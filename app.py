@@ -62,42 +62,29 @@ html, body, [class*="css"] {
   font-size: 15px !important;
   line-height: 1.65 !important;
   background: var(--bg) !important;
-  color: var(--text) !important;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Streamlit renders text inside p, div, span — must target them directly */
-p, div, span, li, label, input, textarea, select,
-[data-testid] p, [data-testid] div, [data-testid] span {
+/* Font family only — no colour override on generic selectors */
+p, div, span, li, label, input, textarea, select {
   font-family: 'Lexend', sans-serif !important;
 }
 
-/* All native paragraph text */
-p { font-size: 1rem !important; line-height: 1.65 !important; color: var(--text) !important; }
-
-/* Streamlit markdown text blocks */
-.stMarkdown p { font-size: 1rem !important; color: var(--text2) !important; }
-.stMarkdown li { font-size: 1rem !important; line-height: 1.8 !important; }
-
-/* Widget labels */
-.stSelectbox label,
-.stTextInput label,
-.stTextArea label,
-.stFileUploader label,
-.stRadio label,
-.stCheckbox label,
-.stSlider label {
-  font-size: .92rem !important;
-  font-weight: 500 !important;
+/* Body text colour only on content elements, not on navbar */
+.main p, .stMarkdown p  {
+  font-size: 1rem !important;
+  line-height: 1.65 !important;
   color: var(--text) !important;
 }
+.stMarkdown p  { color: var(--text2) !important; }
+.stMarkdown li { font-size: 1rem !important; line-height: 1.8 !important; color: var(--text2) !important; }
 
-/* Widget input text */
-.stSelectbox [data-testid="stWidgetLabel"],
-.stTextInput input,
-.stTextArea textarea {
-  font-size: .95rem !important;
+/* Widget labels */
+.stSelectbox label, .stTextInput label, .stTextArea label,
+.stFileUploader label, .stRadio label, .stCheckbox label, .stSlider label {
+  font-size: .92rem !important; font-weight: 500 !important; color: var(--text) !important;
 }
+.stTextInput input, .stTextArea textarea { font-size: .95rem !important; color: var(--text) !important; }
 
 /* ── Hide Streamlit chrome & sidebar toggle ── */
 #MainMenu, footer, header { visibility: hidden; }
@@ -106,135 +93,117 @@ p { font-size: 1rem !important; line-height: 1.65 !important; color: var(--text)
 section[data-testid="stSidebar"] { display: none !important; }
 
 /* ════════════════════════════════════════
-   TOP NAVBAR  — website-style horizontal nav
+   TOP NAVBAR  — scoped, colour-safe
 ════════════════════════════════════════ */
 
-/* The outer navbar container — full-width navy bar */
-.navbar {
+/* Wrapper that spans full width behind the nav buttons */
+.medanon-nav {
   display: flex;
-  align-items: center;
-  background: var(--navy);
-  padding: 0 1.5rem;
-  margin: -6rem -4rem 0rem;
-  border-bottom: 2px solid var(--teal);
+  align-items: stretch;
+  background: #0d1b2a;
+  border-bottom: 2.5px solid #0ea5a0;
+  box-shadow: 0 2px 16px rgba(13,27,42,.30);
+  margin: -6rem -4rem 0;
+  padding: 0 0 0 0;
   position: sticky;
   top: 0;
-  z-index: 999;
-  min-height: 58px;
-  box-shadow: 0 2px 12px rgba(13,27,42,.25);
+  z-index: 9999;
+  min-height: 56px;
 }
 
-/* Brand area on the left */
-.nb-brand {
+/* Brand block */
+.medanon-nav .nb-brand {
   display: flex; align-items: center; gap: .6rem;
-  padding-right: 2rem;
-  border-right: 1px solid var(--navy3);
-  margin-right: 1.5rem;
-  min-width: 180px;
-  flex-shrink: 0;
+  padding: 0 1.5rem 0 1.2rem;
+  border-right: 1px solid #1e2d42;
+  flex-shrink: 0; min-width: 185px;
 }
-.nb-dot {
-  width: 32px; height: 32px; background: var(--teal);
-  border-radius: 8px; display: flex; align-items: center;
-  justify-content: center; font-size: .95rem;
+.medanon-nav .nb-dot {
+  width: 30px; height: 30px; background: #0ea5a0;
+  border-radius: 7px; display: flex; align-items: center;
+  justify-content: center; font-size: .9rem; flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(14,165,160,.4);
-  flex-shrink: 0;
 }
-.nb-name { font-size: .95rem; font-weight: 800; color: #f1f5f9 !important; letter-spacing: -.2px; }
-.nb-sub  { font-size: .6rem; color: #475569 !important; }
+.medanon-nav .nb-name {
+  font-size: .9rem; font-weight: 800;
+  color: #f1f5f9 !important; letter-spacing: -.2px; line-height: 1.2;
+}
+.medanon-nav .nb-sub  { font-size: .58rem; color: #3d5068 !important; }
 
-/* Nav links */
-.nb-links {
-  display: flex; align-items: stretch; gap: 0; flex: 1;
-}
-.nb-link {
-  display: flex; align-items: center; gap: .4rem;
-  padding: 0 1.1rem; height: 58px;
-  font-size: .88rem; font-weight: 500;
-  color: #7ea8c8 !important;
-  text-decoration: none; white-space: nowrap;
-  border-bottom: 3px solid transparent;
-  transition: color .15s, border-color .15s, background .15s;
-  cursor: pointer;
-}
-.nb-link:hover {
-  color: #e2e8f0 !important;
-  background: var(--navy2);
-  border-bottom-color: #3d5068;
-}
-.nb-link.active {
-  color: #ffffff !important;
-  font-weight: 700;
-  border-bottom-color: var(--teal);
-  background: var(--navy2);
-}
-.nb-link.done::after {
-  content: " ✓";
-  font-size: .65rem;
-  color: var(--teal) !important;
-  margin-left: .15rem;
-}
-.nb-icon { font-size: .95rem; }
+/* Nav links area (populated by st.columns buttons) */
+.medanon-nav .nb-links { display: flex; align-items: stretch; flex: 1; }
 
-/* Right section: author + reset */
-.nb-right {
-  display: flex; align-items: center; gap: 1rem;
-  padding-left: 1.5rem;
-  border-left: 1px solid var(--navy3);
-  margin-left: auto; flex-shrink: 0;
+/* Right author block */
+.medanon-nav .nb-right {
+  display: flex; align-items: center;
+  padding: 0 1.2rem;
+  border-left: 1px solid #1e2d42; flex-shrink: 0;
 }
-.nb-author { font-size: .65rem; color: #475569 !important; text-align: right; line-height: 1.5; }
-.nb-author b { color: #94a3b8 !important; }
+.medanon-nav .nb-right-text {
+  font-size: .6rem; line-height: 1.65; text-align: right;
+  color: #475569 !important;
+}
+.medanon-nav .nb-right-text b { color: #5a7a96 !important; }
 
-/* The "New Session" button inside the navbar */
-.nb-session .stButton > button {
-  background: rgba(14,165,160,.12) !important;
-  border: 1px solid rgba(14,165,160,.3) !important;
-  color: #5eead4 !important;
-  font-size: .75rem !important;
-  padding: .3rem .85rem !important;
-  border-radius: 6px !important;
-  font-weight: 600 !important;
-  white-space: nowrap !important;
-}
-.nb-session .stButton > button:hover {
-  background: rgba(14,165,160,.22) !important;
-  transform: none !important; opacity: 1 !important;
-}
-
-/* Streamlit column structure override for the nav columns row */
-.nav-cols-row > div[data-testid="stHorizontalBlock"] {
-  gap: 0 !important;
-  background: var(--navy) !important;
-  padding: 0 !important;
-}
-
-/* Each nav button column */
-.nav-btn-col .stButton > button {
-  background: transparent !important;
-  border: none !important;
+/* ── Nav buttons — inside .medanon-nav .stButton ── */
+/* These selectors are highly specific so global colour rules cannot win */
+.medanon-nav .stButton > button,
+.medanon-nav .stButton > button:focus,
+.medanon-nav .stButton > button:active {
+  background:    transparent           !important;
+  border:        none                  !important;
   border-bottom: 3px solid transparent !important;
-  border-radius: 0 !important;
-  color: #7ea8c8 !important;
-  font-size: .88rem !important;
-  font-weight: 500 !important;
-  padding: 0 1rem !important;
-  height: 54px !important;
-  width: 100% !important;
-  transition: all .15s !important;
-  white-space: nowrap !important;
+  border-radius: 0                     !important;
+  color:         #8ab4d4               !important;  /* ← explicit light blue */
+  font-size:     .88rem                !important;
+  font-weight:   500                   !important;
+  padding:       0 .95rem              !important;
+  height:        56px                  !important;
+  width:         100%                  !important;
+  white-space:   nowrap                !important;
+  box-shadow:    none                  !important;
+  transition:    background .14s, color .14s, border-color .14s !important;
 }
-.nav-btn-col .stButton > button:hover {
-  background: var(--navy2) !important;
-  color: #e2e8f0 !important;
-  border-bottom-color: #3d5068 !important;
+.medanon-nav .stButton > button:hover {
+  background:         #162032 !important;
+  color:              #e2e8f0 !important;
+  border-bottom-color:#3d5068 !important;
   transform: none !important; opacity: 1 !important;
 }
-.nav-btn-col.nav-active .stButton > button {
-  color: #ffffff !important;
-  font-weight: 700 !important;
-  background: var(--navy2) !important;
-  border-bottom-color: var(--teal) !important;
+
+/* Active page nav button */
+.medanon-nav .nb-active .stButton > button {
+  color:              #ffffff !important;
+  font-weight:        700     !important;
+  background:         #162032 !important;
+  border-bottom-color:#0ea5a0 !important;
+}
+
+/* Config pill */
+.medanon-nav .nb-config {
+  display: flex; align-items: center;
+  padding: 0 .75rem; border-left: 1px solid #1e2d42; flex-shrink: 0;
+}
+.medanon-nav .nb-config-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem; line-height: 1.7;
+  color: #3d5068 !important;
+  background: #162032; border-radius: 6px;
+  padding: .2rem .55rem; white-space: nowrap;
+}
+.medanon-nav .nb-config-pill span { color: #0ea5a0 !important; }
+
+/* Reset button */
+.medanon-nav .nb-reset .stButton > button {
+  background:    rgba(14,165,160,.1)   !important;
+  border:        1px solid rgba(14,165,160,.25) !important;
+  border-radius: 6px                   !important;
+  color:         #5eead4               !important;
+  font-size:     .78rem                !important;
+  font-weight:   600                   !important;
+  padding:       .32rem .8rem          !important;
+  height:        auto                  !important;
+  white-space:   nowrap                !important;
 }
 
 /* ════════════════════════════════════════
@@ -919,179 +888,91 @@ def go(idx):
     st.rerun()
 
 # ══════════════════════════════════════════════════════════════════
-# TOP NAVBAR  — website-style horizontal navigation
-# Built with st.columns so Streamlit handles click events natively.
-# CSS transforms the buttons into proper nav links.
+# TOP NAVBAR  — single .medanon-nav container
+# Brand + nav buttons + config pill + reset, all in one dark bar.
+# Uses st.columns inside a scoped CSS wrapper so button colours
+# are protected from the global body colour overrides.
 # ══════════════════════════════════════════════════════════════════
 
 cur  = st.session_state["page"]
 done = st.session_state["run_complete"]
 
-NAV = [
-    (0, "🏠", "Home"),
-    (1, "⚙️", "Configure"),
-    (2, "📤", "Upload"),
-    (3, "🛡", "Anonymize"),
-    (4, "📦", "Download"),
-    (5, "⭐", "Feedback"),
-]
-
-# Inject the navy bar background that spans edge-to-edge
-st.markdown("""
-<div class="navbar-bg" style="
-  background:#0d1b2a;
-  margin:-6rem -4rem 0;
-  padding:0 1.5rem;
-  border-bottom:2px solid #0ea5a0;
-  box-shadow:0 2px 12px rgba(13,27,42,.25);
-  position:sticky; top:0; z-index:999;
-">
-<div style="display:flex;align-items:center;min-height:58px;max-width:1200px;margin:0 auto;gap:0;">
-
-  <!-- Brand -->
-  <div style="display:flex;align-items:center;gap:.6rem;padding-right:1.8rem;
-              border-right:1px solid #1e2d42;margin-right:0;min-width:190px;flex-shrink:0;">
-    <div style="width:32px;height:32px;background:#0ea5a0;border-radius:8px;
-                display:flex;align-items:center;justify-content:center;font-size:.95rem;
-                box-shadow:0 2px 8px rgba(14,165,160,.4);flex-shrink:0;">🛡</div>
-    <div>
-      <div style="font-size:.95rem;font-weight:800;color:#f1f5f9;letter-spacing:-.2px;line-height:1.2;">MedAnon Pro</div>
-      <div style="font-size:.58rem;color:#3d5068;line-height:1;">© Vedaste NYANDWI</div>
-    </div>
-  </div>
-
-  <!-- Spacer: nav buttons go here via st.columns below -->
-  <div style="flex:1;"></div>
-
-  <!-- Right info -->
-  <div style="padding-left:1.5rem;border-left:1px solid #1e2d42;text-align:right;flex-shrink:0;">
-    <div style="font-size:.62rem;color:#475569;line-height:1.6;">
-      University of Rwanda · ACE-DS<br>Data Mining Program
-    </div>
-  </div>
-
-</div>
-</div>
-""", unsafe_allow_html=True)
-
-# Nav button columns — these render inside the page flow just below the brand bar.
-# CSS targets .nav-btn-col and makes buttons look like nav links.
 _all_h  = {**HOSPITALS, **st.session_state["custom_hospitals"]}
 _h_code = _all_h.get(st.session_state["hospital_key"], "H01")
 _p_code = get_programme_code()
 _t_code = st.session_state["img_code"]
 
-# Build navbar using columns: [nav cols ...] + [config info] + [reset]
-nav_col_widths = [1.2, 1.4, 1.1, 1.5, 1.8, 1.2, 2.5, 1.4]
-nav_cols = st.columns(nav_col_widths)
+# Open the .medanon-nav wrapper — everything inside inherits navy bg
+st.markdown('<div class="medanon-nav">', unsafe_allow_html=True)
 
-st.markdown("""
-<style>
-/* ─ Style the nav button row ─ */
-div[data-testid="stHorizontalBlock"]:first-of-type {
-  background: #0d1b2a !important;
-  gap: 0 !important;
-  padding: 0 !important;
-  margin: 0 -4rem !important;
-  padding: 0 1.5rem !important;
-  border-bottom: 2px solid #0ea5a0;
-  box-shadow: 0 2px 12px rgba(13,27,42,.25);
-}
-div[data-testid="stHorizontalBlock"]:first-of-type .stButton > button {
-  background: transparent !important;
-  border: none !important;
-  border-bottom: 3px solid transparent !important;
-  border-radius: 0 !important;
-  color: #7ea8c8 !important;
-  font-size: .9rem !important;
-  font-weight: 500 !important;
-  padding: .95rem .5rem !important;
-  width: 100% !important;
-  height: 54px !important;
-  transition: all .15s !important;
-  white-space: nowrap !important;
-  box-shadow: none !important;
-}
-div[data-testid="stHorizontalBlock"]:first-of-type .stButton > button:hover {
-  background: #162032 !important;
-  color: #e2e8f0 !important;
-  border-bottom-color: #3d5068 !important;
-  transform: none !important; opacity: 1 !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
-with nav_cols[0]:
-    st.markdown(f'<div class="nav-btn-col {"nav-active" if cur==0 else ""}">', unsafe_allow_html=True)
-    if st.button("🏠  Home", key="nav_0", use_container_width=True): go(0)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with nav_cols[1]:
-    tick = " ✓" if done else ""
-    st.markdown(f'<div class="nav-btn-col {"nav-active" if cur==1 else ""}">', unsafe_allow_html=True)
-    if st.button(f"⚙️  Configure{tick}", key="nav_1", use_container_width=True): go(1)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with nav_cols[2]:
-    tick = " ✓" if done else ""
-    st.markdown(f'<div class="nav-btn-col {"nav-active" if cur==2 else ""}">', unsafe_allow_html=True)
-    if st.button(f"📤  Upload{tick}", key="nav_2", use_container_width=True): go(2)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with nav_cols[3]:
-    tick = " ✓" if done else ""
-    st.markdown(f'<div class="nav-btn-col {"nav-active" if cur==3 else ""}">', unsafe_allow_html=True)
-    if st.button(f"🛡  Anonymize{tick}", key="nav_3", use_container_width=True): go(3)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with nav_cols[4]:
-    st.markdown(f'<div class="nav-btn-col {"nav-active" if cur==4 else ""}">', unsafe_allow_html=True)
-    if st.button("📦  Download & Delete", key="nav_4", use_container_width=True): go(4)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with nav_cols[5]:
-    st.markdown(f'<div class="nav-btn-col {"nav-active" if cur==5 else ""}">', unsafe_allow_html=True)
-    if st.button("⭐  Feedback", key="nav_5", use_container_width=True): go(5)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with nav_cols[6]:
-    # Config info pill — shows hospital + programme code
-    _prog_short = st.session_state.get("sel_programme","")
-    _prog_short = _prog_short.split("·")[-1].strip() if "·" in _prog_short else _prog_short
-    st.markdown(f"""
-    <div style="display:flex;align-items:center;height:54px;padding:0 .5rem;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;
-                  color:#3d5068;background:#162032;border-radius:6px;
-                  padding:.25rem .6rem;white-space:nowrap;line-height:1.6;">
-        {_h_code} · {_t_code}<br>
-        <span style="color:#0ea5a0;">{_p_code}</span>
-      </div>
-    </div>""", unsafe_allow_html=True)
-
-with nav_cols[7]:
-    # New Session button
-    st.markdown('<div style="display:flex;align-items:center;height:54px;">', unsafe_allow_html=True)
-    if st.button("🔄 Reset", key="nav_reset", use_container_width=True):
-        for k in list(_D.keys()): st.session_state[k] = _D[k]
-        for k in ["_zip_upload", "_files_upload"]: st.session_state.pop(k, None)
-        st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# Active item highlight — inject CSS for the current active button
-# We target the nth column's button for the active state
-active_col_index = cur + 1  # 1-based for CSS nth-child
+# ── Brand block ──────────────────────────────────────────────────
 st.markdown(f"""
-<style>
-div[data-testid="stHorizontalBlock"]:first-of-type
-  > div:nth-child({active_col_index}) .stButton > button {{
-  color: #ffffff !important;
-  font-weight: 700 !important;
-  background: #162032 !important;
-  border-bottom: 3px solid #0ea5a0 !important;
-}}
-</style>""", unsafe_allow_html=True)
+  <div class="nb-brand">
+    <div class="nb-dot">🛡</div>
+    <div>
+      <div class="nb-name">MedAnon Pro</div>
+      <div class="nb-sub">© Vedaste NYANDWI</div>
+    </div>
+  </div>""", unsafe_allow_html=True)
 
+# ── Nav buttons via st.columns ────────────────────────────────────
+# Open the links region
+st.markdown('<div class="nb-links">', unsafe_allow_html=True)
+
+nav_items = [
+    (0, "🏠",  "Home"),
+    (1, "⚙️", "Configure"),
+    (2, "📤",  "Upload"),
+    (3, "🛡",  "Anonymize"),
+    (4, "📦",  "Download"),
+    (5, "⭐",  "Feedback"),
+]
+
+nav_cols = st.columns([1.1, 1.4, 1.0, 1.4, 1.3, 1.1])
+for col, (idx, icon, label) in zip(nav_cols, nav_items):
+    tick = " ✓" if done and idx in (1, 2, 3) else ""
+    active_cls = "nb-active" if cur == idx else ""
+    with col:
+        st.markdown(f'<div class="{active_cls}">', unsafe_allow_html=True)
+        if st.button(f"{icon} {label}{tick}", key=f"nav_{idx}", use_container_width=True):
+            go(idx)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)  # close .nb-links
+
+# ── Config pill ───────────────────────────────────────────────────
+st.markdown(f"""
+  <div class="nb-config">
+    <div class="nb-config-pill">
+      {_h_code} · {_t_code}<br>
+      <span>{_p_code}</span>
+    </div>
+  </div>""", unsafe_allow_html=True)
+
+# ── Reset button ─────────────────────────────────────────────────
+st.markdown('<div class="nb-reset" style="display:flex;align-items:center;padding:0 .8rem;border-left:1px solid #1e2d42;flex-shrink:0;">', unsafe_allow_html=True)
+if st.button("🔄 Reset", key="nav_reset"):
+    for k in list(_D.keys()): st.session_state[k] = _D[k]
+    for k in ["_zip_upload", "_files_upload"]: st.session_state.pop(k, None)
+    st.rerun()
+st.markdown('</div>', unsafe_allow_html=True)
+
+# ── Right author block ────────────────────────────────────────────
+st.markdown("""
+  <div class="nb-right">
+    <div class="nb-right-text">
+      <b>University of Rwanda</b><br>
+      CBE · ACE-DS · Data Mining
+    </div>
+  </div>""", unsafe_allow_html=True)
+
+# Close the nav wrapper
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Remove any injected per-column nth-child CSS from previous version
 st.markdown('<div style="margin-top:1.5rem;"></div>', unsafe_allow_html=True)
+
+
 
 
 
@@ -2379,13 +2260,40 @@ elif cur == 5:
 
 
 # ══════════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════════
 # FOOTER
 # ══════════════════════════════════════════════════════════════════
-st.markdown("""
-<div style="margin-top:3rem;padding-top:1rem;border-top:1px solid var(--border);
-  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;">
-  <div style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#94a3b8;">
-    © <b style="color:#5e7190;">Vedaste NYANDWI</b> &ensp;·&ensp; MedAnon Pro &ensp;·&ensp; Patient data never stored or transmitted
+st.markdown(f"""
+<div style="
+  margin-top:3.5rem;
+  padding:1.2rem 0 .8rem;
+  border-top:1px solid #dde4ef;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.75rem;
+">
+  <div style="display:flex;align-items:center;gap:.75rem;">
+    <div style="
+      width:26px;height:26px;background:#0d1b2a;border-radius:6px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:.75rem;flex-shrink:0;
+    ">🛡</div>
+    <div>
+      <div style="font-size:.85rem;font-weight:700;color:#0f1d2e;">MedAnon Pro</div>
+      <div style="font-size:.72rem;color:#5e7190;margin-top:.05rem;">
+        Patient data is never stored or transmitted · All processing is in-session only
+      </div>
+    </div>
   </div>
-  <div style="font-size:.68rem;color:#94a3b8;">University of Rwanda · CBE · ACE-DS · Data Mining</div>
+  <div style="text-align:right;">
+    <div style="font-size:.78rem;font-weight:600;color:#374a60;">
+      © Vedaste NYANDWI
+    </div>
+    <div style="font-size:.68rem;color:#5e7190;margin-top:.05rem;">
+      University of Rwanda · College of Business &amp; Economics<br>
+      ACE-DS · Data Mining Program
+    </div>
+  </div>
 </div>""", unsafe_allow_html=True)
