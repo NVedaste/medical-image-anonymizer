@@ -872,11 +872,15 @@ st.markdown(f"""
 }}
 .medanon-navbar .nb-right b {{ color: #5a7a96 !important; }}
 
-/* ── Hidden radio nav ── */
-div[data-testid="stRadio"] > label {{
+/* ── Nav radio — scoped to nav_radio key only ── */
+/* Streamlit sets data-testid="stRadio" on all radios.
+   We scope by looking for the radio that follows .nb-brand-strip */
+.nb-brand-strip + div[data-testid="stRadio"] > label,
+.nb-brand-strip ~ div[data-testid="stRadio"] > label {
   display: none !important;
-}}
-div[data-testid="stRadio"] > div {{
+}
+.nb-brand-strip + div[data-testid="stRadio"] > div,
+.nb-brand-strip ~ div[data-testid="stRadio"] > div {
   display: flex !important;
   flex-direction: row !important;
   gap: 0 !important;
@@ -885,11 +889,12 @@ div[data-testid="stRadio"] > div {{
   padding: 0 !important;
   border-bottom: 2.5px solid #0ea5a0 !important;
   box-shadow: 0 3px 18px rgba(13,27,42,.35) !important;
-}}
-div[data-testid="stRadio"] > div > label {{
+}
+.nb-brand-strip + div[data-testid="stRadio"] > div > label,
+.nb-brand-strip ~ div[data-testid="stRadio"] > div > label {
   display: flex !important;
   align-items: center !important;
-  padding: 0 1rem !important;
+  padding: 0 1.1rem !important;
   min-height: 52px !important;
   cursor: pointer !important;
   font-size: .9rem !important;
@@ -901,27 +906,30 @@ div[data-testid="stRadio"] > div > label {{
   margin: 0 !important;
   border-radius: 0 !important;
   transition: background .13s, color .13s !important;
-}}
-div[data-testid="stRadio"] > div > label:hover {{
+}
+.nb-brand-strip + div[data-testid="stRadio"] > div > label:hover,
+.nb-brand-strip ~ div[data-testid="stRadio"] > div > label:hover {
   background: #162032 !important;
   color: #e2e8f0 !important;
   border-bottom-color: #3d5068 !important;
-}}
-div[data-testid="stRadio"] > div > label[data-checked="true"],
-div[data-testid="stRadio"] > div > label:has(input:checked) {{
+}
+.nb-brand-strip + div[data-testid="stRadio"] > div > label:has(input:checked),
+.nb-brand-strip ~ div[data-testid="stRadio"] > div > label:has(input:checked) {
   background: #1e2d42 !important;
   color: #ffffff !important;
   font-weight: 700 !important;
   border-bottom-color: #0ea5a0 !important;
-}}
-/* Hide the radio bullet */
-div[data-testid="stRadio"] > div > label > div:first-child {{
+}
+/* Hide radio bullet in nav only */
+.nb-brand-strip + div[data-testid="stRadio"] > div > label > div:first-child,
+.nb-brand-strip ~ div[data-testid="stRadio"] > div > label > div:first-child {
   display: none !important;
-}}
-div[data-testid="stRadio"] > div > label > div:last-child {{
+}
+.nb-brand-strip + div[data-testid="stRadio"] > div > label > div:last-child,
+.nb-brand-strip ~ div[data-testid="stRadio"] > div > label > div:last-child {
   font-size: .9rem !important;
   color: inherit !important;
-}}
+}
 /* Brand strip above radio */
 .nb-brand-strip {{
   display: flex; align-items: center;
@@ -1216,13 +1224,13 @@ elif cur == 1:
     st.markdown(f'<div style="margin-top:.5rem;font-size:.8rem;color:#5e7190;">Internal code: <span style="font-family:\'JetBrains Mono\',monospace;color:var(--teal-dk);font-weight:600;">{h_code}</span> (hidden from output filenames)</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    with st.expander("+ Register a new hospital"):
+    with st.expander("Register a new hospital", expanded=False):
         col_a, col_b = st.columns([3, 1])
         with col_a:
             new_hname = st.text_input("Hospital full name", placeholder="e.g. Rwanda Military Hospital", key="nh_name")
         with col_b:
             new_hcode = st.text_input("Code", value=f"H{str(len(all_hospitals)+1).zfill(2)}", max_chars=5, key="nh_code")
-        if st.button("Add hospital ➕", use_container_width=True):
+        if st.button("Add hospital", use_container_width=True, type="primary"):
             n2, c2 = new_hname.strip(), new_hcode.strip().upper()
             if not n2: st.error("Enter a hospital name.")
             elif c2 in set(all_hospitals.values()): st.error(f"Code '{c2}' already in use.")
@@ -1332,9 +1340,9 @@ elif cur == 1:
     st.markdown('</div>', unsafe_allow_html=True)
 
     # ── Add custom university / college / programme ───────────────
-    with st.expander("+ Add a custom university, college or programme"):
-        add_tab = st.radio("What to add:", ["University", "College", "Programme"],
-                           horizontal=True, key="add_tab_sel")
+    with st.expander("Add custom university, college or programme", expanded=False):
+        add_tab = st.selectbox("What to add:", ["University", "College", "Programme"],
+                               key="add_tab_sel", label_visibility="visible")
 
         if add_tab == "University":
             ca, cb = st.columns([3, 1])
