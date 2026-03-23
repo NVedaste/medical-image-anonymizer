@@ -399,7 +399,61 @@ HOSPITALS = {
     "Hôpital La Croix du Sud":                       "H03",
     "CHUB — University Teaching Hospital of Butare": "H04",
 }
-PROGRAMS      = {"University of Rwanda · CBE · ACE-DS · Data Mining": "ACE-DS_DM"}
+
+# ── Cascaded academic structure: University → College → Programme ──
+# Structure: { university_name: { code, colleges: { college_name: { code, programmes: { prog_name: code } } } } }
+ACADEMIC_TREE = {
+    "University of Rwanda": {
+        "code": "UR",
+        "colleges": {
+            "College of Business and Economics (CBE)": {
+                "code": "CBE",
+                "programmes": {
+                    "ACE-DS · Data Science": "DS",
+                    "ACE-DS · Data Mining":  "DM",
+                    "MBA":                   "MBA",
+                    "BBA":                   "BBA",
+                }
+            },
+            "College of Medicine and Health Sciences (CMHS)": {
+                "code": "CMHS",
+                "programmes": {
+                    "Medicine (MBChB)":          "MED",
+                    "Public Health (MPH)":       "PH",
+                    "Biomedical Engineering":    "BME",
+                }
+            },
+            "College of Science and Technology (CST)": {
+                "code": "CST",
+                "programmes": {
+                    "Computer Science (BSc)":    "CS",
+                    "Information Technology":   "IT",
+                    "Electrical Engineering":   "EE",
+                }
+            },
+            "College of Education (CE)": {
+                "code": "CE",
+                "programmes": {
+                    "Education (BEd)":           "EDU",
+                    "Educational Management":   "EDUMGT",
+                }
+            },
+        }
+    },
+    "Rwanda Polytechnic": {
+        "code": "RP",
+        "colleges": {
+            "School of ICT": {
+                "code": "ICT",
+                "programmes": {
+                    "Software Development":     "SD",
+                    "Computer Networking":      "CN",
+                }
+            },
+        }
+    },
+}
+
 SUPPORTED_EXT = {".jpg", ".jpeg", ".png", ".dcm", ".dicom"}
 
 # ══════════════════════════════════════════════════════════════════
@@ -408,7 +462,14 @@ SUPPORTED_EXT = {".jpg", ".jpeg", ".png", ".dcm", ".dicom"}
 _D = dict(
     page=0,
     hospital_key=list(HOSPITALS.keys())[0],
-    program_key=list(PROGRAMS.keys())[0],
+    # ── Cascaded programme selection ──
+    sel_university="University of Rwanda",
+    sel_college="College of Business and Economics (CBE)",
+    sel_programme="ACE-DS · Data Mining",
+    # custom additions per level
+    custom_universities={},   # { uni_name: { code, colleges: {} } }
+    custom_colleges={},       # { "uni_name|college_name": { code, programmes: {} } }
+    custom_programmes={},     # { "uni_name|college_name|prog_name": code }
     img_code="CXR",
     custom_hospitals={},
     upload_mode="zip",
@@ -419,15 +480,13 @@ _D = dict(
     run_complete=False,
     dataset_deleted=False,
     integrity_log=[],
-    # ── Fix #1: Operator identity ──────────────────────────────────
-    operator_name="",        # person running the anonymization
-    operator_dept="",        # their department
-    # ── Fix #2: Patient grouping ───────────────────────────────────
-    patient_groups={},       # filename → patient_label (set on upload page)
-    # ── Fix #4: Image validation results ──────────────────────────
-    validation_results=[],   # per-file validation flags
-    # ── Mapping CSV bytes (encrypted proxy: CSV in ZIP with password note)
-    mapping_csv=None,        # raw bytes of mapping CSV for download
+    operator_name="",
+    operator_dept="",
+    patient_groups={},
+    validation_results=[],
+    mapping_csv=None,
+    cert_ts="",
+    cert_nfiles=0,
     feedback_reviews=[
         {
             "name": "Dr. Mukeshimana A.",
@@ -474,6 +533,38 @@ def _logger():
     log.setLevel(logging.DEBUG)
     return log
 logger = _logger()
+
+# ══════════════════════════════════════════════════════════════════
+# PROGRAMME CODE HELPER
+# Derives the short filename code from the 3-level cascade.
+# Format: {UNI_CODE}_{COL_CODE}_{PROG_CODE}  e.g. UR_CBE_DM
+# ══════════════════════════════════════════════════════════════════
+def get_programme_code() -> str:
+    """Return the combined code for the selected university / college / programme."""
+    uni  = st.session_state.get("sel_university","")
+    col  = st.session_state.get("sel_college","")
+    prog = st.session_state.get("sel_programme","")
+
+    # Merge built-in tree with any custom additions
+    tree = dict(ACADEMIC_TREE)
+    for u_name, u_data in st.session_state.get("custom_universities",{}).items():
+        tree[u_name] = u_data
+
+    u_code = tree.get(uni, {}).get("code", "UNI")
+
+    cols = dict(tree.get(uni, {}).get("colleges", {}))
+    key_uc = f"{uni}|{col}"
+    if key_uc in st.session_state.get("custom_colleges",{}):
+        cols[col] = st.session_state["custom_colleges"][key_uc]
+    c_code = cols.get(col, {}).get("code", "COL")
+
+    progs = dict(cols.get(col, {}).get("programmes", {}))
+    key_up = f"{uni}|{col}|{prog}"
+    if key_up in st.session_state.get("custom_programmes",{}):
+        progs[prog] = st.session_state["custom_programmes"][key_up]
+    p_code = progs.get(prog, "PROG")
+
+    return f"{u_code}_{c_code}_{p_code}"
 
 # ══════════════════════════════════════════════════════════════════
 # CORE ANONYMIZATION
@@ -887,7 +978,7 @@ st.markdown("""
 # CSS targets .nav-btn-col and makes buttons look like nav links.
 _all_h  = {**HOSPITALS, **st.session_state["custom_hospitals"]}
 _h_code = _all_h.get(st.session_state["hospital_key"], "H01")
-_p_code = PROGRAMS.get(st.session_state["program_key"], "ACE-DS_DM")
+_p_code = get_programme_code()
 _t_code = st.session_state["img_code"]
 
 # Build navbar using columns: [nav cols ...] + [config info] + [reset]
@@ -964,13 +1055,16 @@ with nav_cols[5]:
     st.markdown('</div>', unsafe_allow_html=True)
 
 with nav_cols[6]:
-    # Config info pill
+    # Config info pill — shows hospital + programme code
+    _prog_short = st.session_state.get("sel_programme","")
+    _prog_short = _prog_short.split("·")[-1].strip() if "·" in _prog_short else _prog_short
     st.markdown(f"""
     <div style="display:flex;align-items:center;height:54px;padding:0 .5rem;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;
                   color:#3d5068;background:#162032;border-radius:6px;
-                  padding:.25rem .6rem;white-space:nowrap;line-height:1.5;">
-        {_h_code} · {_t_code}
+                  padding:.25rem .6rem;white-space:nowrap;line-height:1.6;">
+        {_h_code} · {_t_code}<br>
+        <span style="color:#0ea5a0;">{_p_code}</span>
       </div>
     </div>""", unsafe_allow_html=True)
 
@@ -1201,16 +1295,148 @@ elif cur == 1:
             if c2c.button("✕", key=f"del_{hc}"):
                 del st.session_state["custom_hospitals"][hn]; st.rerun()
 
-    # Program card
-    st.markdown('<div class="card"><div class="card-header"><div class="card-icon ci-blue">🎓</div><div class="card-title">Academic Program</div></div>', unsafe_allow_html=True)
-    sel_p = st.selectbox("Select program", list(PROGRAMS.keys()),
-                          index=list(PROGRAMS.keys()).index(st.session_state["program_key"])
-                          if st.session_state["program_key"] in PROGRAMS else 0,
-                          label_visibility="collapsed")
-    st.session_state["program_key"] = sel_p
-    p_code = PROGRAMS[sel_p]
-    st.markdown(f'<div style="margin-top:.5rem;font-size:.8rem;color:#5e7190;">Program code: <span style="font-family:\'JetBrains Mono\',monospace;color:var(--teal-dk);font-weight:600;">{p_code}</span></div>', unsafe_allow_html=True)
+    # ── Academic Programme: 3-level cascade ─────────────────────
+    st.markdown("""
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon ci-blue">🎓</div>
+        <div class="card-title">Academic Programme — University → College → Programme</div>
+      </div>""", unsafe_allow_html=True)
+
+    # Build merged tree (built-in + custom)
+    full_tree = dict(ACADEMIC_TREE)
+    for u_nm, u_dat in st.session_state.get("custom_universities", {}).items():
+        full_tree[u_nm] = u_dat
+
+    # ── Level 1: University ──────────────────────────────────────
+    uni_names = list(full_tree.keys())
+    cur_uni = st.session_state.get("sel_university", uni_names[0])
+    if cur_uni not in uni_names:
+        cur_uni = uni_names[0]
+
+    st.markdown('<div style="font-size:.82rem;font-weight:600;color:#374a60;margin-bottom:.3rem;">1 · University</div>', unsafe_allow_html=True)
+    sel_uni = st.selectbox("University", uni_names,
+                            index=uni_names.index(cur_uni),
+                            label_visibility="collapsed", key="sb_uni")
+    if sel_uni != st.session_state.get("sel_university"):
+        st.session_state["sel_university"] = sel_uni
+        # Reset downstream selections
+        st.session_state["sel_college"]   = list(full_tree[sel_uni]["colleges"].keys())[0]
+        col_progs = list(full_tree[sel_uni]["colleges"][st.session_state["sel_college"]]["programmes"].keys())
+        st.session_state["sel_programme"] = col_progs[0] if col_progs else ""
+        st.rerun()
+    st.session_state["sel_university"] = sel_uni
+    uni_code = full_tree[sel_uni]["code"]
+
+    # ── Level 2: College ─────────────────────────────────────────
+    col_dict = dict(full_tree[sel_uni]["colleges"])
+    # add any custom colleges for this university
+    for ck, cv in st.session_state.get("custom_colleges", {}).items():
+        u_part, c_part = ck.split("|", 1) if "|" in ck else ("", ck)
+        if u_part == sel_uni:
+            col_dict[c_part] = cv
+
+    col_names = list(col_dict.keys())
+    cur_col = st.session_state.get("sel_college", col_names[0])
+    if cur_col not in col_names:
+        cur_col = col_names[0]
+
+    st.markdown('<div style="font-size:.82rem;font-weight:600;color:#374a60;margin:.75rem 0 .3rem;">2 · College / School</div>', unsafe_allow_html=True)
+    sel_col = st.selectbox("College", col_names,
+                            index=col_names.index(cur_col),
+                            label_visibility="collapsed", key="sb_col")
+    if sel_col != st.session_state.get("sel_college"):
+        st.session_state["sel_college"] = sel_col
+        prog_list = list(col_dict.get(sel_col, {}).get("programmes", {}).keys())
+        st.session_state["sel_programme"] = prog_list[0] if prog_list else ""
+        st.rerun()
+    st.session_state["sel_college"] = sel_col
+    col_code = col_dict[sel_col]["code"]
+
+    # ── Level 3: Programme ────────────────────────────────────────
+    prog_dict = dict(col_dict.get(sel_col, {}).get("programmes", {}))
+    # add any custom programmes for this college
+    for pk, pv in st.session_state.get("custom_programmes", {}).items():
+        parts = pk.split("|")
+        if len(parts) == 3 and parts[0] == sel_uni and parts[1] == sel_col:
+            prog_dict[parts[2]] = pv
+
+    prog_names = list(prog_dict.keys()) if prog_dict else ["(No programmes)"]
+    cur_prog = st.session_state.get("sel_programme", prog_names[0])
+    if cur_prog not in prog_names:
+        cur_prog = prog_names[0]
+
+    st.markdown('<div style="font-size:.82rem;font-weight:600;color:#374a60;margin:.75rem 0 .3rem;">3 · Programme</div>', unsafe_allow_html=True)
+    sel_prog = st.selectbox("Programme", prog_names,
+                             index=prog_names.index(cur_prog),
+                             label_visibility="collapsed", key="sb_prog")
+    st.session_state["sel_programme"] = sel_prog
+    prog_code = prog_dict.get(sel_prog, "PROG")
+
+    # Derived combined code
+    combined_code = get_programme_code()
+    st.markdown(f"""
+    <div style="margin-top:.9rem;display:flex;align-items:center;gap:1rem;
+                background:var(--bg);border-radius:8px;padding:.65rem 1rem;
+                border:1px solid var(--border);">
+      <div style="font-size:.72rem;color:#5e7190;">Code for filename:</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.9rem;
+                  font-weight:700;color:var(--teal-dk);">{combined_code}</div>
+      <div style="font-size:.72rem;color:#5e7190;margin-left:.25rem;">
+        ({uni_code} · {col_code} · {prog_code})
+      </div>
+    </div>""", unsafe_allow_html=True)
+
     st.markdown('</div>', unsafe_allow_html=True)
+
+    # ── Add custom university / college / programme ───────────────
+    with st.expander("➕  Add a university, college or programme"):
+        add_tab = st.radio("What to add:", ["University", "College", "Programme"],
+                           horizontal=True, key="add_tab_sel")
+
+        if add_tab == "University":
+            ca, cb = st.columns([3, 1])
+            with ca: new_u = st.text_input("University name", placeholder="e.g. INES-Ruhengeri", key="new_u_name")
+            with cb: new_u_code = st.text_input("Code", max_chars=6, placeholder="INES", key="new_u_code")
+            if st.button("Add university", use_container_width=True, key="btn_add_u"):
+                n, c = new_u.strip(), new_u_code.strip().upper()
+                if not n: st.error("Enter a university name.")
+                elif not c: st.error("Enter a code.")
+                elif n in full_tree: st.warning("Already exists.")
+                else:
+                    st.session_state["custom_universities"][n] = {"code": c, "colleges": {}}
+                    st.session_state["sel_university"] = n
+                    st.rerun()
+
+        elif add_tab == "College":
+            ca, cb = st.columns([3, 1])
+            with ca: new_c = st.text_input("College / School name", placeholder="e.g. School of Public Health", key="new_c_name")
+            with cb: new_c_code = st.text_input("Code", max_chars=8, placeholder="SPH", key="new_c_code")
+            st.markdown(f'<div style="font-size:.78rem;color:#5e7190;margin-bottom:.3rem;">Adding to: <b>{sel_uni}</b></div>', unsafe_allow_html=True)
+            if st.button("Add college", use_container_width=True, key="btn_add_c"):
+                n, c = new_c.strip(), new_c_code.strip().upper()
+                if not n: st.error("Enter a college name.")
+                elif not c: st.error("Enter a code.")
+                else:
+                    key = f"{sel_uni}|{n}"
+                    st.session_state["custom_colleges"][key] = {"code": c, "programmes": {}}
+                    st.session_state["sel_college"] = n
+                    st.rerun()
+
+        else:  # Programme
+            ca, cb = st.columns([3, 1])
+            with ca: new_p = st.text_input("Programme name", placeholder="e.g. Health Informatics", key="new_p_name")
+            with cb: new_p_code = st.text_input("Code", max_chars=8, placeholder="HI", key="new_p_code")
+            st.markdown(f'<div style="font-size:.78rem;color:#5e7190;margin-bottom:.3rem;">Adding to: <b>{sel_uni}</b> → <b>{sel_col}</b></div>', unsafe_allow_html=True)
+            if st.button("Add programme", use_container_width=True, key="btn_add_p"):
+                n, c = new_p.strip(), new_p_code.strip().upper()
+                if not n: st.error("Enter a programme name.")
+                elif not c: st.error("Enter a code.")
+                else:
+                    key = f"{sel_uni}|{sel_col}|{n}"
+                    st.session_state["custom_programmes"][key] = c
+                    st.session_state["sel_programme"] = n
+                    st.rerun()
 
     # Image type card
     st.markdown('<div class="card"><div class="card-header"><div class="card-icon ci-teal">🩻</div><div class="card-title">Image Modality</div></div>', unsafe_allow_html=True)
@@ -1229,6 +1455,7 @@ elif cur == 1:
 
     # Preview card
     t_code = st.session_state["img_code"]
+    p_code = get_programme_code()
     st.markdown(f"""
     <div class="card">
       <div class="card-header"><div class="card-icon ci-green">👁</div><div class="card-title">Output Filename Preview</div></div>
@@ -1504,7 +1731,7 @@ elif cur == 3:
 
     all_h  = {**HOSPITALS, **st.session_state["custom_hospitals"]}
     h_code = all_h.get(st.session_state["hospital_key"], "H01")
-    p_code = PROGRAMS.get(st.session_state["program_key"], "ACE-DS_DM")
+    p_code = get_programme_code()
     t_code = st.session_state["img_code"]
 
     # Config summary
@@ -1518,8 +1745,8 @@ elif cur == 3:
           <div class="info-code">{h_code}</div>
         </div>
         <div class="info-pill">
-          <div class="info-lbl">Program</div>
-          <div class="info-val">ACE-DS · Data Mining</div>
+          <div class="info-lbl">Programme</div>
+          <div class="info-val">{st.session_state.get("sel_programme","—")}</div>
           <div class="info-code">{p_code}</div>
         </div>
         <div class="info-pill">
