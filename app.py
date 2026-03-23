@@ -93,118 +93,6 @@ p, div, span, li, label, input, textarea, select {
 section[data-testid="stSidebar"] { display: none !important; }
 
 /* ════════════════════════════════════════
-   TOP NAVBAR  — reliable st.columns approach
-   The nav is a st.columns row. We apply the
-   dark background to stVerticalBlock that
-   contains the nav marker, and style buttons.
-════════════════════════════════════════ */
-
-/* Marker class placed on the div before nav columns */
-.nav-bar-row {
-  background: #0d1b2a !important;
-  /* Pull the row out of the block-container's 3.5rem side padding */
-  margin-left:  -3.5rem !important;
-  margin-right: -3.5rem !important;
-  margin-top:   -1.8rem !important;
-  margin-bottom: 0      !important;
-  padding: 0            !important;
-  border-bottom: 2.5px solid #0ea5a0 !important;
-  box-shadow: 0 2px 16px rgba(13,27,42,.30) !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 9999 !important;
-}
-/* The Streamlit horizontal block inside the marker */
-.nav-bar-row > div[data-testid="stHorizontalBlock"],
-.nav-bar-row [data-testid="stHorizontalBlock"] {
-  background: #0d1b2a !important;
-  gap: 0 !important;
-  padding: 0 !important;
-  align-items: stretch !important;
-}
-/* All buttons inside the nav bar row */
-.nav-bar-row .stButton > button {
-  background:    transparent           !important;
-  border:        none                  !important;
-  border-bottom: 3px solid transparent !important;
-  border-radius: 0                     !important;
-  color:         #8ab4d4               !important;
-  font-size:     .88rem                !important;
-  font-weight:   500                   !important;
-  padding:       0 .8rem               !important;
-  min-height:    52px                  !important;
-  height:        52px                  !important;
-  width:         100%                  !important;
-  white-space:   nowrap                !important;
-  box-shadow:    none                  !important;
-  line-height:   1                     !important;
-  transition:    background .14s, color .14s, border-color .14s !important;
-}
-.nav-bar-row .stButton > button:hover {
-  background:         #162032 !important;
-  color:              #e2e8f0 !important;
-  border-bottom-color:#3d5068 !important;
-  transform: none !important;
-  opacity:    1   !important;
-}
-/* Active page button */
-.nav-bar-row .nav-active .stButton > button {
-  color:              #ffffff !important;
-  font-weight:        700     !important;
-  background:         #1e2d42 !important;
-  border-bottom-color:#0ea5a0 !important;
-}
-/* Config pill and reset in rightmost columns */
-.nav-bar-row .nav-pill {
-  display: flex; align-items: center; justify-content: center;
-  height: 52px; padding: 0 .5rem;
-}
-.nav-bar-row .nav-pill-inner {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .62rem; line-height: 1.7;
-  color: #5a7a96 !important;
-  background: #162032; border-radius: 6px;
-  padding: .22rem .6rem; white-space: nowrap;
-}
-.nav-bar-row .nav-pill-inner span { color: #0ea5a0 !important; }
-.nav-bar-row .nav-reset .stButton > button {
-  background:    rgba(14,165,160,.12)   !important;
-  border:        1px solid rgba(14,165,160,.25) !important;
-  border-radius: 6px                    !important;
-  color:         #5eead4                !important;
-  font-size:     .78rem                 !important;
-  font-weight:   600                    !important;
-  min-height:    32px                   !important;
-  height:        auto                   !important;
-  padding:       .3rem .8rem            !important;
-  white-space:   nowrap                 !important;
-}
-/* Brand + right info columns */
-.nav-bar-row .nav-brand {
-  display: flex; align-items: center; gap: .55rem;
-  height: 52px; padding: 0 1rem 0 1rem;
-  border-right: 1px solid #1e2d42;
-}
-.nav-bar-row .nav-brand-dot {
-  width: 28px; height: 28px; background: #0ea5a0;
-  border-radius: 6px; display: flex; align-items: center;
-  justify-content: center; font-size: .82rem; flex-shrink: 0;
-}
-.nav-bar-row .nav-brand-name {
-  font-size: .88rem; font-weight: 800;
-  color: #f1f5f9 !important; letter-spacing: -.2px;
-}
-.nav-bar-row .nav-brand-sub { font-size: .56rem; color: #3d5068 !important; }
-.nav-bar-row .nav-right {
-  display: flex; align-items: center; justify-content: flex-end;
-  height: 52px; padding: 0 1rem;
-  border-left: 1px solid #1e2d42;
-  font-size: .6rem; line-height: 1.6;
-  color: #475569 !important; text-align: right;
-}
-.nav-bar-row .nav-right b { color: #5a7a96 !important; }
-
-/* ════════════════════════════════════════
    MAIN CONTENT — margins, width, spacing
 ════════════════════════════════════════ */
 
@@ -886,12 +774,10 @@ def go(idx):
     st.rerun()
 
 # ══════════════════════════════════════════════════════════════════
-# TOP NAVBAR
-# Single st.columns row wrapped in .nav-bar-row div.
-# CSS applies dark background to the whole row and styles each button.
-# No nesting st.columns inside HTML divs — the wrapper div contains
-# only HTML markdown elements; the columns sit outside it but the
-# CSS selector .nav-bar-row targets the NEXT sibling stHorizontalBlock.
+# TOP NAVBAR  — Pure HTML visual bar + hidden st.radio for clicks
+# The navbar is rendered entirely as HTML (guaranteed to look right).
+# Below it, a hidden st.radio provides the actual click targets.
+# CSS hides the radio default styling and makes it look like nav links.
 # ══════════════════════════════════════════════════════════════════
 
 cur  = st.session_state["page"]
@@ -901,59 +787,249 @@ _h_code = _all_h.get(st.session_state["hospital_key"], "H01")
 _p_code = get_programme_code()
 _t_code = st.session_state["img_code"]
 
-# ── Marker div: CSS targets this + its following stHorizontalBlock ──
-st.markdown('<div class="nav-bar-row">', unsafe_allow_html=True)
+NAV_LABELS = ["🏠 Home", "⚙ Configure", "📤 Upload", "🛡 Anonymize", "📦 Download", "⭐ Feedback"]
+NAV_PAGES  = [0, 1, 2, 3, 4, 5]
 
-# ── All navbar content in ONE st.columns call ─────────────────────
-# Columns: [brand] [Home] [Configure] [Upload] [Anonymize] [Download] [Feedback] [pill] [reset] [right]
-nav_cols = st.columns([2.2, 1.0, 1.3, 0.95, 1.3, 1.25, 1.05, 1.4, 1.0, 1.8])
+# ── Pure HTML navbar ──────────────────────────────────────────────
+tick_map = {i: " ✓" if done and i in (1,2,3) else "" for i in range(6)}
+nav_items_html = ""
+for i, label in enumerate(NAV_LABELS):
+    active = "nav-active" if cur == i else ""
+    tick   = tick_map[i]
+    nav_items_html += f'<div class="nav-item {active}" onclick="">{label}{tick}</div>'
 
-with nav_cols[0]:   # Brand
-    st.markdown(f"""
-    <div class="nav-brand">
-      <div class="nav-brand-dot">🛡</div>
-      <div>
-        <div class="nav-brand-name">MedAnon Pro</div>
-        <div class="nav-brand-sub">© Vedaste NYANDWI</div>
-      </div>
-    </div>""", unsafe_allow_html=True)
+st.markdown(f"""
+<style>
+/* ── Navbar shell ── */
+.medanon-navbar {{
+  display: flex;
+  align-items: stretch;
+  background: #0d1b2a;
+  border-bottom: 2.5px solid #0ea5a0;
+  box-shadow: 0 3px 18px rgba(13,27,42,.35);
+  margin: -1.8rem -3.5rem 0 -3.5rem;
+  min-height: 54px;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  font-family: 'Lexend', sans-serif;
+}}
+/* Brand */
+.medanon-navbar .nb-brand {{
+  display: flex; align-items: center; gap: .55rem;
+  padding: 0 1.4rem 0 1.1rem;
+  border-right: 1px solid #1e2d42;
+  flex-shrink: 0; white-space: nowrap;
+}}
+.medanon-navbar .nb-dot {{
+  width: 28px; height: 28px; background: #0ea5a0;
+  border-radius: 6px; display: flex; align-items: center;
+  justify-content: center; font-size: .82rem;
+}}
+.medanon-navbar .nb-name  {{ font-size: .88rem; font-weight: 800; color: #f1f5f9 !important; letter-spacing: -.2px; }}
+.medanon-navbar .nb-sub   {{ font-size: .56rem; color: #3d5068 !important; margin-top: .05rem; }}
+/* Nav items */
+.medanon-navbar .nav-items {{ display: flex; align-items: stretch; flex: 1; }}
+.medanon-navbar .nav-item {{
+  display: flex; align-items: center;
+  padding: 0 1rem; cursor: pointer;
+  font-size: .88rem; font-weight: 500;
+  color: #8ab4d4 !important;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+  transition: background .13s, color .13s, border-color .13s;
+  user-select: none;
+}}
+.medanon-navbar .nav-item:hover {{
+  background: #162032; color: #e2e8f0 !important;
+  border-bottom-color: #3d5068;
+}}
+.medanon-navbar .nav-item.nav-active {{
+  background: #1e2d42; color: #ffffff !important;
+  font-weight: 700; border-bottom-color: #0ea5a0;
+}}
+/* Config pill */
+.medanon-navbar .nb-pill {{
+  display: flex; align-items: center;
+  padding: 0 .75rem; border-left: 1px solid #1e2d42;
+  flex-shrink: 0;
+}}
+.medanon-navbar .nb-pill-inner {{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .6rem; line-height: 1.7;
+  color: #5a7a96 !important;
+  background: #162032; border-radius: 5px;
+  padding: .18rem .5rem; white-space: nowrap;
+}}
+.medanon-navbar .nb-pill-inner span {{ color: #0ea5a0 !important; }}
+/* Right info */
+.medanon-navbar .nb-right {{
+  display: flex; align-items: center;
+  padding: 0 1rem; border-left: 1px solid #1e2d42;
+  flex-shrink: 0; white-space: nowrap;
+  font-size: .6rem; line-height: 1.65;
+  color: #475569 !important; text-align: right;
+}}
+.medanon-navbar .nb-right b {{ color: #5a7a96 !important; }}
 
-nav_items = [(1,"🏠","Home"),(2,"⚙️","Configure"),(3,"📤","Upload"),
-             (4,"🛡","Anonymize"),(5,"📦","Download"),(6,"⭐","Feedback")]
-for col, (page_idx, icon, label) in zip(nav_cols[1:7], nav_items):
-    actual_idx = page_idx - 1   # 0-based page index
-    tick = " ✓" if done and actual_idx in (1,2,3) else ""
-    act  = "nav-active" if cur == actual_idx else ""
-    with col:
-        st.markdown(f'<div class="{act}">', unsafe_allow_html=True)
-        if st.button(f"{icon} {label}{tick}", key=f"nav_{actual_idx}", use_container_width=True):
-            go(actual_idx)
-        st.markdown('</div>', unsafe_allow_html=True)
+/* ── Hidden radio nav ── */
+div[data-testid="stRadio"] > label {{
+  display: none !important;
+}}
+div[data-testid="stRadio"] > div {{
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 0 !important;
+  background: #0d1b2a !important;
+  margin: 0 -3.5rem !important;
+  padding: 0 !important;
+  border-bottom: 2.5px solid #0ea5a0 !important;
+  box-shadow: 0 3px 18px rgba(13,27,42,.35) !important;
+}}
+div[data-testid="stRadio"] > div > label {{
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 1rem !important;
+  min-height: 52px !important;
+  cursor: pointer !important;
+  font-size: .9rem !important;
+  font-weight: 500 !important;
+  color: #8ab4d4 !important;
+  border-bottom: 3px solid transparent !important;
+  background: transparent !important;
+  white-space: nowrap !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  transition: background .13s, color .13s !important;
+}}
+div[data-testid="stRadio"] > div > label:hover {{
+  background: #162032 !important;
+  color: #e2e8f0 !important;
+  border-bottom-color: #3d5068 !important;
+}}
+div[data-testid="stRadio"] > div > label[data-checked="true"],
+div[data-testid="stRadio"] > div > label:has(input:checked) {{
+  background: #1e2d42 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  border-bottom-color: #0ea5a0 !important;
+}}
+/* Hide the radio bullet */
+div[data-testid="stRadio"] > div > label > div:first-child {{
+  display: none !important;
+}}
+div[data-testid="stRadio"] > div > label > div:last-child {{
+  font-size: .9rem !important;
+  color: inherit !important;
+}}
+/* Brand strip above radio */
+.nb-brand-strip {{
+  display: flex; align-items: center;
+  justify-content: space-between;
+  background: #0d1b2a;
+  padding: 0 1rem 0 1.1rem;
+  margin: -1.8rem -3.5rem 0 -3.5rem;
+  min-height: 52px;
+  border-bottom: none;
+  position: sticky; top: 0; z-index: 9999;
+}}
+.nb-brand-strip .nb-left {{
+  display: flex; align-items: center; gap: .55rem;
+}}
+.nb-brand-strip .nb-dot2 {{
+  width: 28px; height: 28px; background: #0ea5a0;
+  border-radius: 6px; display: flex; align-items: center;
+  justify-content: center; font-size: .82rem;
+}}
+.nb-brand-strip .nb-name2 {{
+  font-size: .9rem; font-weight: 800;
+  color: #f1f5f9 !important; letter-spacing: -.2px;
+}}
+.nb-brand-strip .nb-sub2 {{ font-size: .56rem; color: #3d5068 !important; }}
+.nb-brand-strip .nb-mid {{
+  display: flex; align-items: center; gap: .75rem;
+}}
+.nb-brand-strip .nb-pill2 {{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .6rem; line-height: 1.65;
+  color: #5a7a96 !important;
+  background: #162032; border-radius: 5px;
+  padding: .18rem .5rem; white-space: nowrap;
+}}
+.nb-brand-strip .nb-pill2 span {{ color: #0ea5a0 !important; }}
+.nb-brand-strip .nb-right2 {{
+  font-size: .6rem; line-height: 1.65;
+  color: #475569 !important; text-align: right;
+}}
+.nb-brand-strip .nb-right2 b {{ color: #5a7a96 !important; }}
 
-with nav_cols[7]:   # Config pill
-    st.markdown(f"""
-    <div class="nav-pill">
-      <div class="nav-pill-inner">
-        {_h_code}·{_t_code}<br><span>{_p_code}</span>
-      </div>
-    </div>""", unsafe_allow_html=True)
+/* ── Inline Reset button in brand strip ── */
+.nb-reset-btn .stButton > button {{
+  background: rgba(14,165,160,.12) !important;
+  border: 1px solid rgba(14,165,160,.28) !important;
+  border-radius: 5px !important;
+  color: #5eead4 !important;
+  font-size: .76rem !important;
+  font-weight: 600 !important;
+  padding: .26rem .7rem !important;
+  height: auto !important;
+  white-space: nowrap !important;
+  min-height: unset !important;
+}}
+</style>
 
-with nav_cols[8]:   # Reset
-    st.markdown('<div class="nav-reset" style="display:flex;align-items:center;justify-content:center;height:52px;">', unsafe_allow_html=True)
-    if st.button("🔄 Reset", key="nav_reset", use_container_width=True):
+<div class="nb-brand-strip">
+  <div class="nb-left">
+    <div class="nb-dot2">🛡</div>
+    <div>
+      <div class="nb-name2">MedAnon Pro</div>
+      <div class="nb-sub2">© Vedaste NYANDWI</div>
+    </div>
+  </div>
+  <div class="nb-mid">
+    <div class="nb-pill2">
+      {_h_code} · {_t_code}<br><span>{_p_code}</span>
+    </div>
+  </div>
+  <div class="nb-right2">
+    <b>University of Rwanda</b><br>
+    CBE · ACE-DS · Data Mining
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ── Nav radio (this is the real navigation widget) ────────────────
+# Build label list — append ✓ for completed steps
+nav_labels_display = []
+for i, base in enumerate(["🏠 Home", "⚙ Configure", "📤 Upload",
+                           "🛡 Anonymize", "📦 Download", "⭐ Feedback"]):
+    tick = "  ✓" if done and i in (1,2,3) else ""
+    nav_labels_display.append(base + tick)
+
+nav_choice = st.radio(
+    "nav",
+    options=nav_labels_display,
+    index=cur,
+    horizontal=True,
+    label_visibility="collapsed",
+    key="nav_radio",
+)
+chosen_idx = nav_labels_display.index(nav_choice)
+if chosen_idx != cur:
+    go(chosen_idx)
+
+# ── Reset button (inline, just below brand strip) ─────────────────
+_rc1, _rc2, _rc3 = st.columns([1, 0.18, 6])
+with _rc2:
+    st.markdown('<div class="nb-reset-btn">', unsafe_allow_html=True)
+    if st.button("↺", key="nav_reset", help="Reset session"):
         for k in list(_D.keys()): st.session_state[k] = _D[k]
         for k in ["_zip_upload","_files_upload"]: st.session_state.pop(k, None)
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-with nav_cols[9]:   # Right info
-    st.markdown(f"""
-    <div class="nav-right">
-      <div><b>Univ. of Rwanda</b><br>CBE · ACE-DS</div>
-    </div>""", unsafe_allow_html=True)
+st.markdown('<div style="margin-top:.5rem;"></div>', unsafe_allow_html=True)
 
-st.markdown('</div>', unsafe_allow_html=True)   # close .nav-bar-row
-st.markdown('<div style="margin-top:1.8rem;"></div>', unsafe_allow_html=True)
 
 
 
