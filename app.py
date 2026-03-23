@@ -774,10 +774,10 @@ def go(idx):
     st.rerun()
 
 # ══════════════════════════════════════════════════════════════════
-# TOP NAVBAR  — Pure HTML visual bar + hidden st.radio for clicks
-# The navbar is rendered entirely as HTML (guaranteed to look right).
-# Below it, a hidden st.radio provides the actual click targets.
-# CSS hides the radio default styling and makes it look like nav links.
+# TOP NAVBAR — pure HTML, single block, no Streamlit widgets inside.
+# Navigation handled by st.query_params: clicking a nav link sets
+# ?p=N in the URL which Streamlit reads on rerun to change pages.
+# Reset is the only Streamlit widget — placed BELOW the nav bar.
 # ══════════════════════════════════════════════════════════════════
 
 cur  = st.session_state["page"]
@@ -787,256 +787,192 @@ _h_code = _all_h.get(st.session_state["hospital_key"], "H01")
 _p_code = get_programme_code()
 _t_code = st.session_state["img_code"]
 
-NAV_LABELS = ["🏠 Home", "⚙ Configure", "📤 Upload", "🛡 Anonymize", "📦 Download", "⭐ Feedback"]
-NAV_PAGES  = [0, 1, 2, 3, 4, 5]
+# Read query param navigation request
+try:
+    _qp = st.query_params.get("p", None)
+    if _qp is not None:
+        _qp_int = int(_qp)
+        if _qp_int != cur and 0 <= _qp_int <= 5:
+            st.session_state["page"] = _qp_int
+            st.query_params.clear()
+            st.rerun()
+except Exception:
+    pass
 
-# ── Pure HTML navbar ──────────────────────────────────────────────
-tick_map = {i: " ✓" if done and i in (1,2,3) else "" for i in range(6)}
-nav_items_html = ""
-for i, label in enumerate(NAV_LABELS):
-    active = "nav-active" if cur == i else ""
-    tick   = tick_map[i]
-    nav_items_html += f'<div class="nav-item {active}" onclick="">{label}{tick}</div>'
+# Build nav items HTML
+_pages = [
+    (0, "🏠", "Home"),
+    (1, "⚙", "Configure"),
+    (2, "📤", "Upload"),
+    (3, "🛡", "Anonymize"),
+    (4, "📦", "Download"),
+    (5, "⭐", "Feedback"),
+]
+_nav_html = ""
+for _idx, _icon, _lbl in _pages:
+    _tick   = " ✓" if done and _idx in (1,2,3) else ""
+    _active = "mna-active" if cur == _idx else ""
+    _nav_html += (
+        f'<a class="mna-link {_active}" '
+        f'href="?p={_idx}" target="_self">'
+        f'{_icon} {_lbl}{_tick}</a>'
+    )
 
 st.markdown(f"""
 <style>
-/* ── Navbar shell ── */
-.medanon-navbar {{
-  display: flex;
-  align-items: stretch;
-  background: #0d1b2a;
-  border-bottom: 2.5px solid #0ea5a0;
-  box-shadow: 0 3px 18px rgba(13,27,42,.35);
-  margin: -1.8rem -3.5rem 0 -3.5rem;
-  min-height: 54px;
-  position: sticky;
-  top: 0;
-  z-index: 9999;
-  font-family: 'Lexend', sans-serif;
+/* ─────────────────────────────────────────
+   MedAnon unified navbar — single block
+───────────────────────────────────────── */
+.mna-bar {{
+  display:         flex;
+  align-items:     center;
+  background:      #0d1b2a;
+  border-bottom:   2.5px solid #0ea5a0;
+  box-shadow:      0 3px 18px rgba(13,27,42,.35);
+  margin:          -1.8rem -3.5rem 1.8rem -3.5rem;
+  padding:         0;
+  position:        sticky;
+  top:             0;
+  z-index:         9999;
+  min-height:      56px;
+  font-family:     'Lexend', sans-serif;
 }}
 /* Brand */
-.medanon-navbar .nb-brand {{
-  display: flex; align-items: center; gap: .55rem;
-  padding: 0 1.4rem 0 1.1rem;
-  border-right: 1px solid #1e2d42;
-  flex-shrink: 0; white-space: nowrap;
+.mna-brand {{
+  display:     flex;
+  align-items: center;
+  gap:         .55rem;
+  padding:     0 1.2rem 0 1rem;
+  border-right:1px solid #1e2d42;
+  flex-shrink: 0;
+  min-width:   155px;
+  min-height:  56px;
+  text-decoration: none;
 }}
-.medanon-navbar .nb-dot {{
-  width: 28px; height: 28px; background: #0ea5a0;
-  border-radius: 6px; display: flex; align-items: center;
-  justify-content: center; font-size: .82rem;
+.mna-dot {{
+  width:32px; height:32px; background:#0ea5a0;
+  border-radius:7px; display:flex; align-items:center;
+  justify-content:center; font-size:.9rem; flex-shrink:0;
+  box-shadow:0 2px 8px rgba(14,165,160,.4);
 }}
-.medanon-navbar .nb-name  {{ font-size: .88rem; font-weight: 800; color: #f1f5f9 !important; letter-spacing: -.2px; }}
-.medanon-navbar .nb-sub   {{ font-size: .56rem; color: #3d5068 !important; margin-top: .05rem; }}
-/* Nav items */
-.medanon-navbar .nav-items {{ display: flex; align-items: stretch; flex: 1; }}
-.medanon-navbar .nav-item {{
-  display: flex; align-items: center;
-  padding: 0 1rem; cursor: pointer;
-  font-size: .88rem; font-weight: 500;
-  color: #8ab4d4 !important;
-  border-bottom: 3px solid transparent;
-  white-space: nowrap;
-  transition: background .13s, color .13s, border-color .13s;
-  user-select: none;
+.mna-name {{ font-size:.9rem; font-weight:800; color:#f1f5f9; letter-spacing:-.2px; line-height:1.2; }}
+.mna-sub  {{ font-size:.58rem; color:#3d5068; margin-top:.05rem; }}
+/* Nav links */
+.mna-links {{
+  display:     flex;
+  align-items: stretch;
+  flex:        1;
 }}
-.medanon-navbar .nav-item:hover {{
-  background: #162032; color: #e2e8f0 !important;
-  border-bottom-color: #3d5068;
+.mna-link {{
+  display:        flex;
+  align-items:    center;
+  padding:        0 1rem;
+  font-size:      .88rem;
+  font-weight:    500;
+  color:          #8ab4d4;
+  text-decoration:none;
+  border-bottom:  3px solid transparent;
+  white-space:    nowrap;
+  transition:     background .13s, color .13s, border-color .13s;
+  min-height:     56px;
 }}
-.medanon-navbar .nav-item.nav-active {{
-  background: #1e2d42; color: #ffffff !important;
-  font-weight: 700; border-bottom-color: #0ea5a0;
+.mna-link:hover {{
+  background:         #162032;
+  color:              #e2e8f0;
+  border-bottom-color:#3d5068;
+  text-decoration:    none;
+}}
+.mna-link.mna-active {{
+  background:         #1e2d42;
+  color:              #ffffff;
+  font-weight:        700;
+  border-bottom-color:#0ea5a0;
 }}
 /* Config pill */
-.medanon-navbar .nb-pill {{
-  display: flex; align-items: center;
-  padding: 0 .75rem; border-left: 1px solid #1e2d42;
-  flex-shrink: 0;
+.mna-pill {{
+  display:      flex;
+  align-items:  center;
+  padding:      0 .8rem;
+  border-left:  1px solid #1e2d42;
+  flex-shrink:  0;
 }}
-.medanon-navbar .nb-pill-inner {{
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .6rem; line-height: 1.7;
-  color: #5a7a96 !important;
-  background: #162032; border-radius: 5px;
-  padding: .18rem .5rem; white-space: nowrap;
+.mna-pill-inner {{
+  font-family:  'JetBrains Mono', monospace;
+  font-size:    .6rem;
+  line-height:  1.7;
+  color:        #5a7a96;
+  background:   #162032;
+  border-radius:5px;
+  padding:      .2rem .55rem;
+  white-space:  nowrap;
 }}
-.medanon-navbar .nb-pill-inner span {{ color: #0ea5a0 !important; }}
+.mna-pill-inner span {{ color:#0ea5a0; }}
 /* Right info */
-.medanon-navbar .nb-right {{
-  display: flex; align-items: center;
-  padding: 0 1rem; border-left: 1px solid #1e2d42;
-  flex-shrink: 0; white-space: nowrap;
-  font-size: .6rem; line-height: 1.65;
-  color: #475569 !important; text-align: right;
+.mna-right {{
+  display:     flex;
+  align-items: center;
+  padding:     0 1rem;
+  border-left: 1px solid #1e2d42;
+  flex-shrink: 0;
+  font-size:   .6rem;
+  line-height: 1.65;
+  color:       #5a7a96;
+  text-align:  right;
 }}
-.medanon-navbar .nb-right b {{ color: #5a7a96 !important; }}
-
-/* ── Nav radio — scoped to nav_radio key only ── */
-/* Streamlit sets data-testid="stRadio" on all radios.
-   We scope by looking for the radio that follows .nb-brand-strip */
-.nb-brand-strip + div[data-testid="stRadio"] > label,
-.nb-brand-strip ~ div[data-testid="stRadio"] > label {
-  display: none !important;
-}
-.nb-brand-strip + div[data-testid="stRadio"] > div,
-.nb-brand-strip ~ div[data-testid="stRadio"] > div {
-  display: flex !important;
-  flex-direction: row !important;
-  gap: 0 !important;
-  background: #0d1b2a !important;
-  margin: 0 -3.5rem !important;
-  padding: 0 !important;
-  border-bottom: 2.5px solid #0ea5a0 !important;
-  box-shadow: 0 3px 18px rgba(13,27,42,.35) !important;
-}
-.nb-brand-strip + div[data-testid="stRadio"] > div > label,
-.nb-brand-strip ~ div[data-testid="stRadio"] > div > label {
-  display: flex !important;
-  align-items: center !important;
-  padding: 0 1.1rem !important;
-  min-height: 52px !important;
-  cursor: pointer !important;
-  font-size: .9rem !important;
-  font-weight: 500 !important;
-  color: #8ab4d4 !important;
-  border-bottom: 3px solid transparent !important;
-  background: transparent !important;
-  white-space: nowrap !important;
-  margin: 0 !important;
-  border-radius: 0 !important;
-  transition: background .13s, color .13s !important;
-}
-.nb-brand-strip + div[data-testid="stRadio"] > div > label:hover,
-.nb-brand-strip ~ div[data-testid="stRadio"] > div > label:hover {
-  background: #162032 !important;
-  color: #e2e8f0 !important;
-  border-bottom-color: #3d5068 !important;
-}
-.nb-brand-strip + div[data-testid="stRadio"] > div > label:has(input:checked),
-.nb-brand-strip ~ div[data-testid="stRadio"] > div > label:has(input:checked) {
-  background: #1e2d42 !important;
-  color: #ffffff !important;
-  font-weight: 700 !important;
-  border-bottom-color: #0ea5a0 !important;
-}
-/* Hide radio bullet in nav only */
-.nb-brand-strip + div[data-testid="stRadio"] > div > label > div:first-child,
-.nb-brand-strip ~ div[data-testid="stRadio"] > div > label > div:first-child {
-  display: none !important;
-}
-.nb-brand-strip + div[data-testid="stRadio"] > div > label > div:last-child,
-.nb-brand-strip ~ div[data-testid="stRadio"] > div > label > div:last-child {
-  font-size: .9rem !important;
-  color: inherit !important;
-}
-/* Brand strip above radio */
-.nb-brand-strip {{
-  display: flex; align-items: center;
-  justify-content: space-between;
-  background: #0d1b2a;
-  padding: 0 1rem 0 1.1rem;
-  margin: -1.8rem -3.5rem 0 -3.5rem;
-  min-height: 52px;
-  border-bottom: none;
-  position: sticky; top: 0; z-index: 9999;
-}}
-.nb-brand-strip .nb-left {{
-  display: flex; align-items: center; gap: .55rem;
-}}
-.nb-brand-strip .nb-dot2 {{
-  width: 28px; height: 28px; background: #0ea5a0;
-  border-radius: 6px; display: flex; align-items: center;
-  justify-content: center; font-size: .82rem;
-}}
-.nb-brand-strip .nb-name2 {{
-  font-size: .9rem; font-weight: 800;
-  color: #f1f5f9 !important; letter-spacing: -.2px;
-}}
-.nb-brand-strip .nb-sub2 {{ font-size: .56rem; color: #3d5068 !important; }}
-.nb-brand-strip .nb-mid {{
-  display: flex; align-items: center; gap: .75rem;
-}}
-.nb-brand-strip .nb-pill2 {{
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .6rem; line-height: 1.65;
-  color: #5a7a96 !important;
-  background: #162032; border-radius: 5px;
-  padding: .18rem .5rem; white-space: nowrap;
-}}
-.nb-brand-strip .nb-pill2 span {{ color: #0ea5a0 !important; }}
-.nb-brand-strip .nb-right2 {{
-  font-size: .6rem; line-height: 1.65;
-  color: #475569 !important; text-align: right;
-}}
-.nb-brand-strip .nb-right2 b {{ color: #5a7a96 !important; }}
-
-/* ── Inline Reset button in brand strip ── */
-.nb-reset-btn .stButton > button {{
-  background: rgba(14,165,160,.12) !important;
-  border: 1px solid rgba(14,165,160,.28) !important;
-  border-radius: 5px !important;
-  color: #5eead4 !important;
-  font-size: .76rem !important;
-  font-weight: 600 !important;
-  padding: .26rem .7rem !important;
-  height: auto !important;
-  white-space: nowrap !important;
-  min-height: unset !important;
+.mna-right b {{ color:#7ea8c8; }}
+/* ── Reset button ── */
+.mna-reset-wrap .stButton > button {{
+  background:   rgba(14,165,160,.1) !important;
+  border:       1px solid rgba(14,165,160,.25) !important;
+  border-radius:6px !important;
+  color:        #5eead4 !important;
+  font-size:    .78rem !important;
+  font-weight:  600 !important;
+  padding:      .28rem .75rem !important;
+  margin:       0 !important;
+  height:       auto !important;
+  min-height:   unset !important;
+  white-space:  nowrap !important;
 }}
 </style>
 
-<div class="nb-brand-strip">
-  <div class="nb-left">
-    <div class="nb-dot2">🛡</div>
+<div class="mna-bar">
+  <div class="mna-brand">
+    <div class="mna-dot">🛡</div>
     <div>
-      <div class="nb-name2">MedAnon Pro</div>
-      <div class="nb-sub2">© Vedaste NYANDWI</div>
+      <div class="mna-name">MedAnon Pro</div>
+      <div class="mna-sub">© Vedaste NYANDWI</div>
     </div>
   </div>
-  <div class="nb-mid">
-    <div class="nb-pill2">
-      {_h_code} · {_t_code}<br><span>{_p_code}</span>
+  <div class="mna-links">
+    {_nav_html}
+  </div>
+  <div class="mna-pill">
+    <div class="mna-pill-inner">
+      {_h_code} · {_t_code}<br>
+      <span>{_p_code}</span>
     </div>
   </div>
-  <div class="nb-right2">
+  <div class="mna-right">
     <b>University of Rwanda</b><br>
     CBE · ACE-DS · Data Mining
   </div>
 </div>
 """, unsafe_allow_html=True)
 
-# ── Nav radio (this is the real navigation widget) ────────────────
-# Build label list — append ✓ for completed steps
-nav_labels_display = []
-for i, base in enumerate(["🏠 Home", "⚙ Configure", "📤 Upload",
-                           "🛡 Anonymize", "📦 Download", "⭐ Feedback"]):
-    tick = "  ✓" if done and i in (1,2,3) else ""
-    nav_labels_display.append(base + tick)
-
-nav_choice = st.radio(
-    "nav",
-    options=nav_labels_display,
-    index=cur,
-    horizontal=True,
-    label_visibility="collapsed",
-    key="nav_radio",
-)
-chosen_idx = nav_labels_display.index(nav_choice)
-if chosen_idx != cur:
-    go(chosen_idx)
-
-# ── Reset button (inline, just below brand strip) ─────────────────
-_rc1, _rc2, _rc3 = st.columns([1, 0.18, 6])
-with _rc2:
-    st.markdown('<div class="nb-reset-btn">', unsafe_allow_html=True)
-    if st.button("↺", key="nav_reset", help="Reset session"):
+# Reset session button — only Streamlit widget in nav area
+_nr1, _nr2, _nr3 = st.columns([0.001, 1, 20])
+with _nr2:
+    st.markdown('<div class="mna-reset-wrap">', unsafe_allow_html=True)
+    if st.button("↺ Reset", key="nav_reset", help="Start a new session"):
         for k in list(_D.keys()): st.session_state[k] = _D[k]
         for k in ["_zip_upload","_files_upload"]: st.session_state.pop(k, None)
+        st.query_params.clear()
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown('<div style="margin-top:.5rem;"></div>', unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+
 
 
 
