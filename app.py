@@ -22,7 +22,7 @@ except ImportError:
     pass
 
 st.set_page_config(page_title="MedAnon Pro", page_icon="🛡",
-                   layout="wide", initial_sidebar_state="expanded")
+                   layout="wide", initial_sidebar_state="collapsed")
 
 # ══════════════════════════════════════════════════════════════════
 # DESIGN SYSTEM
@@ -63,218 +63,180 @@ html, body, [class*="css"] {
   color: var(--text) !important;
   -webkit-font-smoothing: antialiased;
 }
+
+/* ── Hide Streamlit chrome & sidebar toggle ── */
 #MainMenu, footer, header { visibility: hidden; }
 .stDeployButton { display: none; }
+[data-testid="collapsedControl"] { display: none !important; }
+section[data-testid="stSidebar"] { display: none !important; }
 
-/* ═══════════════════════════════
-   COMPACT TOP BAR  (replaces heavy header)
-═══════════════════════════════ */
-.top-bar {
-  display: flex; align-items: center; justify-content: space-between;
+/* ════════════════════════════════════════
+   TOP NAVBAR  — website-style horizontal nav
+════════════════════════════════════════ */
+
+/* The outer navbar container — full-width navy bar */
+.navbar {
+  display: flex;
+  align-items: center;
   background: var(--navy);
-  padding: .65rem 1.5rem;
-  margin: -2rem -2.5rem 1.2rem;
+  padding: 0 1.5rem;
+  margin: -6rem -4rem 0rem;
   border-bottom: 2px solid var(--teal);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  min-height: 58px;
+  box-shadow: 0 2px 12px rgba(13,27,42,.25);
 }
-.tb-left  { display: flex; align-items: center; gap: .65rem; }
-.tb-dot   {
-  width: 30px; height: 30px; background: var(--teal);
-  border-radius: 7px; display: flex; align-items: center;
-  justify-content: center; font-size: .9rem; flex-shrink: 0;
-}
-.tb-name  { font-size: .95rem; font-weight: 800; color: #f1f5f9 !important; }
-.tb-sub   { font-size: .68rem; color: #64748b !important; margin-top: .05rem; }
-.tb-badges { display: flex; gap: .35rem; flex-wrap: wrap; margin-top: .2rem; }
-.tb-badge {
-  font-family: 'JetBrains Mono', monospace; font-size: .58rem;
-  padding: 1px 7px; border-radius: 100px; font-weight: 500;
-}
-.tbb-t { background: rgba(14,165,160,.2); color: #5eead4 !important; border:1px solid rgba(14,165,160,.3);}
-.tbb-g { background: rgba(22,163,74,.15); color: #86efac !important; border:1px solid rgba(22,163,74,.2);}
-.tbb-s { background: rgba(148,163,184,.1);color: #94a3b8 !important; border:1px solid rgba(148,163,184,.2);}
-.tb-right { text-align: right; }
-.tb-author { font-size: .72rem; font-weight: 600; color: #cbd5e1 !important; }
-.tb-inst   { font-size: .6rem;  color: #475569 !important; margin-top: .1rem; }
 
-/* ═══════════════════════════════
-   SIDEBAR  — vertical nav
-═══════════════════════════════ */
-section[data-testid="stSidebar"] {
-  background: var(--navy) !important;
-  border-right: 1px solid var(--navy3) !important;
-  min-width: 230px !important;
-  max-width: 230px !important;
+/* Brand area on the left */
+.nb-brand {
+  display: flex; align-items: center; gap: .6rem;
+  padding-right: 2rem;
+  border-right: 1px solid var(--navy3);
+  margin-right: 1.5rem;
+  min-width: 180px;
+  flex-shrink: 0;
 }
-section[data-testid="stSidebar"] .block-container {
-  padding: 0 !important;
-}
-section[data-testid="stSidebar"] * { color: #c8d4e8 !important; }
-
-/* brand row */
-.sb-top {
-  display: flex; align-items: center; gap: .65rem;
-  padding: 1.1rem 1rem 1rem;
-  border-bottom: 1px solid var(--navy3);
-  margin-bottom: .4rem;
-}
-.sb-dot {
-  width: 32px; height: 32px; border-radius: 8px;
-  background: var(--teal); display: flex; align-items: center;
-  justify-content: center; font-size: .95rem; flex-shrink: 0;
+.nb-dot {
+  width: 32px; height: 32px; background: var(--teal);
+  border-radius: 8px; display: flex; align-items: center;
+  justify-content: center; font-size: .95rem;
   box-shadow: 0 2px 8px rgba(14,165,160,.4);
+  flex-shrink: 0;
 }
-.sb-brand { font-size: .95rem; font-weight: 800; color: #f1f5f9 !important; letter-spacing: -.2px; }
-.sb-by    { font-size: .63rem; color: #3d5068 !important; margin-top: .05rem; }
+.nb-name { font-size: .95rem; font-weight: 800; color: #f1f5f9 !important; letter-spacing: -.2px; }
+.nb-sub  { font-size: .6rem; color: #475569 !important; }
 
-.nav-section {
-  font-size: .63rem; letter-spacing: 1.4px; text-transform: uppercase;
-  color: #243352 !important; padding: .85rem 1rem .2rem; font-weight: 700;
+/* Nav links */
+.nb-links {
+  display: flex; align-items: stretch; gap: 0; flex: 1;
 }
-
-/* ── Nav item wrapper — each nav item sits in a .nav-item-wrap div ── */
-.nav-item-wrap {
-  position: relative;
-  border-left: 3px solid transparent;
-  transition: background .13s, border-color .13s;
-}
-.nav-item-wrap:hover {
-  background: var(--navy2) !important;
-  border-left-color: #3d5068 !important;
-}
-.nav-item-wrap.nav-active {
-  background: var(--navy2) !important;
-  border-left-color: var(--teal) !important;
-}
-
-/* The Streamlit button inside nav-item-wrap */
-.nav-item-wrap .stButton > button {
-  background: transparent !important;
-  border: none !important;
-  border-radius: 0 !important;
-  text-align: left !important;
-  padding: .82rem 1rem !important;
-  font-size: .93rem !important;
-  font-weight: 500 !important;
+.nb-link {
+  display: flex; align-items: center; gap: .4rem;
+  padding: 0 1.1rem; height: 58px;
+  font-size: .88rem; font-weight: 500;
   color: #7ea8c8 !important;
-  width: 100% !important;
-  line-height: 1.3 !important;
-  letter-spacing: 0 !important;
-  box-shadow: none !important;
-  margin: 0 !important;
+  text-decoration: none; white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: color .15s, border-color .15s, background .15s;
+  cursor: pointer;
 }
-.nav-item-wrap:hover .stButton > button {
+.nb-link:hover {
   color: #e2e8f0 !important;
-  background: transparent !important;
-  transform: none !important;
-  opacity: 1 !important;
+  background: var(--navy2);
+  border-bottom-color: #3d5068;
 }
-.nav-item-wrap.nav-active .stButton > button {
-  color: #f0f9ff !important;
-  font-weight: 700 !important;
-  background: transparent !important;
+.nb-link.active {
+  color: #ffffff !important;
+  font-weight: 700;
+  border-bottom-color: var(--teal);
+  background: var(--navy2);
 }
+.nb-link.done::after {
+  content: " ✓";
+  font-size: .65rem;
+  color: var(--teal) !important;
+  margin-left: .15rem;
+}
+.nb-icon { font-size: .95rem; }
 
-/* Reset button from Streamlit (New Session) */
-.nav-reset-wrap .stButton > button {
-  background: rgba(14,165,160,.1) !important;
-  border: 1px solid rgba(14,165,160,.2) !important;
-  border-radius: 6px !important;
-  color: #5eead4 !important;
-  font-size: .85rem !important;
-  padding: .55rem 1rem !important;
-  margin: .5rem 1rem !important;
-  width: calc(100% - 2rem) !important;
-  text-align: center !important;
+/* Right section: author + reset */
+.nb-right {
+  display: flex; align-items: center; gap: 1rem;
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--navy3);
+  margin-left: auto; flex-shrink: 0;
 }
-.nav-reset-wrap .stButton > button:hover {
-  background: rgba(14,165,160,.2) !important;
+.nb-author { font-size: .65rem; color: #475569 !important; text-align: right; line-height: 1.5; }
+.nb-author b { color: #94a3b8 !important; }
+
+/* The "New Session" button inside the navbar */
+.nb-session .stButton > button {
+  background: rgba(14,165,160,.12) !important;
+  border: 1px solid rgba(14,165,160,.3) !important;
+  color: #5eead4 !important;
+  font-size: .75rem !important;
+  padding: .3rem .85rem !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+}
+.nb-session .stButton > button:hover {
+  background: rgba(14,165,160,.22) !important;
   transform: none !important; opacity: 1 !important;
 }
 
-.sb-config {
-  padding: .8rem 1rem;
-  border-top: 1px solid var(--navy3);
-  font-size: .7rem; color: #3d5068 !important; line-height: 1.85;
-}
-.sb-config b { color: #5a7a96 !important; }
-.sb-code {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .64rem; color: var(--teal) !important; word-break: break-all;
+/* Streamlit column structure override for the nav columns row */
+.nav-cols-row > div[data-testid="stHorizontalBlock"] {
+  gap: 0 !important;
+  background: var(--navy) !important;
+  padding: 0 !important;
 }
 
-/* ═══════════════════════════════
-   MAIN AREA
-═══════════════════════════════ */
+/* Each nav button column */
+.nav-btn-col .stButton > button {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 3px solid transparent !important;
+  border-radius: 0 !important;
+  color: #7ea8c8 !important;
+  font-size: .88rem !important;
+  font-weight: 500 !important;
+  padding: 0 1rem !important;
+  height: 54px !important;
+  width: 100% !important;
+  transition: all .15s !important;
+  white-space: nowrap !important;
+}
+.nav-btn-col .stButton > button:hover {
+  background: var(--navy2) !important;
+  color: #e2e8f0 !important;
+  border-bottom-color: #3d5068 !important;
+  transform: none !important; opacity: 1 !important;
+}
+.nav-btn-col.nav-active .stButton > button {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  background: var(--navy2) !important;
+  border-bottom-color: var(--teal) !important;
+}
+
+/* ════════════════════════════════════════
+   MAIN CONTENT
+════════════════════════════════════════ */
 .main .block-container {
   background: var(--bg) !important;
   padding: 1.5rem 2rem 4rem !important;
-  max-width: 960px !important;
+  max-width: 1000px !important;
 }
 
-/* ── Step bar — compact ── */
-.step-bar {
-  display: flex; margin-bottom: 1.5rem;
-  border-radius: var(--r); overflow: hidden;
-  border: 1px solid var(--border); box-shadow: var(--sh);
-}
-.step {
-  flex: 1; padding: .6rem .3rem; text-align: center;
-  background: var(--white); font-size: .75rem; font-weight: 600;
-  color: var(--text3) !important;
-  border-right: 1px solid var(--border); transition: all .2s;
-}
-.step:last-child { border-right: none; }
-.step-num { display: block; font-size: .55rem; font-weight: 700;
-            margin-bottom: .05rem; opacity: .5; letter-spacing: .5px; }
-.step.done   { background: var(--teal-lt); color: var(--teal-dk) !important; }
-.step.active { background: var(--teal); color: var(--navy) !important; font-weight: 700; }
-
-/* ── Page heading — minimal ── */
+/* ── Page heading ── */
 .pg-wrap { margin-bottom: 1.2rem; }
-.pg-eyebrow {
-  font-size: .62rem; font-weight: 700; letter-spacing: 1.8px;
-  text-transform: uppercase; color: var(--teal-dk) !important; margin-bottom: .2rem;
-}
-.pg-title {
-  font-size: 1.45rem; font-weight: 800; color: var(--text) !important;
-  letter-spacing: -.4px; line-height: 1.2; margin: 0 0 .2rem;
-}
-.pg-sub { font-size: .85rem; color: var(--text3) !important; }
+.pg-eyebrow { font-size: .62rem; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: var(--teal-dk) !important; margin-bottom: .2rem; }
+.pg-title { font-size: 1.45rem; font-weight: 800; color: var(--text) !important; letter-spacing: -.4px; line-height: 1.2; margin: 0 0 .2rem; }
+.pg-sub   { font-size: .85rem; color: var(--text3) !important; }
 
 /* ── Cards ── */
-.card {
-  background: var(--white); border: 1px solid var(--border);
-  border-radius: var(--r); padding: 1.3rem 1.4rem;
-  margin-bottom: .85rem; box-shadow: var(--sh);
-}
+.card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 1.3rem 1.4rem; margin-bottom: .85rem; box-shadow: var(--sh); }
 .card-header { display: flex; align-items: center; gap: .55rem; margin-bottom: .85rem; }
-.card-icon {
-  width: 28px; height: 28px; border-radius: 7px;
-  display: flex; align-items: center; justify-content: center; font-size: .85rem; flex-shrink: 0;
-}
+.card-icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: .85rem; flex-shrink: 0; }
 .ci-teal  { background: var(--teal-lt); }
 .ci-amber { background: var(--amber-lt); }
 .ci-red   { background: var(--red-lt); }
 .ci-blue  { background: var(--blue-lt); }
 .ci-green { background: var(--green-lt); }
-.card-title {
-  font-size: .78rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: .7px; color: var(--text2) !important;
-}
+.card-title { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; color: var(--text2) !important; }
 
-/* ── Weakness / fix pills ── */
+/* ── Weakness pills ── */
 .weakness-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: .55rem; margin-bottom: .5rem; }
-.wk-pill {
-  background: var(--bg); border: 1px solid var(--border);
-  border-radius: var(--rs); padding: .6rem .75rem;
-  border-left: 3px solid var(--teal);
-}
+.wk-pill { background: var(--bg); border: 1px solid var(--border); border-radius: var(--rs); padding: .6rem .75rem; border-left: 3px solid var(--teal); }
 .wk-pill.amber { border-left-color: var(--amber); }
-.wk-pill.blue  { border-left-color: var(--blue);  }
+.wk-pill.blue  { border-left-color: var(--blue); }
 .wk-pill.green { border-left-color: var(--green); }
-.wk-pill.red   { border-left-color: var(--red);   }
-.wk-title  { font-size: .72rem; font-weight: 700; color: var(--text) !important; margin-bottom: .1rem; }
-.wk-desc   { font-size: .67rem; color: var(--text3) !important; line-height: 1.45; }
+.wk-pill.red   { border-left-color: var(--red); }
+.wk-title { font-size: .72rem; font-weight: 700; color: var(--text) !important; margin-bottom: .1rem; }
+.wk-desc  { font-size: .67rem; color: var(--text3) !important; line-height: 1.45; }
 .wk-status { font-size: .59rem; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; margin-top: .25rem; }
 .wk-status.addressed { color: var(--teal-dk) !important; }
 .wk-status.noted     { color: var(--amber) !important; }
@@ -311,15 +273,13 @@ section[data-testid="stSidebar"] * { color: #c8d4e8 !important; }
 .stat-box  { flex:1; background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:.9rem 1rem; text-align:center; box-shadow:var(--sh); }
 .stat-n    { font-size:2rem; font-weight:800; line-height:1; }
 .stat-l    { font-size:.68rem; color:var(--text3) !important; margin-top:.2rem; font-weight:500; }
-.c-teal  { color:var(--teal-dk) !important; }
-.c-red   { color:var(--red) !important; }
-.c-amber { color:var(--amber) !important; }
-.c-slate { color:var(--text) !important; }
+.c-teal { color:var(--teal-dk) !important; } .c-red { color:var(--red) !important; }
+.c-amber{ color:var(--amber) !important; }   .c-slate{ color:var(--text) !important; }
 
 /* ── File table ── */
 .ftable { border:1px solid var(--border); border-radius:var(--r); overflow:hidden; box-shadow:var(--sh); }
-.fth    { display:grid; grid-template-columns:2fr 2.3fr 88px; background:var(--navy); padding:.55rem 1rem; font-family:'JetBrains Mono',monospace; font-size:.59rem; letter-spacing:1.1px; text-transform:uppercase; color:#475569 !important; }
-.frow   { display:grid; grid-template-columns:2fr 2.3fr 88px; padding:.58rem 1rem; background:var(--white); border-top:1px solid var(--border); align-items:center; transition:background .12s; }
+.fth  { display:grid; grid-template-columns:2fr 2.3fr 88px; background:var(--navy); padding:.55rem 1rem; font-family:'JetBrains Mono',monospace; font-size:.59rem; letter-spacing:1.1px; text-transform:uppercase; color:#475569 !important; }
+.frow { display:grid; grid-template-columns:2fr 2.3fr 88px; padding:.58rem 1rem; background:var(--white); border-top:1px solid var(--border); align-items:center; transition:background .12s; }
 .frow:hover { background:var(--bg); }
 .f-orig { font-size:.77rem; color:var(--text3) !important; font-family:'JetBrains Mono',monospace; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .f-new  { font-family:'JetBrains Mono',monospace; font-size:.79rem; font-weight:600; color:var(--teal-dk) !important; }
@@ -338,23 +298,22 @@ section[data-testid="stSidebar"] * { color: #c8d4e8 !important; }
 /* ── Log box ── */
 .logbox { background:var(--navy); color:#4ade80 !important; font-family:'JetBrains Mono',monospace; font-size:.71rem; border-radius:var(--rs); padding:.85rem 1rem; max-height:220px; overflow-y:auto; line-height:1.7; border:1px solid var(--navy3); }
 
-/* ── Image preview ── */
+/* ── Misc ── */
 .img-count-badge { background:var(--navy); border:1px solid var(--navy3); border-radius:var(--rs); padding:.45rem .75rem; font-size:.78rem; color:#94a3b8 !important; display:inline-flex; align-items:center; gap:.35rem; margin-bottom:.45rem; }
 
-/* ── Buttons ── */
+/* ── Main buttons ── */
 .stButton > button { font-family:'Lexend',sans-serif !important; font-weight:600 !important; border-radius:var(--rs) !important; border:none !important; transition:all .15s !important; }
 .stButton > button[kind="primary"] { background:var(--teal) !important; color:var(--navy) !important; font-weight:700 !important; padding:.55rem 1.4rem !important; }
-.stButton > button:not(section *):hover { opacity:.88 !important; transform:translateY(-1px) !important; }
+.stButton > button:hover { opacity:.88 !important; transform:translateY(-1px) !important; }
 .stProgress > div > div > div { background:var(--teal) !important; border-radius:100px !important; }
 .stSelectbox > div > div, .stTextInput > div > div { border-radius:var(--rs) !important; border-color:var(--border) !important; font-size:.88rem !important; }
 .stFileUploader > div { border-radius:var(--r) !important; }
 .stCheckbox { margin:.4rem 0 !important; }
-
 hr { border-color:var(--border) !important; }
 ::-webkit-scrollbar { width:4px; height:4px; }
 ::-webkit-scrollbar-thumb { background:var(--border2); border-radius:10px; }
 
-/* ── Review cards ── */
+/* ── Reviews ── */
 .review-card { background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:1.1rem 1.3rem; margin-bottom:.65rem; box-shadow:var(--sh); }
 .review-header { display:flex; align-items:center; gap:.65rem; margin-bottom:.45rem; }
 .review-avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--teal),#2563eb); display:flex; align-items:center; justify-content:center; font-size:.9rem; font-weight:800; color:white !important; flex-shrink:0; }
@@ -380,6 +339,7 @@ hr { border-color:var(--border) !important; }
 .rating-bar-n    { font-size:.68rem; color:var(--text3) !important; width:20px; }
 </style>
 """, unsafe_allow_html=True)
+
 
 # ══════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -819,106 +779,178 @@ def go(idx):
     st.rerun()
 
 # ══════════════════════════════════════════════════════════════════
-# COMPACT TOP BAR  (replaces the heavy header banner)
+# TOP NAVBAR  — website-style horizontal navigation
+# Built with st.columns so Streamlit handles click events natively.
+# CSS transforms the buttons into proper nav links.
 # ══════════════════════════════════════════════════════════════════
-def render_header():
-    st.markdown("""
-    <div class="top-bar">
-      <div class="tb-left">
-        <div class="tb-dot">🛡</div>
-        <div>
-          <div class="tb-name">MedAnon Pro</div>
-          <div class="tb-badges">
-            <span class="tb-badge tbb-t">EXIF</span>
-            <span class="tb-badge tbb-t">DICOM</span>
-            <span class="tb-badge tbb-g">RAM ZEROED</span>
-            <span class="tb-badge tbb-s">SHA-256</span>
-            <span class="tb-badge tbb-s">LOCAL ONLY</span>
-          </div>
-        </div>
-      </div>
-      <div class="tb-right">
-        <div class="tb-author">© Vedaste NYANDWI</div>
-        <div class="tb-inst">University of Rwanda · ACE-DS · Data Mining</div>
-      </div>
+
+cur  = st.session_state["page"]
+done = st.session_state["run_complete"]
+
+NAV = [
+    (0, "🏠", "Home"),
+    (1, "⚙️", "Configure"),
+    (2, "📤", "Upload"),
+    (3, "🛡", "Anonymize"),
+    (4, "📦", "Download"),
+    (5, "⭐", "Feedback"),
+]
+
+# Inject the navy bar background that spans edge-to-edge
+st.markdown("""
+<div class="navbar-bg" style="
+  background:#0d1b2a;
+  margin:-6rem -4rem 0;
+  padding:0 1.5rem;
+  border-bottom:2px solid #0ea5a0;
+  box-shadow:0 2px 12px rgba(13,27,42,.25);
+  position:sticky; top:0; z-index:999;
+">
+<div style="display:flex;align-items:center;min-height:58px;max-width:1200px;margin:0 auto;gap:0;">
+
+  <!-- Brand -->
+  <div style="display:flex;align-items:center;gap:.6rem;padding-right:1.8rem;
+              border-right:1px solid #1e2d42;margin-right:0;min-width:190px;flex-shrink:0;">
+    <div style="width:32px;height:32px;background:#0ea5a0;border-radius:8px;
+                display:flex;align-items:center;justify-content:center;font-size:.95rem;
+                box-shadow:0 2px 8px rgba(14,165,160,.4);flex-shrink:0;">🛡</div>
+    <div>
+      <div style="font-size:.95rem;font-weight:800;color:#f1f5f9;letter-spacing:-.2px;line-height:1.2;">MedAnon Pro</div>
+      <div style="font-size:.58rem;color:#3d5068;line-height:1;">© Vedaste NYANDWI</div>
     </div>
-    """, unsafe_allow_html=True)
+  </div>
 
-# ══════════════════════════════════════════════════════════════════
-# SIDEBAR — vertical navigation
-# Each nav item: styled wrapper div (.nav-item-wrap) + st.button.
-# The CSS on .nav-active wrapper changes button colour.
-# ══════════════════════════════════════════════════════════════════
-with st.sidebar:
-    cur  = st.session_state["page"]
-    done = st.session_state["run_complete"]
+  <!-- Spacer: nav buttons go here via st.columns below -->
+  <div style="flex:1;"></div>
 
-    # ── Brand ────────────────────────────────────────────────────
-    st.markdown("""
-    <div class="sb-top">
-      <div class="sb-dot">🛡</div>
-      <div>
-        <div class="sb-brand">MedAnon Pro</div>
-        <div class="sb-by">Vedaste NYANDWI</div>
+  <!-- Right info -->
+  <div style="padding-left:1.5rem;border-left:1px solid #1e2d42;text-align:right;flex-shrink:0;">
+    <div style="font-size:.62rem;color:#475569;line-height:1.6;">
+      University of Rwanda · ACE-DS<br>Data Mining Program
+    </div>
+  </div>
+
+</div>
+</div>
+""", unsafe_allow_html=True)
+
+# Nav button columns — these render inside the page flow just below the brand bar.
+# CSS targets .nav-btn-col and makes buttons look like nav links.
+_all_h  = {**HOSPITALS, **st.session_state["custom_hospitals"]}
+_h_code = _all_h.get(st.session_state["hospital_key"], "H01")
+_p_code = PROGRAMS.get(st.session_state["program_key"], "ACE-DS_DM")
+_t_code = st.session_state["img_code"]
+
+# Build navbar using columns: [nav cols ...] + [config info] + [reset]
+nav_col_widths = [1.2, 1.4, 1.1, 1.5, 1.8, 1.2, 2.5, 1.4]
+nav_cols = st.columns(nav_col_widths)
+
+st.markdown("""
+<style>
+/* ─ Style the nav button row ─ */
+div[data-testid="stHorizontalBlock"]:first-of-type {
+  background: #0d1b2a !important;
+  gap: 0 !important;
+  padding: 0 !important;
+  margin: 0 -4rem !important;
+  padding: 0 1.5rem !important;
+  border-bottom: 2px solid #0ea5a0;
+  box-shadow: 0 2px 12px rgba(13,27,42,.25);
+}
+div[data-testid="stHorizontalBlock"]:first-of-type .stButton > button {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 3px solid transparent !important;
+  border-radius: 0 !important;
+  color: #7ea8c8 !important;
+  font-size: .9rem !important;
+  font-weight: 500 !important;
+  padding: .95rem .5rem !important;
+  width: 100% !important;
+  height: 54px !important;
+  transition: all .15s !important;
+  white-space: nowrap !important;
+  box-shadow: none !important;
+}
+div[data-testid="stHorizontalBlock"]:first-of-type .stButton > button:hover {
+  background: #162032 !important;
+  color: #e2e8f0 !important;
+  border-bottom-color: #3d5068 !important;
+  transform: none !important; opacity: 1 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+with nav_cols[0]:
+    st.markdown(f'<div class="nav-btn-col {"nav-active" if cur==0 else ""}">', unsafe_allow_html=True)
+    if st.button("🏠  Home", key="nav_0", use_container_width=True): go(0)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with nav_cols[1]:
+    tick = " ✓" if done else ""
+    st.markdown(f'<div class="nav-btn-col {"nav-active" if cur==1 else ""}">', unsafe_allow_html=True)
+    if st.button(f"⚙️  Configure{tick}", key="nav_1", use_container_width=True): go(1)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with nav_cols[2]:
+    tick = " ✓" if done else ""
+    st.markdown(f'<div class="nav-btn-col {"nav-active" if cur==2 else ""}">', unsafe_allow_html=True)
+    if st.button(f"📤  Upload{tick}", key="nav_2", use_container_width=True): go(2)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with nav_cols[3]:
+    tick = " ✓" if done else ""
+    st.markdown(f'<div class="nav-btn-col {"nav-active" if cur==3 else ""}">', unsafe_allow_html=True)
+    if st.button(f"🛡  Anonymize{tick}", key="nav_3", use_container_width=True): go(3)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with nav_cols[4]:
+    st.markdown(f'<div class="nav-btn-col {"nav-active" if cur==4 else ""}">', unsafe_allow_html=True)
+    if st.button("📦  Download & Delete", key="nav_4", use_container_width=True): go(4)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with nav_cols[5]:
+    st.markdown(f'<div class="nav-btn-col {"nav-active" if cur==5 else ""}">', unsafe_allow_html=True)
+    if st.button("⭐  Feedback", key="nav_5", use_container_width=True): go(5)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with nav_cols[6]:
+    # Config info pill
+    st.markdown(f"""
+    <div style="display:flex;align-items:center;height:54px;padding:0 .5rem;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;
+                  color:#3d5068;background:#162032;border-radius:6px;
+                  padding:.25rem .6rem;white-space:nowrap;line-height:1.5;">
+        {_h_code} · {_t_code}
       </div>
     </div>""", unsafe_allow_html=True)
 
-    # ── Nav items ────────────────────────────────────────────────
-    st.markdown('<div class="nav-section">Navigation</div>', unsafe_allow_html=True)
-
-    NAV = [
-        (0, "🏠  Home"),
-        (1, "⚙️  Configure"),
-        (2, "📤  Upload"),
-        (3, "🛡  Anonymize"),
-        (4, "📦  Download & Delete"),
-        (5, "⭐  Feedback"),
-    ]
-    for idx, label in NAV:
-        is_active = (idx == cur)
-        tick = "  ✓" if done and idx in (1, 2, 3) else ""
-        wrap_cls = "nav-item-wrap nav-active" if is_active else "nav-item-wrap"
-        # Open the wrapper div — CSS drives active background + border
-        st.markdown(f'<div class="{wrap_cls}">', unsafe_allow_html=True)
-        if st.button(label + tick, key=f"nav_{idx}", use_container_width=True):
-            go(idx)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    # ── New Session ──────────────────────────────────────────────
-    st.markdown('<div style="height:.5rem;"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="nav-reset-wrap">', unsafe_allow_html=True)
-    if st.button("🔄  New Session", key="nav_reset", use_container_width=True):
+with nav_cols[7]:
+    # New Session button
+    st.markdown('<div style="display:flex;align-items:center;height:54px;">', unsafe_allow_html=True)
+    if st.button("🔄 Reset", key="nav_reset", use_container_width=True):
         for k in list(_D.keys()): st.session_state[k] = _D[k]
         for k in ["_zip_upload", "_files_upload"]: st.session_state.pop(k, None)
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # ── Config summary ───────────────────────────────────────────
-    all_h  = {**HOSPITALS, **st.session_state["custom_hospitals"]}
-    h_code = all_h.get(st.session_state["hospital_key"], "H01")
-    p_code = PROGRAMS.get(st.session_state["program_key"], "ACE-DS_DM")
-    t_code = st.session_state["img_code"]
-    st.markdown(f"""
-    <div class="sb-config">
-      <b>Active:</b> {h_code} · {t_code}<br>
-      <span class="sb-code">{h_code}_{p_code}_{t_code}_NNNNN</span>
-    </div>""", unsafe_allow_html=True)
+# Active item highlight — inject CSS for the current active button
+# We target the nth column's button for the active state
+active_col_index = cur + 1  # 1-based for CSS nth-child
+st.markdown(f"""
+<style>
+div[data-testid="stHorizontalBlock"]:first-of-type
+  > div:nth-child({active_col_index}) .stButton > button {{
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  background: #162032 !important;
+  border-bottom: 3px solid #0ea5a0 !important;
+}}
+</style>""", unsafe_allow_html=True)
 
-# ══════════════════════════════════════════════════════════════════
-# SHARED: render header + step bar on every page
-# ══════════════════════════════════════════════════════════════════
-render_header()
+st.markdown('<div style="margin-top:1.5rem;"></div>', unsafe_allow_html=True)
 
-cur  = st.session_state["page"]
-done = st.session_state["run_complete"]
 
-steps = ["Home", "Configure", "Upload", "Anonymize", "Download & Delete", "Feedback"]
-bar_html = '<div class="step-bar">'
-for i, s in enumerate(steps):
-    cls = "active" if i == cur else ("done" if i < cur or (done and i < 4) else "")
-    bar_html += f'<div class="step {cls}"><span class="step-num">STEP {i+1}</span>{s}</div>'
-bar_html += '</div>'
-st.markdown(bar_html, unsafe_allow_html=True)
 
 
 # ══════════════════════════════════════════════════════════════════
