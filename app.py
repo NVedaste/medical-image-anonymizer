@@ -93,118 +93,116 @@ p, div, span, li, label, input, textarea, select {
 section[data-testid="stSidebar"] { display: none !important; }
 
 /* ════════════════════════════════════════
-   TOP NAVBAR  — scoped, colour-safe
+   TOP NAVBAR  — reliable st.columns approach
+   The nav is a st.columns row. We apply the
+   dark background to stVerticalBlock that
+   contains the nav marker, and style buttons.
 ════════════════════════════════════════ */
 
-/* Wrapper that spans full width behind the nav buttons */
-.medanon-nav {
-  display: flex;
-  align-items: stretch;
-  background: #0d1b2a;
-  border-bottom: 2.5px solid #0ea5a0;
-  box-shadow: 0 2px 16px rgba(13,27,42,.30);
-  margin: -6rem -4rem 0;
-  padding: 0 0 0 0;
-  position: sticky;
-  top: 0;
-  z-index: 9999;
-  min-height: 56px;
+/* Marker class placed on the div before nav columns */
+.nav-bar-row {
+  background: #0d1b2a !important;
+  /* Pull the row out of the block-container's 3.5rem side padding */
+  margin-left:  -3.5rem !important;
+  margin-right: -3.5rem !important;
+  margin-top:   -1.8rem !important;
+  margin-bottom: 0      !important;
+  padding: 0            !important;
+  border-bottom: 2.5px solid #0ea5a0 !important;
+  box-shadow: 0 2px 16px rgba(13,27,42,.30) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 9999 !important;
 }
-
-/* Brand block */
-.medanon-nav .nb-brand {
-  display: flex; align-items: center; gap: .6rem;
-  padding: 0 1.5rem 0 1.2rem;
-  border-right: 1px solid #1e2d42;
-  flex-shrink: 0; min-width: 185px;
+/* The Streamlit horizontal block inside the marker */
+.nav-bar-row > div[data-testid="stHorizontalBlock"],
+.nav-bar-row [data-testid="stHorizontalBlock"] {
+  background: #0d1b2a !important;
+  gap: 0 !important;
+  padding: 0 !important;
+  align-items: stretch !important;
 }
-.medanon-nav .nb-dot {
-  width: 30px; height: 30px; background: #0ea5a0;
-  border-radius: 7px; display: flex; align-items: center;
-  justify-content: center; font-size: .9rem; flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(14,165,160,.4);
-}
-.medanon-nav .nb-name {
-  font-size: .9rem; font-weight: 800;
-  color: #f1f5f9 !important; letter-spacing: -.2px; line-height: 1.2;
-}
-.medanon-nav .nb-sub  { font-size: .58rem; color: #3d5068 !important; }
-
-/* Nav links area (populated by st.columns buttons) */
-.medanon-nav .nb-links { display: flex; align-items: stretch; flex: 1; }
-
-/* Right author block */
-.medanon-nav .nb-right {
-  display: flex; align-items: center;
-  padding: 0 1.2rem;
-  border-left: 1px solid #1e2d42; flex-shrink: 0;
-}
-.medanon-nav .nb-right-text {
-  font-size: .6rem; line-height: 1.65; text-align: right;
-  color: #475569 !important;
-}
-.medanon-nav .nb-right-text b { color: #5a7a96 !important; }
-
-/* ── Nav buttons — inside .medanon-nav .stButton ── */
-/* These selectors are highly specific so global colour rules cannot win */
-.medanon-nav .stButton > button,
-.medanon-nav .stButton > button:focus,
-.medanon-nav .stButton > button:active {
+/* All buttons inside the nav bar row */
+.nav-bar-row .stButton > button {
   background:    transparent           !important;
   border:        none                  !important;
   border-bottom: 3px solid transparent !important;
   border-radius: 0                     !important;
-  color:         #8ab4d4               !important;  /* ← explicit light blue */
+  color:         #8ab4d4               !important;
   font-size:     .88rem                !important;
   font-weight:   500                   !important;
-  padding:       0 .95rem              !important;
-  height:        56px                  !important;
+  padding:       0 .8rem               !important;
+  min-height:    52px                  !important;
+  height:        52px                  !important;
   width:         100%                  !important;
   white-space:   nowrap                !important;
   box-shadow:    none                  !important;
+  line-height:   1                     !important;
   transition:    background .14s, color .14s, border-color .14s !important;
 }
-.medanon-nav .stButton > button:hover {
+.nav-bar-row .stButton > button:hover {
   background:         #162032 !important;
   color:              #e2e8f0 !important;
   border-bottom-color:#3d5068 !important;
-  transform: none !important; opacity: 1 !important;
+  transform: none !important;
+  opacity:    1   !important;
 }
-
-/* Active page nav button */
-.medanon-nav .nb-active .stButton > button {
+/* Active page button */
+.nav-bar-row .nav-active .stButton > button {
   color:              #ffffff !important;
   font-weight:        700     !important;
-  background:         #162032 !important;
+  background:         #1e2d42 !important;
   border-bottom-color:#0ea5a0 !important;
 }
-
-/* Config pill */
-.medanon-nav .nb-config {
-  display: flex; align-items: center;
-  padding: 0 .75rem; border-left: 1px solid #1e2d42; flex-shrink: 0;
+/* Config pill and reset in rightmost columns */
+.nav-bar-row .nav-pill {
+  display: flex; align-items: center; justify-content: center;
+  height: 52px; padding: 0 .5rem;
 }
-.medanon-nav .nb-config-pill {
+.nav-bar-row .nav-pill-inner {
   font-family: 'JetBrains Mono', monospace;
   font-size: .62rem; line-height: 1.7;
-  color: #3d5068 !important;
+  color: #5a7a96 !important;
   background: #162032; border-radius: 6px;
-  padding: .2rem .55rem; white-space: nowrap;
+  padding: .22rem .6rem; white-space: nowrap;
 }
-.medanon-nav .nb-config-pill span { color: #0ea5a0 !important; }
-
-/* Reset button */
-.medanon-nav .nb-reset .stButton > button {
-  background:    rgba(14,165,160,.1)   !important;
+.nav-bar-row .nav-pill-inner span { color: #0ea5a0 !important; }
+.nav-bar-row .nav-reset .stButton > button {
+  background:    rgba(14,165,160,.12)   !important;
   border:        1px solid rgba(14,165,160,.25) !important;
-  border-radius: 6px                   !important;
-  color:         #5eead4               !important;
-  font-size:     .78rem                !important;
-  font-weight:   600                   !important;
-  padding:       .32rem .8rem          !important;
-  height:        auto                  !important;
-  white-space:   nowrap                !important;
+  border-radius: 6px                    !important;
+  color:         #5eead4                !important;
+  font-size:     .78rem                 !important;
+  font-weight:   600                    !important;
+  min-height:    32px                   !important;
+  height:        auto                   !important;
+  padding:       .3rem .8rem            !important;
+  white-space:   nowrap                 !important;
 }
+/* Brand + right info columns */
+.nav-bar-row .nav-brand {
+  display: flex; align-items: center; gap: .55rem;
+  height: 52px; padding: 0 1rem 0 1rem;
+  border-right: 1px solid #1e2d42;
+}
+.nav-bar-row .nav-brand-dot {
+  width: 28px; height: 28px; background: #0ea5a0;
+  border-radius: 6px; display: flex; align-items: center;
+  justify-content: center; font-size: .82rem; flex-shrink: 0;
+}
+.nav-bar-row .nav-brand-name {
+  font-size: .88rem; font-weight: 800;
+  color: #f1f5f9 !important; letter-spacing: -.2px;
+}
+.nav-bar-row .nav-brand-sub { font-size: .56rem; color: #3d5068 !important; }
+.nav-bar-row .nav-right {
+  display: flex; align-items: center; justify-content: flex-end;
+  height: 52px; padding: 0 1rem;
+  border-left: 1px solid #1e2d42;
+  font-size: .6rem; line-height: 1.6;
+  color: #475569 !important; text-align: right;
+}
+.nav-bar-row .nav-right b { color: #5a7a96 !important; }
 
 /* ════════════════════════════════════════
    MAIN CONTENT — margins, width, spacing
@@ -888,89 +886,76 @@ def go(idx):
     st.rerun()
 
 # ══════════════════════════════════════════════════════════════════
-# TOP NAVBAR  — single .medanon-nav container
-# Brand + nav buttons + config pill + reset, all in one dark bar.
-# Uses st.columns inside a scoped CSS wrapper so button colours
-# are protected from the global body colour overrides.
+# TOP NAVBAR
+# Single st.columns row wrapped in .nav-bar-row div.
+# CSS applies dark background to the whole row and styles each button.
+# No nesting st.columns inside HTML divs — the wrapper div contains
+# only HTML markdown elements; the columns sit outside it but the
+# CSS selector .nav-bar-row targets the NEXT sibling stHorizontalBlock.
 # ══════════════════════════════════════════════════════════════════
 
 cur  = st.session_state["page"]
 done = st.session_state["run_complete"]
-
 _all_h  = {**HOSPITALS, **st.session_state["custom_hospitals"]}
 _h_code = _all_h.get(st.session_state["hospital_key"], "H01")
 _p_code = get_programme_code()
 _t_code = st.session_state["img_code"]
 
-# Open the .medanon-nav wrapper — everything inside inherits navy bg
-st.markdown('<div class="medanon-nav">', unsafe_allow_html=True)
+# ── Marker div: CSS targets this + its following stHorizontalBlock ──
+st.markdown('<div class="nav-bar-row">', unsafe_allow_html=True)
 
-# ── Brand block ──────────────────────────────────────────────────
-st.markdown(f"""
-  <div class="nb-brand">
-    <div class="nb-dot">🛡</div>
-    <div>
-      <div class="nb-name">MedAnon Pro</div>
-      <div class="nb-sub">© Vedaste NYANDWI</div>
-    </div>
-  </div>""", unsafe_allow_html=True)
+# ── All navbar content in ONE st.columns call ─────────────────────
+# Columns: [brand] [Home] [Configure] [Upload] [Anonymize] [Download] [Feedback] [pill] [reset] [right]
+nav_cols = st.columns([2.2, 1.0, 1.3, 0.95, 1.3, 1.25, 1.05, 1.4, 1.0, 1.8])
 
-# ── Nav buttons via st.columns ────────────────────────────────────
-# Open the links region
-st.markdown('<div class="nb-links">', unsafe_allow_html=True)
+with nav_cols[0]:   # Brand
+    st.markdown(f"""
+    <div class="nav-brand">
+      <div class="nav-brand-dot">🛡</div>
+      <div>
+        <div class="nav-brand-name">MedAnon Pro</div>
+        <div class="nav-brand-sub">© Vedaste NYANDWI</div>
+      </div>
+    </div>""", unsafe_allow_html=True)
 
-nav_items = [
-    (0, "🏠",  "Home"),
-    (1, "⚙️", "Configure"),
-    (2, "📤",  "Upload"),
-    (3, "🛡",  "Anonymize"),
-    (4, "📦",  "Download"),
-    (5, "⭐",  "Feedback"),
-]
-
-nav_cols = st.columns([1.1, 1.4, 1.0, 1.4, 1.3, 1.1])
-for col, (idx, icon, label) in zip(nav_cols, nav_items):
-    tick = " ✓" if done and idx in (1, 2, 3) else ""
-    active_cls = "nb-active" if cur == idx else ""
+nav_items = [(1,"🏠","Home"),(2,"⚙️","Configure"),(3,"📤","Upload"),
+             (4,"🛡","Anonymize"),(5,"📦","Download"),(6,"⭐","Feedback")]
+for col, (page_idx, icon, label) in zip(nav_cols[1:7], nav_items):
+    actual_idx = page_idx - 1   # 0-based page index
+    tick = " ✓" if done and actual_idx in (1,2,3) else ""
+    act  = "nav-active" if cur == actual_idx else ""
     with col:
-        st.markdown(f'<div class="{active_cls}">', unsafe_allow_html=True)
-        if st.button(f"{icon} {label}{tick}", key=f"nav_{idx}", use_container_width=True):
-            go(idx)
+        st.markdown(f'<div class="{act}">', unsafe_allow_html=True)
+        if st.button(f"{icon} {label}{tick}", key=f"nav_{actual_idx}", use_container_width=True):
+            go(actual_idx)
         st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown('</div>', unsafe_allow_html=True)  # close .nb-links
+with nav_cols[7]:   # Config pill
+    st.markdown(f"""
+    <div class="nav-pill">
+      <div class="nav-pill-inner">
+        {_h_code}·{_t_code}<br><span>{_p_code}</span>
+      </div>
+    </div>""", unsafe_allow_html=True)
 
-# ── Config pill ───────────────────────────────────────────────────
-st.markdown(f"""
-  <div class="nb-config">
-    <div class="nb-config-pill">
-      {_h_code} · {_t_code}<br>
-      <span>{_p_code}</span>
-    </div>
-  </div>""", unsafe_allow_html=True)
+with nav_cols[8]:   # Reset
+    st.markdown('<div class="nav-reset" style="display:flex;align-items:center;justify-content:center;height:52px;">', unsafe_allow_html=True)
+    if st.button("🔄 Reset", key="nav_reset", use_container_width=True):
+        for k in list(_D.keys()): st.session_state[k] = _D[k]
+        for k in ["_zip_upload","_files_upload"]: st.session_state.pop(k, None)
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# ── Reset button ─────────────────────────────────────────────────
-st.markdown('<div class="nb-reset" style="display:flex;align-items:center;padding:0 .8rem;border-left:1px solid #1e2d42;flex-shrink:0;">', unsafe_allow_html=True)
-if st.button("🔄 Reset", key="nav_reset"):
-    for k in list(_D.keys()): st.session_state[k] = _D[k]
-    for k in ["_zip_upload", "_files_upload"]: st.session_state.pop(k, None)
-    st.rerun()
-st.markdown('</div>', unsafe_allow_html=True)
+with nav_cols[9]:   # Right info
+    st.markdown(f"""
+    <div class="nav-right">
+      <div><b>Univ. of Rwanda</b><br>CBE · ACE-DS</div>
+    </div>""", unsafe_allow_html=True)
 
-# ── Right author block ────────────────────────────────────────────
-st.markdown("""
-  <div class="nb-right">
-    <div class="nb-right-text">
-      <b>University of Rwanda</b><br>
-      CBE · ACE-DS · Data Mining
-    </div>
-  </div>""", unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)   # close .nav-bar-row
+st.markdown('<div style="margin-top:1.8rem;"></div>', unsafe_allow_html=True)
 
-# Close the nav wrapper
-st.markdown('</div>', unsafe_allow_html=True)
 
-# Remove any injected per-column nth-child CSS from previous version
-st.markdown('<div style="margin-top:1.5rem;"></div>', unsafe_allow_html=True)
 
 
 
@@ -1155,7 +1140,7 @@ elif cur == 1:
     st.markdown(f'<div style="margin-top:.5rem;font-size:.8rem;color:#5e7190;">Internal code: <span style="font-family:\'JetBrains Mono\',monospace;color:var(--teal-dk);font-weight:600;">{h_code}</span> (hidden from output filenames)</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    with st.expander("➕  Register a new hospital"):
+    with st.expander("+ Register a new hospital"):
         col_a, col_b = st.columns([3, 1])
         with col_a:
             new_hname = st.text_input("Hospital full name", placeholder="e.g. Rwanda Military Hospital", key="nh_name")
@@ -1271,7 +1256,7 @@ elif cur == 1:
     st.markdown('</div>', unsafe_allow_html=True)
 
     # ── Add custom university / college / programme ───────────────
-    with st.expander("➕  Add a university, college or programme"):
+    with st.expander("+ Add a custom university, college or programme"):
         add_tab = st.radio("What to add:", ["University", "College", "Programme"],
                            horizontal=True, key="add_tab_sel")
 
