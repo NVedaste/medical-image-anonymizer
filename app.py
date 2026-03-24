@@ -337,6 +337,8 @@ _D = dict(
     integrity_log=[],
     operator_name="",
     operator_dept="",
+    operator_email="",
+    operator_phone="",
     patient_groups={},
     validation_results=[],
     mapping_csv=None,
@@ -528,7 +530,7 @@ def run_pipeline(entries, h, p, t, bar, status_el):
         bar.progress(int(i / len(entries) * 100))
         status_el.markdown(
             f'<span style="font-size:.82rem;color:#374a60;">Processing '
-            f'<b>{i+1}/{len(entries)}</b> — {e["name"]}</span>',
+            f'<b>{i+1}/{len(entries)}</b>: {e["name"]}</span>',
             unsafe_allow_html=True)
         pid = e.get("pid", i + 1)
         try:
@@ -600,13 +602,17 @@ def make_thumb_b64(raw: bytes, ext: str, max_px: int = 120) -> str:
 # ══════════════════════════════════════════════════════════════════
 def operator_header() -> list[str]:
     """Lines prepended to every log showing who ran the anonymization."""
-    name = st.session_state.get("operator_name","").strip() or "NOT PROVIDED"
-    dept = st.session_state.get("operator_dept","").strip() or "NOT PROVIDED"
-    ts   = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    name  = st.session_state.get("operator_name","").strip()  or "NOT PROVIDED"
+    dept  = st.session_state.get("operator_dept","").strip()  or "NOT PROVIDED"
+    email = st.session_state.get("operator_email","").strip() or "NOT PROVIDED"
+    phone = st.session_state.get("operator_phone","").strip() or "NOT PROVIDED"
+    ts    = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     return [
         "─"*60,
         f"  OPERATOR  : {name}",
         f"  DEPT      : {dept}",
+        f"  EMAIL     : {email}",
+        f"  PHONE     : {phone}",
         f"  TIMESTAMP : {ts}",
         "─"*60,
     ]
@@ -664,7 +670,7 @@ def pack_mapping_zip(csv_bytes: bytes, password: str) -> bytes:
             zf.writestr("README.txt",
                 "This file contains the patient ID mapping table.\n"
                 "Password: provided separately to the data governance officer.\n"
-                "Keep this file confidential — do not share the mapping.\n")
+                "Keep this file confidential. Do not share the mapping.\n")
         return buf.getvalue()
     except ImportError:
         # Fallback: plain ZIP with a clear warning inside
@@ -696,7 +702,7 @@ def validate_image(raw: bytes, ext: str, name: str) -> dict:
 
     if ext in (".dcm", ".dicom"):
         if not DICOM_AVAILABLE:
-            return {"valid": True, "warnings": ["pydicom not installed — DICOM not validated"], "errors": []}
+            return {"valid": True, "warnings": ["pydicom not installed. DICOM metadata not validated."], "errors": []}
         try:
             ds = pydicom.dcmread(io.BytesIO(raw), stop_before_pixels=True)
             modality = getattr(ds, "Modality", "").upper()
@@ -724,7 +730,7 @@ def validate_image(raw: bytes, ext: str, name: str) -> dict:
         if w < MIN_DIM_PX or h < MIN_DIM_PX:
             errors.append(f"Image too small: {w}×{h}px (min {MIN_DIM_PX})")
         if w > MAX_DIM_PX or h > MAX_DIM_PX:
-            warnings.append(f"Very large image: {w}×{h}px — confirm it's a scan, not a photo")
+            warnings.append(f"Very large image: {w}×{h}px. Please confirm it is a medical scan.")
         ratio = w / h if h else 1
         if not (MEDICAL_ASPECT_RANGE[0] <= ratio <= MEDICAL_ASPECT_RANGE[1]):
             warnings.append(f"Aspect ratio {ratio:.2f} unusual for medical scans")
@@ -734,7 +740,7 @@ def validate_image(raw: bytes, ext: str, name: str) -> dict:
             sample = pixels[::max(1, len(pixels)//500)][:500]
             coloured = sum(1 for r,g,b in sample if abs(r-g) > 20 or abs(g-b) > 20)
             if coloured / len(sample) > 0.25:
-                warnings.append("Image appears to contain colour — chest X-rays are greyscale")
+                warnings.append("Image appears to contain colour. Note: chest X-rays are greyscale.")
     except Exception as e:
         errors.append(f"Cannot open image: {e}")
 
@@ -775,9 +781,6 @@ def go(idx):
 
 # ══════════════════════════════════════════════════════════════════
 # TOP NAVBAR — pure HTML, single block, no Streamlit widgets inside.
-# Navigation handled by st.query_params: clicking a nav link sets
-# ?p=N in the URL which Streamlit reads on rerun to change pages.
-# Reset is the only Streamlit widget — placed BELOW the nav bar.
 # ══════════════════════════════════════════════════════════════════
 
 cur  = st.session_state["page"]
@@ -792,21 +795,22 @@ try:
     _qp = st.query_params.get("p", None)
     if _qp is not None:
         _qp_int = int(_qp)
-        if _qp_int != cur and 0 <= _qp_int <= 5:
+        if _qp_int != cur and 0 <= _qp_int <= 6:
             st.session_state["page"] = _qp_int
             st.query_params.clear()
             st.rerun()
 except Exception:
     pass
 
-# Build nav items HTML
+# Build nav items HTML — 7 pages (Download and Delete are now separate)
 _pages = [
     (0, "🏠", "Home"),
     (1, "⚙", "Configure"),
     (2, "📤", "Upload"),
     (3, "🛡", "Anonymize"),
-    (4, "📦", "Download"),
-    (5, "⭐", "Feedback"),
+    (4, "⬇", "Download"),
+    (5, "🗑", "Delete"),
+    (6, "⭐", "Feedback"),
 ]
 _nav_html = ""
 for _idx, _icon, _lbl in _pages:
@@ -815,8 +819,199 @@ for _idx, _icon, _lbl in _pages:
     _nav_html += (
         f'<a class="mna-link {_active}" '
         f'href="?p={_idx}" target="_self">'
-        f'{_icon} {_lbl}{_tick}</a>'
+        f'<span class="mna-icon">{_icon}</span>'
+        f'<span class="mna-lbl">{_lbl}{_tick}</span>'
+        f'</a>'
     )
+
+st.markdown(f"""
+<style>
+/* ─────────────────────────────────────────
+   MedAnon Navbar — professional, single block
+───────────────────────────────────────── */
+.mna-bar {{
+  display:       flex;
+  align-items:   stretch;
+  background:    #0d1b2a;
+  border-bottom: 2.5px solid #0ea5a0;
+  box-shadow:    0 4px 20px rgba(13,27,42,.40);
+  margin:        -1.8rem -3.5rem 2rem -3.5rem;
+  padding:       0;
+  position:      sticky;
+  top:           0;
+  z-index:       9999;
+  height:        54px;
+  font-family:   'Lexend', sans-serif;
+}}
+/* Brand */
+.mna-brand {{
+  display:         flex;
+  align-items:     center;
+  gap:             .55rem;
+  padding:         0 1.4rem 0 1.1rem;
+  border-right:    1px solid #1e2d42;
+  flex-shrink:     0;
+  min-width:       160px;
+  height:          54px;
+  text-decoration: none !important;
+}}
+.mna-dot {{
+  width:         32px;
+  height:        32px;
+  background:    #0ea5a0;
+  border-radius: 8px;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  font-size:     .95rem;
+  flex-shrink:   0;
+  box-shadow:    0 2px 8px rgba(14,165,160,.4);
+}}
+.mna-name {{
+  font-size:      .92rem;
+  font-weight:    800;
+  color:          #f1f5f9 !important;
+  letter-spacing: -.25px;
+  line-height:    1.2;
+}}
+.mna-sub {{
+  font-size:   .58rem;
+  color:       #3a566e !important;
+  margin-top:  .06rem;
+  font-weight: 400;
+}}
+/* Nav links container */
+.mna-links {{
+  display:     flex;
+  align-items: stretch;
+  flex:        1;
+}}
+/* Individual nav link */
+.mna-link {{
+  display:         flex;
+  align-items:     center;
+  gap:             .38rem;
+  padding:         0 .95rem;
+  font-size:       .84rem;
+  font-weight:     500;
+  color:           #7ea8c8 !important;
+  text-decoration: none !important;
+  border-bottom:   3px solid transparent;
+  white-space:     nowrap;
+  height:          54px;
+  transition:      background .12s, color .12s, border-color .12s;
+  letter-spacing:  0;
+  line-height:     1;
+}}
+.mna-link:visited,
+.mna-link:focus  {{ text-decoration: none !important; outline: none; }}
+.mna-icon {{ font-size: .88rem; flex-shrink: 0; }}
+.mna-lbl  {{ font-size: .84rem; }}
+.mna-link:hover {{
+  background:          #162032;
+  color:               #d4e8f8 !important;
+  border-bottom-color: #2d4a62;
+  text-decoration:     none !important;
+}}
+.mna-link.mna-active {{
+  background:          #1a2d40;
+  color:               #ffffff !important;
+  font-weight:         700;
+  border-bottom-color: #0ea5a0;
+  text-decoration:     none !important;
+}}
+/* Config pill */
+.mna-pill {{
+  display:      flex;
+  align-items:  center;
+  padding:      0 .85rem;
+  border-left:  1px solid #1e2d42;
+  flex-shrink:  0;
+}}
+.mna-pill-inner {{
+  font-family:   'JetBrains Mono', monospace;
+  font-size:     .62rem;
+  line-height:   1.65;
+  color:         #5a7a96 !important;
+  background:    #162032;
+  border-radius: 5px;
+  padding:       .22rem .6rem;
+  white-space:   nowrap;
+  border:        1px solid #1e2d42;
+}}
+.mna-pill-inner span {{ color: #0ea5a0 !important; font-weight: 600; }}
+/* Right info */
+.mna-right {{
+  display:      flex;
+  align-items:  center;
+  padding:      0 1.1rem;
+  border-left:  1px solid #1e2d42;
+  flex-shrink:  0;
+  font-size:    .62rem;
+  line-height:  1.6;
+  color:        #5a7a96 !important;
+  text-align:   right;
+  white-space:  nowrap;
+}}
+.mna-right b {{ color: #7ea8c8 !important; font-weight: 600; }}
+/* ── Reset button ── */
+.mna-reset-wrap .stButton > button {{
+  background:    rgba(14,165,160,.1)  !important;
+  border:        1px solid rgba(14,165,160,.3) !important;
+  border-radius: 6px                  !important;
+  color:         #5eead4              !important;
+  font-size:     .78rem               !important;
+  font-weight:   600                  !important;
+  padding:       .3rem .85rem         !important;
+  margin:        0                    !important;
+  height:        auto                 !important;
+  min-height:    unset                !important;
+  white-space:   nowrap               !important;
+  letter-spacing: 0                   !important;
+}}
+.mna-reset-wrap .stButton > button:hover {{
+  background:    rgba(14,165,160,.22) !important;
+  transform:     none                 !important;
+  opacity:       1                    !important;
+}}
+</style>
+
+<div class="mna-bar">
+  <div class="mna-brand">
+    <div class="mna-dot">🛡</div>
+    <div>
+      <div class="mna-name">MedAnon Pro</div>
+      <div class="mna-sub">© Vedaste NYANDWI</div>
+    </div>
+  </div>
+  <div class="mna-links">
+    {_nav_html}
+  </div>
+  <div class="mna-pill">
+    <div class="mna-pill-inner">
+      {_h_code} · {_t_code}<br>
+      <span>{_p_code}</span>
+    </div>
+  </div>
+  <div class="mna-right">
+    <div><b>Univ. of Rwanda</b><br>CBE · ACE-DS · DM</div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+# Reset session button — placed neatly below the bar
+_nr1, _nr2, _nr3 = st.columns([0.001, 1.2, 18])
+with _nr2:
+    st.markdown('<div class="mna-reset-wrap">', unsafe_allow_html=True)
+    if st.button("↺ Reset", key="nav_reset", help="Start a new session"):
+        for k in list(_D.keys()): st.session_state[k] = _D[k]
+        for k in ["_zip_upload","_files_upload"]: st.session_state.pop(k, None)
+        st.query_params.clear()
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown('<div style="margin-top:.25rem;"></div>', unsafe_allow_html=True)
+
 
 st.markdown(f"""
 <style>
@@ -960,20 +1155,6 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# Reset session button — only Streamlit widget in nav area
-_nr1, _nr2, _nr3 = st.columns([0.001, 1, 20])
-with _nr2:
-    st.markdown('<div class="mna-reset-wrap">', unsafe_allow_html=True)
-    if st.button("↺ Reset", key="nav_reset", help="Start a new session"):
-        for k in list(_D.keys()): st.session_state[k] = _D[k]
-        for k in ["_zip_upload","_files_upload"]: st.session_state.pop(k, None)
-        st.query_params.clear()
-        st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-
 
 
 
@@ -1019,11 +1200,11 @@ if cur == 0:
             <div class="card-title">5-step workflow</div>
           </div>
           <ol style="font-size:.87rem;line-height:2.1;color:#374a60;padding-left:1.1rem;margin:0;">
-            <li><b>Configure</b> — select hospital, program, image type</li>
-            <li><b>Upload</b> — ZIP your folder or pick individual files</li>
-            <li><b>Anonymize</b> — one-click pipeline with live progress</li>
-            <li><b>Download</b> — save the anonymized ZIP to your device</li>
-            <li><b>Delete</b> — purge originals &amp; receive deletion certificate</li>
+            <li><b>Configure</b>: select hospital, program, image type</li>
+            <li><b>Upload</b>: ZIP your folder or pick individual files</li>
+            <li><b>Anonymize</b>: one-click pipeline with live progress</li>
+            <li><b>Download</b>: save the anonymized ZIP to your device</li>
+            <li><b>Delete</b>: purge originals &amp; receive deletion certificate</li>
           </ol>
         </div>""", unsafe_allow_html=True)
 
@@ -1060,22 +1241,22 @@ if cur == 0:
         </div>
         <div class="wk-pill amber">
           <div class="wk-title">W4 · GAN face-replacement risk</div>
-          <div class="wk-desc">System does not use generative models. No synthetic face substitution — no GAN leakage risk.</div>
+          <div class="wk-desc">System does not use generative models. No synthetic face substitution. No GAN leakage risk.</div>
           <div class="wk-status addressed">✓ Avoided by design</div>
         </div>
         <div class="wk-pill amber">
           <div class="wk-title">W10 · Scalability failures</div>
-          <div class="wk-desc">Full in-memory pipeline — no half-processed states. ZIP built only after all files succeed.</div>
+          <div class="wk-desc">Full in-memory pipeline. No half-processed states. ZIP built only after all files succeed.</div>
           <div class="wk-status partial">~ Partially addressed</div>
         </div>
         <div class="wk-pill" style="border-left-color:var(--text3);">
           <div class="wk-title">W3 · Detection coverage gaps</div>
-          <div class="wk-desc">X-ray pipeline does not use face detection — renaming and metadata stripping are universal.</div>
+          <div class="wk-desc">X-ray pipeline does not use face detection. Renaming and metadata stripping are universal.</div>
           <div class="wk-status noted">~ Not applicable (X-ray)</div>
         </div>
         <div class="wk-pill" style="border-left-color:var(--text3);">
           <div class="wk-title">W8 · Demographic bias in detection</div>
-          <div class="wk-desc">No ML detector used in this pipeline — all images are processed equally regardless of content.</div>
+          <div class="wk-desc">No ML detector used in this pipeline. All images are processed equally regardless of content.</div>
           <div class="wk-status noted">~ Not applicable</div>
         </div>
         <div class="wk-pill red">
@@ -1095,7 +1276,7 @@ if cur == 0:
     <div class="card">
       <div class="card-header">
         <div class="card-icon ci-red">🏥</div>
-        <div class="card-title">5 Hospital-Specific Requirements — Addressed</div>
+        <div class="card-title">5 Hospital-Specific Requirements: Addressed</div>
       </div>
       <div style="font-size:.78rem;color:#374a60;margin-bottom:.75rem;">
         Beyond the published weakness literature, these are the questions a hospital radiology
@@ -1104,7 +1285,7 @@ if cur == 0:
       <div class="weakness-grid">
         <div class="wk-pill green">
           <div class="wk-title">Fix #1 · Operator identity</div>
-          <div class="wk-desc">Researcher name and department captured in Configure. Printed on the deletion certificate — the department knows <em>who</em> ran this.</div>
+          <div class="wk-desc">Researcher name and department captured in Configure. Printed on the deletion certificate. The department knows <em>who</em> ran this.</div>
           <div class="wk-status addressed">✓ Implemented</div>
         </div>
         <div class="wk-pill blue">
@@ -1114,7 +1295,7 @@ if cur == 0:
         </div>
         <div class="wk-pill amber">
           <div class="wk-title">Fix #3 · Image content validation</div>
-          <div class="wk-desc">Checks dimensions, aspect ratio, and colour distribution to confirm files are plausible medical images — catches accidental photo uploads.</div>
+          <div class="wk-desc">Checks dimensions, aspect ratio, and colour distribution to confirm files are plausible medical images. Catches accidental photo uploads.</div>
           <div class="wk-status addressed">✓ Implemented</div>
         </div>
         <div class="wk-pill">
@@ -1358,46 +1539,75 @@ elif cur == 1:
     st.markdown("""
     <div class="card">
       <div class="card-header"><div class="card-icon ci-red">🪪</div>
-      <div class="card-title">Operator Identity — Required for Certificate</div></div>
-      <div style="font-size:.83rem;color:#374a60;margin-bottom:.85rem;">
-        The hospital department will ask <em>who</em> ran this anonymization and
-        <em>which department</em> authorised it. This is printed on the deletion certificate.
+      <div class="card-title">Operator Identity: Required for Certificate</div></div>
+      <div style="font-size:.88rem;color:#374a60;margin-bottom:1rem;line-height:1.6;">
+        Your identity will be printed on the deletion certificate issued to the hospital.
+        All four fields are required.
       </div>""", unsafe_allow_html=True)
 
     col_op1, col_op2 = st.columns(2)
     with col_op1:
-        op_name = st.text_input("Your full name",
+        op_name = st.text_input("Full name *",
             value=st.session_state.get("operator_name",""),
             placeholder="e.g. Vedaste NYANDWI", key="op_name_input")
         st.session_state["operator_name"] = op_name.strip()
     with col_op2:
-        op_dept = st.text_input("Department / Institution",
+        op_dept = st.text_input("Department / Institution *",
             value=st.session_state.get("operator_dept",""),
             placeholder="e.g. ACE-DS · Data Mining · University of Rwanda",
             key="op_dept_input")
         st.session_state["operator_dept"] = op_dept.strip()
 
-    if st.session_state["operator_name"] and st.session_state["operator_dept"]:
+    col_op3, col_op4 = st.columns(2)
+    with col_op3:
+        op_email = st.text_input("Email address *",
+            value=st.session_state.get("operator_email",""),
+            placeholder="e.g. v.nyandwi@ur.ac.rw",
+            key="op_email_input")
+        st.session_state["operator_email"] = op_email.strip()
+    with col_op4:
+        op_phone = st.text_input("Phone number *",
+            value=st.session_state.get("operator_phone",""),
+            placeholder="e.g. +250 780 000 000",
+            key="op_phone_input")
+        st.session_state["operator_phone"] = op_phone.strip()
+
+    _op_complete = all([
+        st.session_state["operator_name"],
+        st.session_state["operator_dept"],
+        st.session_state["operator_email"],
+        st.session_state["operator_phone"],
+    ])
+
+    if _op_complete:
         st.markdown(f"""
         <div class="alert alert-ok" style="margin-top:.5rem;">
           <span>✅</span>
-          <div style="font-size:.82rem;">Operator: <b>{st.session_state["operator_name"]}</b>
-          · {st.session_state["operator_dept"]}</div>
+          <div><b>{st.session_state["operator_name"]}</b> · {st.session_state["operator_dept"]}<br>
+          <span style="font-size:.8rem;">{st.session_state["operator_email"]} · {st.session_state["operator_phone"]}</span>
+          </div>
         </div>""", unsafe_allow_html=True)
     else:
-        st.markdown("""
+        missing = [f for f, k in [("Full name","operator_name"),("Department","operator_dept"),
+                                    ("Email","operator_email"),("Phone","operator_phone")]
+                   if not st.session_state.get(k,"")]
+        st.markdown(f"""
         <div class="alert alert-warn" style="margin-top:.5rem;">
           <span>⚠️</span>
-          <div style="font-size:.82rem;">
-            Operator identity is <b>required</b> to generate a valid deletion certificate.
-          </div>
+          <div>Missing: <b>{", ".join(missing)}</b>. These are required for the certificate.</div>
         </div>""", unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
+    # Fix 2: validate before allowing Next
+    _configure_ok = bool(st.session_state.get("hospital_key")) and _op_complete
     col_b, _ = st.columns([1, 3])
     with col_b:
-        if st.button("Next: Upload →", type="primary", use_container_width=True):
+        if st.button("Next: Upload →", type="primary", use_container_width=True,
+                     disabled=not _configure_ok):
             go(2)
+    if not _configure_ok:
+        st.markdown('<div style="font-size:.82rem;color:var(--amber);margin-top:.4rem;">Complete all required fields above before proceeding.</div>',
+                    unsafe_allow_html=True)
 # ══════════════════════════════════════════════════════════════════
 elif cur == 2:
     st.markdown("""
@@ -1467,7 +1677,7 @@ elif cur == 2:
             st.markdown(f"""
             <div class="alert alert-ok">
               <span>✅</span>
-              <div><b>{len(uploaded_files)}</b> file(s) ready — {len(uploaded_files)-dcm_n} image(s) + {dcm_n} DICOM</div>
+              <div><b>{len(uploaded_files)}</b> file(s) ready: {len(uploaded_files)-dcm_n} image(s) + {dcm_n} DICOM</div>
             </div>""", unsafe_allow_html=True)
             st.session_state["_files_upload"] = uploaded_files
         else:
@@ -1528,11 +1738,11 @@ elif cur == 2:
 
             for v in val_res:
                 if v["errors"]:
-                    st.markdown(f'<div class="alert alert-danger"><span>❌</span><div><b>{v["name"]}</b> — {"; ".join(v["errors"])}</div></div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="alert alert-danger"><span>❌</span><div><b>{v["name"]}</b>: {"; ".join(v["errors"])}</div></div>', unsafe_allow_html=True)
                 elif v["warnings"]:
-                    st.markdown(f'<div class="alert alert-warn"><span>⚠️</span><div><b>{v["name"]}</b> — {"; ".join(v["warnings"])}</div></div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="alert alert-warn"><span>⚠️</span><div><b>{v["name"]}</b>: {"; ".join(v["warnings"])}</div></div>', unsafe_allow_html=True)
             if n_err == 0 and n_warn == 0:
-                st.markdown('<div class="alert alert-ok"><span>✅</span><div>All files passed validation — confirmed as plausible medical images.</div></div>', unsafe_allow_html=True)
+                st.markdown('<div class="alert alert-ok"><span>✅</span><div>All files passed validation. Confirmed as plausible medical images.</div></div>', unsafe_allow_html=True)
             if n_err > 0:
                 st.markdown(f'<div class="alert alert-danger"><span>🚫</span><div><b>{n_err} file(s) have errors</b> and should be removed before anonymization. Errors indicate files that are too small, corrupted, or cannot be opened.</div></div>', unsafe_allow_html=True)
 
@@ -1589,7 +1799,7 @@ elif cur == 2:
             st.session_state["patient_groups"] = groups
             used_groups = {v for v in groups.values() if v}
             if used_groups:
-                st.markdown(f'<div class="alert alert-info"><span>👤</span><div style="font-size:.82rem;">Patient groups defined: <b>{", ".join(sorted(used_groups))}</b> — files sharing a label will receive the same anonymized patient ID.</div></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="alert alert-info"><span>👤</span><div style="font-size:.82rem;">Patient groups defined: <b>{", ".join(sorted(used_groups))}</b>: files sharing a label will receive the same anonymized patient ID.</div></div>', unsafe_allow_html=True)
 
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -1801,14 +2011,15 @@ elif cur == 3:
 
 
 # ══════════════════════════════════════════════════════════════════
-# PAGE 4 — DOWNLOAD & DELETE
+# ══════════════════════════════════════════════════════════════════
+# PAGE 4 — DOWNLOAD
 # ══════════════════════════════════════════════════════════════════
 elif cur == 4:
     st.markdown("""
     <div class="pg-wrap">
-      <div class="pg-eyebrow">Step 4 &amp; 5</div>
-      <div class="pg-title">Download &amp; Delete</div>
-      <div class="pg-sub">Download your anonymized images and issue a deletion certificate.</div>
+      <div class="pg-eyebrow">Step 4</div>
+      <div class="pg-title">Download</div>
+      <div class="pg-sub">Download your anonymized images and the mapping table before proceeding to deletion.</div>
     </div>""", unsafe_allow_html=True)
 
     if not st.session_state["run_complete"] or not st.session_state.get("zip_bytes"):
@@ -1823,82 +2034,60 @@ elif cur == 4:
         zip_fn = st.session_state["zip_filename"]
         ok_n   = sum(1 for r in st.session_state.get("results",[]) if r["status"] == "ok")
         sz_mb  = len(zip_b) / 1024 / 1024
-        op_name = st.session_state.get("operator_name","—")
-        op_dept = st.session_state.get("operator_dept","—")
-        ts_now  = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # ── Step A: Download anonymized images ───────────────────
+        # ── Download anonymized ZIP ───────────────────────────────
         st.markdown(f"""
         <div class="card">
           <div class="card-header">
             <div class="card-icon ci-teal">⬇</div>
-            <div class="card-title">Step 4A — Download Anonymized Images</div>
+            <div class="card-title">Anonymized Images ZIP</div>
           </div>
-          <div style="font-size:.86rem;color:#374a60;margin-bottom:1rem;">
-            <b>{ok_n}</b> anonymized image(s) ready · <b>{sz_mb:.2f} MB</b><br>
-            <span style="font-size:.78rem;color:#5e7190;">Downloads to your browser's default Downloads folder.</span>
+          <div style="font-size:.88rem;color:#374a60;margin-bottom:1rem;">
+            <b>{ok_n}</b> image(s) ready &nbsp;·&nbsp; <b>{sz_mb:.2f} MB</b><br>
+            <span style="font-size:.8rem;color:#5e7190;">Downloads to your browser's default Downloads folder.</span>
           </div>""", unsafe_allow_html=True)
         st.download_button(
-            label=f"⬇  Download Anonymized ZIP  ({ok_n} files)",
+            label=f"⬇  Download Anonymized ZIP  ({ok_n} files, {sz_mb:.1f} MB)",
             data=zip_b, file_name=zip_fn, mime="application/zip",
             type="primary")
         st.markdown('</div>', unsafe_allow_html=True)
 
-        # ── Step B: Download mapping CSV (Fix #2) ────────────────
+        # ── Download mapping table ────────────────────────────────
         mapping_zip = st.session_state.get("mapping_csv")
-        st.markdown("""
+        _hkey_short = st.session_state.get("hospital_key","H01").split("—")[0].strip()[:4].replace(" ","")
+        st.markdown(f"""
         <div class="card">
           <div class="card-header">
             <div class="card-icon ci-blue">🗂</div>
-            <div class="card-title">Step 4B — Download Mapping Table (Fix #2)</div>
+            <div class="card-title">Patient ID Mapping Table</div>
           </div>
-          <div style="font-size:.84rem;color:#374a60;margin-bottom:.75rem;">
-            The <b>mapping table</b> links every original filename to its anonymized ID.
-            The hospital data officer must keep this file under lock and key — it is the only
-            document that can link an anonymized image back to a patient for clinical follow-up.
+          <div style="font-size:.88rem;color:#374a60;margin-bottom:.8rem;">
+            The mapping table links every <b>original filename</b> to its <b>anonymized ID</b>.
+            Keep this file with the hospital data officer. It is the only document that can
+            link an anonymized scan back to a patient for clinical follow-up.
           </div>
           <div class="alert alert-warn" style="margin-bottom:.75rem;">
             <span>🔐</span>
-            <div style="font-size:.82rem;">
-              <b>Security:</b> This file is packaged as a ZIP.
-              If <code>pip install pyzipper</code> is installed, it is AES-encrypted.
-              Password convention: <code>{hospital_code}-mapping-key</code>
-              (replace <code>{hospital_code}</code> with your hospital code, e.g. <code>H02-mapping-key</code>).
-              Share the password only with the data governance officer — never by email.
-            </div>
-          </div>""".format(hospital_code=st.session_state.get(
-            "hospital_key","H01").split("—")[0].strip()[:4].replace(" ","")),
-        unsafe_allow_html=True)
-
+            <div><b>Password convention:</b> <code>{_hkey_short}-mapping-key</code>
+            (your hospital code prefix). Share only with the data governance officer.</div>
+          </div>""", unsafe_allow_html=True)
         if mapping_zip:
-            ts_map = datetime.now().strftime("%Y%m%d_%H%M%S")
             all_h2 = {**HOSPITALS, **st.session_state["custom_hospitals"]}
             h2 = all_h2.get(st.session_state["hospital_key"],"H01")
             st.download_button(
-                label="⬇  Download Mapping Table (protected ZIP)",
+                label="⬇  Download Mapping Table (password-protected ZIP)",
                 data=mapping_zip,
-                file_name=f"mapping_{h2}_{ts_map}.zip",
+                file_name=f"mapping_{h2}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip",
                 mime="application/zip")
         else:
             st.markdown('<div class="alert alert-info"><span>ℹ️</span><div>Run anonymization first to generate the mapping table.</div></div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-        # ── Audit log ────────────────────────────────────────────
+        # ── Audit log ─────────────────────────────────────────────
         integrity = st.session_state.get("integrity_log", [])
-        with st.expander(f"📋 Full audit log — {len(integrity)} checksum(s)"):
+        with st.expander(f"View audit log  ({len(integrity)} checksum record(s))"):
             log_txt = "\n".join(st.session_state.get("log_lines", []))
-            st.markdown(f'<div class="logbox"><pre>{log_txt}</pre></div>',
-                        unsafe_allow_html=True)
-            if integrity:
-                st.markdown('<div style="font-size:.72rem;color:#5e7190;margin-top:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.8px;">SHA-256 integrity table (Fix #2 / W7)</div>', unsafe_allow_html=True)
-                for row in integrity[:25]:
-                    st.markdown(
-                        f'<div style="font-family:JetBrains Mono,monospace;font-size:.67rem;'
-                        f'color:#374a60;padding:.2rem 0;border-bottom:1px solid var(--border);">'
-                        f'{row["original"]} → {row["new"]} | in:{row["sha_in"]} out:{row["sha_out"]}'
-                        f'</div>', unsafe_allow_html=True)
-                if len(integrity) > 25:
-                    st.markdown(f'<div style="font-size:.72rem;color:#5e7190;padding:.3rem 0;">… and {len(integrity)-25} more rows in the downloaded mapping table.</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="logbox"><pre>{log_txt}</pre></div>', unsafe_allow_html=True)
             col_lg, _ = st.columns([1, 3])
             with col_lg:
                 st.download_button("⬇ Download full log (.txt)", data=log_txt.encode(),
@@ -1906,194 +2095,208 @@ elif cur == 4:
                                     mime="text/plain")
 
         st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("""
+        <div class="alert alert-info">
+          <span>ℹ️</span>
+          <div>Once you have downloaded both files above, proceed to the <b>Delete</b> step to
+          permanently remove the original dataset and receive a signed deletion certificate.</div>
+        </div>""", unsafe_allow_html=True)
 
-        # ── Step C: Delete original dataset + issue certificate ──
+        col_next, _ = st.columns([1, 3])
+        with col_next:
+            if st.button("Next: Delete →", type="primary", use_container_width=True):
+                go(5)
+
+# ══════════════════════════════════════════════════════════════════
+# PAGE 5 — DELETE & CERTIFICATE
+# ══════════════════════════════════════════════════════════════════
+elif cur == 5:
+    st.markdown("""
+    <div class="pg-wrap">
+      <div class="pg-eyebrow">Step 5</div>
+      <div class="pg-title">Delete Original Dataset</div>
+      <div class="pg-sub">Permanently remove the original images and receive an official deletion certificate for the hospital.</div>
+    </div>""", unsafe_allow_html=True)
+
+    if not st.session_state["run_complete"]:
+        st.markdown("""
+        <div class="alert alert-warn">
+          <span>⚠️</span>
+          <div>No anonymized data found. Complete <b>Anonymize</b> and <b>Download</b> first.</div>
+        </div>""", unsafe_allow_html=True)
+        if st.button("← Go to Anonymize"): go(3)
+    else:
+        op_name  = st.session_state.get("operator_name","—")
+        op_dept  = st.session_state.get("operator_dept","—")
+        op_email = st.session_state.get("operator_email","—")
+        op_phone = st.session_state.get("operator_phone","—")
+        ok_n     = sum(1 for r in st.session_state.get("results",[]) if r["status"] == "ok")
+        ts_now   = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        integrity = st.session_state.get("integrity_log", [])
+        n_checks  = len(integrity)
+
         if st.session_state.get("dataset_deleted"):
-            # ── Enriched certificate with all 5 fixes (Fix #1, #2, #3, #4, #5) ──
-            cert_ts = st.session_state.get("cert_ts", ts_now)
-            n_files = st.session_state.get("cert_nfiles", ok_n)
-            n_checks = len(integrity)
+            cert_ts    = st.session_state.get("cert_ts", ts_now)
+            n_files    = st.session_state.get("cert_nfiles", ok_n)
             groups_used = {v for v in st.session_state.get("patient_groups",{}).values() if v}
-            val_ran = bool(st.session_state.get("validation_results"))
+            val_ran    = bool(st.session_state.get("validation_results"))
 
             st.markdown(f"""
             <div class="proof-box">
               <div class="proof-title">🏛 Official Anonymization &amp; Deletion Certificate</div>
-
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;
                           background:#dcfce7;border-radius:8px;padding:.9rem 1rem;
-                          margin-bottom:1rem;font-size:.82rem;color:#14532d;">
+                          margin-bottom:1rem;font-size:.85rem;color:#14532d;line-height:1.7;">
                 <div><b>Operator:</b> {op_name}</div>
                 <div><b>Department:</b> {op_dept}</div>
+                <div><b>Email:</b> {op_email}</div>
+                <div><b>Phone:</b> {op_phone}</div>
                 <div><b>Hospital:</b> {st.session_state.get("hospital_key","—").split("—")[0].strip()}</div>
                 <div><b>Issued:</b> {cert_ts}</div>
                 <div><b>Files processed:</b> {n_files}</div>
-                <div><b>System:</b> MedAnon Pro · © Vedaste NYANDWI</div>
+                <div><b>System:</b> MedAnon Pro</div>
               </div>
-
-              <div style="font-size:.88rem;font-weight:700;color:#15803d;
-                          margin-bottom:.6rem;">This certifies that:</div>
-
-              <div class="proof-row">
-                <span>✅</span>
-                <span>All original patient images have been <b>permanently deleted from this session</b></span>
-              </div>
-              <div class="proof-row">
-                <span>✅</span>
-                <span>All anonymized image buffers have been <b>byte-zeroed in RAM</b>
-                  &nbsp;<em style="font-size:.75rem;">(Fix #5 · W11)</em></span>
-              </div>
-              <div class="proof-row">
-                <span>✅</span>
-                <span>All EXIF metadata stripped &amp; 27 DICOM PHI tags wiped from every file
-                  &nbsp;<em style="font-size:.75rem;">(W1 · W5)</em></span>
-              </div>
-              <div class="proof-row">
-                <span>✅</span>
-                <span>SHA-256 checksums recorded for <b>all {n_checks} file(s)</b>
-                  &nbsp;<em style="font-size:.75rem;">(Fix #2 · W7)</em></span>
-              </div>
-              <div class="proof-row">
-                <span>✅</span>
-                <span>Mapping table (original → anonymized ID) generated and delivered to operator
-                  &nbsp;<em style="font-size:.75rem;">(Fix #2)</em></span>
-              </div>
-              <div class="proof-row">
-                <span>{"✅" if val_ran else "⚪"}</span>
-                <span>Image content validation {"performed — files confirmed as medical images" if val_ran else "not run this session"}
-                  &nbsp;<em style="font-size:.75rem;">(Fix #3)</em></span>
-              </div>
-              <div class="proof-row">
-                <span>{"✅" if groups_used else "⚪"}</span>
-                <span>{"Patient grouping applied — " + str(len(groups_used)) + " group(s) defined for multi-scan patients" if groups_used else "Patient grouping not used — each file received a unique ID"}
-                  &nbsp;<em style="font-size:.75rem;">(Fix #4)</em></span>
-              </div>
-              <div class="proof-row">
-                <span>✅</span>
-                <span>Operator identity recorded: <b>{op_name}</b>, {op_dept}
-                  &nbsp;<em style="font-size:.75rem;">(Fix #1)</em></span>
-              </div>
-
-              <div style="margin-top:1rem;padding:.85rem 1rem;background:#bbf7d0;
-                          border-radius:8px;font-size:.82rem;color:#14532d;line-height:1.6;">
+              <div style="font-size:.9rem;font-weight:700;color:#15803d;margin-bottom:.6rem;">This certifies that:</div>
+              <div class="proof-row"><span>✅</span><span>All original patient images <b>permanently deleted from this session</b></span></div>
+              <div class="proof-row"><span>✅</span><span>All anonymized image buffers <b>byte-zeroed in RAM</b></span></div>
+              <div class="proof-row"><span>✅</span><span>All EXIF metadata stripped &amp; 27 DICOM PHI tags wiped</span></div>
+              <div class="proof-row"><span>✅</span><span>SHA-256 checksums recorded for <b>all {n_checks} file(s)</b></span></div>
+              <div class="proof-row"><span>✅</span><span>Mapping table delivered to operator</span></div>
+              <div class="proof-row"><span>{"✅" if val_ran else "⚪"}</span><span>Image content validation {"performed" if val_ran else "not run this session"}</span></div>
+              <div class="proof-row"><span>{"✅" if groups_used else "⚪"}</span><span>{"Patient grouping: " + str(len(groups_used)) + " group(s)" if groups_used else "Patient grouping: not used"}</span></div>
+              <div style="margin-top:1rem;padding:.85rem 1rem;background:#bbf7d0;border-radius:8px;
+                          font-size:.85rem;color:#14532d;line-height:1.6;">
                 <b>This certificate may be presented to the hospital radiology department,
                 data governance office, or IRB</b> as formal confirmation that the original
-                patient dataset has been deleted from this research platform and was not retained.
-                <br><br>
-                Signed: <b>{op_name}</b> · {op_dept} · {cert_ts}
+                patient dataset has been deleted from this research platform and was not retained.<br><br>
+                Signed: <b>{op_name}</b> · {op_dept}<br>
+                Contact: {op_email} · {op_phone}<br>
+                Date: {cert_ts}
               </div>
             </div>""", unsafe_allow_html=True)
 
-            # Printable certificate download
             cert_txt = f"""OFFICIAL ANONYMIZATION & DELETION CERTIFICATE
 ================================================
 Operator    : {op_name}
 Department  : {op_dept}
+Email       : {op_email}
+Phone       : {op_phone}
 Hospital    : {st.session_state.get("hospital_key","—").split("—")[0].strip()}
-System      : MedAnon Pro  ©  Vedaste NYANDWI
+System      : MedAnon Pro  (c) Vedaste NYANDWI
 Issued      : {cert_ts}
 Files       : {n_files} images anonymized
 Checksums   : {n_checks} SHA-256 records
 
 CERTIFICATIONS
 --------------
-[✓] Original patient images permanently deleted from session (Fix #5 · W11)
-[✓] All image buffers byte-zeroed in RAM  (W11)
-[✓] EXIF metadata stripped + 27 DICOM PHI tags wiped (W1 · W5)
-[✓] SHA-256 checksums logged for all {n_checks} file(s)  (Fix #2 · W7)
-[✓] Mapping table (original → anonymized ID) delivered to operator  (Fix #2)
-[{"✓" if val_ran else "—"}] Image content validation {"performed" if val_ran else "not run"}  (Fix #3)
-[{"✓" if groups_used else "—"}] Patient grouping: {"applied (" + str(len(groups_used)) + " groups)" if groups_used else "not used"}  (Fix #4)
-[✓] Operator identity recorded  (Fix #1)
+[OK] Original patient images permanently deleted
+[OK] All image buffers byte-zeroed in RAM
+[OK] EXIF metadata stripped + 27 DICOM PHI tags wiped
+[OK] SHA-256 checksums logged for all {n_checks} file(s)
+[OK] Mapping table delivered to operator
+[{"OK" if val_ran else "--"}] Image content validation {"performed" if val_ran else "not run"}
+[{"OK" if groups_used else "--"}] Patient grouping: {"applied (" + str(len(groups_used)) + " groups)" if groups_used else "not used"}
 
 STATEMENT
 ---------
-This certifies that the original patient dataset has been deleted from
-this research system and was not retained.
+The original patient dataset has been deleted from this research
+system and was not retained.
 
 Signed: {op_name}
         {op_dept}
+        {op_email} | {op_phone}
         {cert_ts}
 """
-            col_cert, _ = st.columns([1, 3])
+            col_cert, col_ns, _ = st.columns([1.2, 1.2, 2])
             with col_cert:
-                st.download_button(
-                    "⬇  Download Certificate (.txt)",
+                st.download_button("⬇  Download Certificate (.txt)",
                     data=cert_txt.encode(),
                     file_name=f"deletion_certificate_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
                     mime="text/plain")
+            with col_ns:
+                if st.button("🔄 New Session", use_container_width=True):
+                    for k in list(_D.keys()): st.session_state[k] = _D[k]
+                    for k in ["_zip_upload","_files_upload"]: st.session_state.pop(k, None)
+                    st.rerun()
 
         else:
-            st.markdown("""
-            <div class="del-box">
-              <div class="del-title">🗑 Step 5 — Delete Original Dataset &amp; Issue Certificate</div>
-              <div style="font-size:.85rem;color:#991b1b;margin-bottom:.85rem;">
-                Permanently erases all uploaded original images from this session and issues
-                a signed <b>Deletion Certificate</b> for the hospital department.
-              </div>
-              <div style="font-size:.82rem;color:#7f1d1d;line-height:2.1;">
-                ✓ Uploaded files cleared from server memory &nbsp;<em>(Fix #5 · W11)</em><br>
-                ✓ All image buffers byte-zeroed &nbsp;<em>(W11)</em><br>
-                ✓ Certificate includes operator name &amp; department &nbsp;<em>(Fix #1)</em><br>
-                ✓ Certificate confirms mapping table delivery &nbsp;<em>(Fix #2)</em><br>
-                ✓ Certificate records validation &amp; grouping status &nbsp;<em>(Fix #3 · Fix #4)</em>
-              </div>
-            </div>""", unsafe_allow_html=True)
+            # ── Verify downloads done ─────────────────────────────
+            st.markdown(f"""
+            <div class="card">
+              <div class="card-header"><div class="card-icon ci-amber">✅</div>
+              <div class="card-title">Before You Delete: Checklist</div></div>
+              <div style="font-size:.88rem;color:#374a60;line-height:2.1;">
+                Confirm you have completed the following:
+              </div>""", unsafe_allow_html=True)
 
-            if not op_name or op_name == "—":
+            chk1 = st.checkbox("I have downloaded the **anonymized ZIP** file", key="chk_zip")
+            chk2 = st.checkbox("I have downloaded the **mapping table** ZIP", key="chk_map")
+            chk3 = st.checkbox("I have saved both files in a **secure location**", key="chk_saved")
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            # ── Operator identity confirmation ────────────────────
+            _op_ok = all([op_name != "—", op_dept != "—", op_email != "—", op_phone != "—"])
+            if not _op_ok:
                 st.markdown("""
                 <div class="alert alert-danger">
                   <span>🚫</span>
-                  <div>Operator name is missing. Go back to <b>Configure</b> and fill in your name
-                  and department before deleting — the certificate will be invalid without it.</div>
+                  <div>Operator identity is incomplete. Go back to <b>Configure</b> and fill in
+                  your name, department, email and phone before deleting.</div>
                 </div>""", unsafe_allow_html=True)
 
+            st.markdown(f"""
+            <div class="del-box" style="margin-top:1rem;">
+              <div class="del-title">🗑 Permanent Deletion</div>
+              <div style="font-size:.88rem;color:#991b1b;margin-bottom:.85rem;line-height:1.65;">
+                This will <b>permanently erase</b> all uploaded original images from this session
+                and issue a signed <b>Deletion Certificate</b> for the hospital department.
+              </div>
+              <div style="font-size:.85rem;color:#7f1d1d;line-height:2;">
+                ✓ Uploaded files cleared from server memory<br>
+                ✓ All image buffers byte-zeroed in RAM<br>
+                ✓ Certificate issued with operator signature, email &amp; phone<br>
+                ✓ Certificate includes timestamp and file counts
+              </div>
+            </div>""", unsafe_allow_html=True)
+
             confirmed = st.checkbox(
-                "✅  I have downloaded both the anonymized ZIP and the mapping table. "
-                "I want to permanently delete the original dataset.",
+                "I confirm I have downloaded all files and I want to permanently delete the original dataset.",
                 key="del_confirm")
 
             col_del, _ = st.columns([1, 3])
             with col_del:
                 del_btn = st.button(
                     "🗑  Delete & Issue Certificate",
-                    disabled=(not confirmed or not op_name or op_name == "—"),
+                    disabled=(not confirmed or not all([chk1, chk2, chk3]) or not _op_ok),
                     use_container_width=True)
 
             if del_btn and confirmed:
                 ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                for k in ["_zip_upload", "_files_upload"]:
-                    st.session_state.pop(k, None)
+                for k in ["_zip_upload","_files_upload"]: st.session_state.pop(k, None)
                 if st.session_state.get("results"):
                     for r in st.session_state["results"]:
                         if r.get("clean_bytes"):
                             ba = bytearray(r["clean_bytes"]); _wipe(ba)
-                st.session_state["results"]        = []
+                st.session_state["results"]         = []
                 st.session_state["dataset_deleted"] = True
                 st.session_state["cert_ts"]         = ts
                 st.session_state["cert_nfiles"]     = ok_n
-                log = st.session_state.get("log_lines", [])
+                log = st.session_state.get("log_lines",[])
                 log += [
-                    f"  🗑  SESSION DATA DELETED   [{ts}]  operator:{op_name}",
-                    f"  🗑  ALL BUFFERS ZEROED      [{ts}]",
-                    f"  🏛  CERTIFICATE ISSUED      [{ts}]  to:{op_name} / {op_dept}",
+                    f"  DELETED   [{ts}]  operator:{op_name}",
+                    f"  ZEROED    [{ts}]  all buffers",
+                    f"  CERT      [{ts}]  issued to {op_name} / {op_dept}",
                 ]
                 st.session_state["log_lines"] = log
-                logger.warning("Certificate issued at %s by %s / %s", ts, op_name, op_dept)
-                st.rerun()
-
-        st.markdown("<br><hr style='border-color:var(--border);'>", unsafe_allow_html=True)
-        col_new, _ = st.columns([1, 3])
-        with col_new:
-            if st.button("🔄  Start a new session", use_container_width=True):
-                for k in list(_D.keys()): st.session_state[k] = _D[k]
-                for k in ["_zip_upload", "_files_upload"]: st.session_state.pop(k, None)
+                logger.warning("Dataset deleted at %s by %s", ts, op_name)
                 st.rerun()
 
 # ══════════════════════════════════════════════════════════════════
-# PAGE 5 — FEEDBACK
+# PAGE 6 — FEEDBACK
 # ══════════════════════════════════════════════════════════════════
-elif cur == 5:
+# PAGE 6 — FEEDBACK
+# ══════════════════════════════════════════════════════════════════
+elif cur == 6:
     st.markdown("""
     <div class="pg-wrap">
       <div class="pg-eyebrow">Community</div>
@@ -2180,7 +2383,7 @@ elif cur == 5:
 
     f_comment = st.text_area(
         "Your comment",
-        placeholder="Describe your experience — what worked well, what could be improved, how you used the system...",
+        placeholder="Describe your experience: what worked well, what could be improved, how you used the system...",
         height=110,
         key="fb_comment",
         label_visibility="visible",
