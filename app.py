@@ -344,6 +344,9 @@ _D = dict(
     mapping_csv=None,
     cert_ts="",
     cert_nfiles=0,
+    show_add_hospital=False,
+    show_add_programme=False,
+    show_audit_log=False,
     feedback_reviews=[
         {
             "name": "Dr. Mukeshimana A.",
@@ -824,75 +827,81 @@ for _idx, _icon, _lbl in _pages:
         f'</a>'
     )
 
+
+
 st.markdown(f"""
 <style>
-/* ─────────────────────────────────────────
-   MedAnon Navbar — professional, single block
-───────────────────────────────────────── */
+/* ── MedAnon Navbar ── */
 .mna-bar {{
   display:       flex;
-  align-items:   stretch;
+  align-items:   center;
   background:    #0d1b2a;
   border-bottom: 2.5px solid #0ea5a0;
-  box-shadow:    0 4px 20px rgba(13,27,42,.40);
+  box-shadow:    0 3px 16px rgba(13,27,42,.45);
   margin:        -1.8rem -3.5rem 2rem -3.5rem;
   padding:       0;
   position:      sticky;
   top:           0;
   z-index:       9999;
   height:        54px;
+  max-height:    54px;
+  overflow:      hidden;
   font-family:   'Lexend', sans-serif;
+  box-sizing:    border-box;
 }}
 /* Brand */
 .mna-brand {{
   display:         flex;
   align-items:     center;
-  gap:             .55rem;
-  padding:         0 1.4rem 0 1.1rem;
+  gap:             .5rem;
+  padding:         0 1.1rem 0 1rem;
   border-right:    1px solid #1e2d42;
   flex-shrink:     0;
-  min-width:       160px;
+  width:           170px;
   height:          54px;
   text-decoration: none !important;
+  box-sizing:      border-box;
 }}
 .mna-dot {{
-  width:         32px;
-  height:        32px;
-  background:    #0ea5a0;
-  border-radius: 8px;
-  display:       flex;
-  align-items:   center;
+  width:           30px;
+  height:          30px;
+  background:      #0ea5a0;
+  border-radius:   7px;
+  display:         flex;
+  align-items:     center;
   justify-content: center;
-  font-size:     .95rem;
-  flex-shrink:   0;
-  box-shadow:    0 2px 8px rgba(14,165,160,.4);
+  font-size:       .85rem;
+  flex-shrink:     0;
+  box-shadow:      0 2px 6px rgba(14,165,160,.4);
 }}
 .mna-name {{
-  font-size:      .92rem;
+  font-size:      .88rem;
   font-weight:    800;
   color:          #f1f5f9 !important;
-  letter-spacing: -.25px;
+  letter-spacing: -.2px;
   line-height:    1.2;
+  white-space:    nowrap;
 }}
 .mna-sub {{
-  font-size:   .58rem;
-  color:       #3a566e !important;
-  margin-top:  .06rem;
-  font-weight: 400;
+  font-size:  .56rem;
+  color:      #3a566e !important;
+  margin-top: .04rem;
+  white-space: nowrap;
 }}
-/* Nav links container */
+/* Nav links */
 .mna-links {{
   display:     flex;
   align-items: stretch;
   flex:        1;
+  overflow:    hidden;
+  height:      54px;
 }}
-/* Individual nav link */
 .mna-link {{
   display:         flex;
   align-items:     center;
-  gap:             .38rem;
-  padding:         0 .95rem;
-  font-size:       .84rem;
+  gap:             .3rem;
+  padding:         0 .85rem;
+  font-size:       .83rem;
   font-weight:     500;
   color:           #7ea8c8 !important;
   text-decoration: none !important;
@@ -900,13 +909,12 @@ st.markdown(f"""
   white-space:     nowrap;
   height:          54px;
   transition:      background .12s, color .12s, border-color .12s;
-  letter-spacing:  0;
-  line-height:     1;
+  box-sizing:      border-box;
 }}
 .mna-link:visited,
-.mna-link:focus  {{ text-decoration: none !important; outline: none; }}
-.mna-icon {{ font-size: .88rem; flex-shrink: 0; }}
-.mna-lbl  {{ font-size: .84rem; }}
+.mna-link:focus  {{ text-decoration: none !important; color: #7ea8c8 !important; outline: none; }}
+.mna-icon {{ font-size: .82rem; line-height: 1; flex-shrink: 0; }}
+.mna-lbl  {{ font-size: .83rem; line-height: 1; }}
 .mna-link:hover {{
   background:          #162032;
   color:               #d4e8f8 !important;
@@ -922,58 +930,42 @@ st.markdown(f"""
 }}
 /* Config pill */
 .mna-pill {{
-  display:      flex;
-  align-items:  center;
-  padding:      0 .85rem;
-  border-left:  1px solid #1e2d42;
-  flex-shrink:  0;
+  display:     flex;
+  align-items: center;
+  padding:     0 .75rem;
+  border-left: 1px solid #1e2d42;
+  flex-shrink: 0;
+  height:      54px;
 }}
 .mna-pill-inner {{
   font-family:   'JetBrains Mono', monospace;
-  font-size:     .62rem;
+  font-size:     .59rem;
   line-height:   1.65;
   color:         #5a7a96 !important;
   background:    #162032;
   border-radius: 5px;
-  padding:       .22rem .6rem;
+  padding:       .18rem .5rem;
   white-space:   nowrap;
   border:        1px solid #1e2d42;
 }}
 .mna-pill-inner span {{ color: #0ea5a0 !important; font-weight: 600; }}
-/* Right info */
+/* Right info — fixed width so it never overflows */
 .mna-right {{
-  display:      flex;
-  align-items:  center;
-  padding:      0 1.1rem;
-  border-left:  1px solid #1e2d42;
-  flex-shrink:  0;
-  font-size:    .62rem;
-  line-height:  1.6;
-  color:        #5a7a96 !important;
-  text-align:   right;
-  white-space:  nowrap;
+  display:     flex;
+  align-items: center;
+  padding:     0 .9rem;
+  border-left: 1px solid #1e2d42;
+  flex-shrink: 0;
+  width:       148px;
+  height:      54px;
+  font-size:   .58rem;
+  line-height: 1.6;
+  color:       #5a7a96 !important;
+  text-align:  right;
+  overflow:    hidden;
+  box-sizing:  border-box;
 }}
 .mna-right b {{ color: #7ea8c8 !important; font-weight: 600; }}
-/* ── Reset button ── */
-.mna-reset-wrap .stButton > button {{
-  background:    rgba(14,165,160,.1)  !important;
-  border:        1px solid rgba(14,165,160,.3) !important;
-  border-radius: 6px                  !important;
-  color:         #5eead4              !important;
-  font-size:     .78rem               !important;
-  font-weight:   600                  !important;
-  padding:       .3rem .85rem         !important;
-  margin:        0                    !important;
-  height:        auto                 !important;
-  min-height:    unset                !important;
-  white-space:   nowrap               !important;
-  letter-spacing: 0                   !important;
-}}
-.mna-reset-wrap .stButton > button:hover {{
-  background:    rgba(14,165,160,.22) !important;
-  transform:     none                 !important;
-  opacity:       1                    !important;
-}}
 </style>
 
 <div class="mna-bar">
@@ -999,161 +991,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# Reset session button — placed neatly below the bar
-_nr1, _nr2, _nr3 = st.columns([0.001, 1.2, 18])
-with _nr2:
-    st.markdown('<div class="mna-reset-wrap">', unsafe_allow_html=True)
-    if st.button("↺ Reset", key="nav_reset", help="Start a new session"):
-        for k in list(_D.keys()): st.session_state[k] = _D[k]
-        for k in ["_zip_upload","_files_upload"]: st.session_state.pop(k, None)
-        st.query_params.clear()
-        st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown('<div style="margin-top:.25rem;"></div>', unsafe_allow_html=True)
-
-
-st.markdown(f"""
-<style>
-/* ─────────────────────────────────────────
-   MedAnon unified navbar — single block
-───────────────────────────────────────── */
-.mna-bar {{
-  display:         flex;
-  align-items:     center;
-  background:      #0d1b2a;
-  border-bottom:   2.5px solid #0ea5a0;
-  box-shadow:      0 3px 18px rgba(13,27,42,.35);
-  margin:          -1.8rem -3.5rem 1.8rem -3.5rem;
-  padding:         0;
-  position:        sticky;
-  top:             0;
-  z-index:         9999;
-  min-height:      56px;
-  font-family:     'Lexend', sans-serif;
-}}
-/* Brand */
-.mna-brand {{
-  display:     flex;
-  align-items: center;
-  gap:         .55rem;
-  padding:     0 1.2rem 0 1rem;
-  border-right:1px solid #1e2d42;
-  flex-shrink: 0;
-  min-width:   155px;
-  min-height:  56px;
-  text-decoration: none;
-}}
-.mna-dot {{
-  width:32px; height:32px; background:#0ea5a0;
-  border-radius:7px; display:flex; align-items:center;
-  justify-content:center; font-size:.9rem; flex-shrink:0;
-  box-shadow:0 2px 8px rgba(14,165,160,.4);
-}}
-.mna-name {{ font-size:.9rem; font-weight:800; color:#f1f5f9; letter-spacing:-.2px; line-height:1.2; }}
-.mna-sub  {{ font-size:.58rem; color:#3d5068; margin-top:.05rem; }}
-/* Nav links */
-.mna-links {{
-  display:     flex;
-  align-items: stretch;
-  flex:        1;
-}}
-.mna-link {{
-  display:        flex;
-  align-items:    center;
-  padding:        0 1rem;
-  font-size:      .88rem;
-  font-weight:    500;
-  color:          #8ab4d4;
-  text-decoration:none;
-  border-bottom:  3px solid transparent;
-  white-space:    nowrap;
-  transition:     background .13s, color .13s, border-color .13s;
-  min-height:     56px;
-}}
-.mna-link:hover {{
-  background:         #162032;
-  color:              #e2e8f0;
-  border-bottom-color:#3d5068;
-  text-decoration:    none;
-}}
-.mna-link.mna-active {{
-  background:         #1e2d42;
-  color:              #ffffff;
-  font-weight:        700;
-  border-bottom-color:#0ea5a0;
-}}
-/* Config pill */
-.mna-pill {{
-  display:      flex;
-  align-items:  center;
-  padding:      0 .8rem;
-  border-left:  1px solid #1e2d42;
-  flex-shrink:  0;
-}}
-.mna-pill-inner {{
-  font-family:  'JetBrains Mono', monospace;
-  font-size:    .6rem;
-  line-height:  1.7;
-  color:        #5a7a96;
-  background:   #162032;
-  border-radius:5px;
-  padding:      .2rem .55rem;
-  white-space:  nowrap;
-}}
-.mna-pill-inner span {{ color:#0ea5a0; }}
-/* Right info */
-.mna-right {{
-  display:     flex;
-  align-items: center;
-  padding:     0 1rem;
-  border-left: 1px solid #1e2d42;
-  flex-shrink: 0;
-  font-size:   .6rem;
-  line-height: 1.65;
-  color:       #5a7a96;
-  text-align:  right;
-}}
-.mna-right b {{ color:#7ea8c8; }}
-/* ── Reset button ── */
-.mna-reset-wrap .stButton > button {{
-  background:   rgba(14,165,160,.1) !important;
-  border:       1px solid rgba(14,165,160,.25) !important;
-  border-radius:6px !important;
-  color:        #5eead4 !important;
-  font-size:    .78rem !important;
-  font-weight:  600 !important;
-  padding:      .28rem .75rem !important;
-  margin:       0 !important;
-  height:       auto !important;
-  min-height:   unset !important;
-  white-space:  nowrap !important;
-}}
-</style>
-
-<div class="mna-bar">
-  <div class="mna-brand">
-    <div class="mna-dot">🛡</div>
-    <div>
-      <div class="mna-name">MedAnon Pro</div>
-      <div class="mna-sub">© Vedaste NYANDWI</div>
-    </div>
-  </div>
-  <div class="mna-links">
-    {_nav_html}
-  </div>
-  <div class="mna-pill">
-    <div class="mna-pill-inner">
-      {_h_code} · {_t_code}<br>
-      <span>{_p_code}</span>
-    </div>
-  </div>
-  <div class="mna-right">
-    <b>University of Rwanda</b><br>
-    CBE · ACE-DS · Data Mining
-  </div>
-</div>
-""", unsafe_allow_html=True)
 
 
 
@@ -1341,13 +1179,26 @@ elif cur == 1:
     st.markdown(f'<div style="margin-top:.5rem;font-size:.8rem;color:#5e7190;">Internal code: <span style="font-family:\'JetBrains Mono\',monospace;color:var(--teal-dk);font-weight:600;">{h_code}</span> (hidden from output filenames)</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    with st.expander("Register a new hospital", expanded=False):
+
+    # ── Register a new hospital toggle ──────────────────────────
+    _show_h = st.session_state.get("show_add_hospital", False)
+    _lbl_h  = "Hide" if _show_h else "+ Register a new hospital"
+    if st.button(_lbl_h, key="toggle_add_hospital"):
+        st.session_state["show_add_hospital"] = not _show_h
+        st.rerun()
+
+    if st.session_state.get("show_add_hospital"):
+        st.markdown("""
+        <div class="card" style="border-left:3px solid var(--teal);margin-top:.25rem;">
+          <div class="card-header"><div class="card-icon ci-teal">🏥</div>
+          <div class="card-title">Register a New Hospital</div></div>""",
+        unsafe_allow_html=True)
         col_a, col_b = st.columns([3, 1])
         with col_a:
             new_hname = st.text_input("Hospital full name", placeholder="e.g. Rwanda Military Hospital", key="nh_name")
         with col_b:
             new_hcode = st.text_input("Code", value=f"H{str(len(all_hospitals)+1).zfill(2)}", max_chars=5, key="nh_code")
-        if st.button("Add hospital", use_container_width=True, type="primary"):
+        if st.button("Add hospital", use_container_width=True, type="primary", key="btn_add_hospital"):
             n2, c2 = new_hname.strip(), new_hcode.strip().upper()
             if not n2: st.error("Enter a hospital name.")
             elif c2 in set(all_hospitals.values()): st.error(f"Code '{c2}' already in use.")
@@ -1355,12 +1206,14 @@ elif cur == 1:
             else:
                 st.session_state["custom_hospitals"][n2] = c2
                 st.session_state["hospital_key"] = n2
+                st.session_state["show_add_hospital"] = False
                 st.rerun()
         for hn, hc in list(st.session_state["custom_hospitals"].items()):
             c1, c2c = st.columns([5, 1])
-            c1.markdown(f'<span style="font-size:.82rem;color:#374a60;"><b style="color:var(--teal-dk);">{hc}</b> — {hn}</span>', unsafe_allow_html=True)
-            if c2c.button("✕", key=f"del_{hc}"):
+            c1.markdown(f'<span style="font-size:.85rem;color:#374a60;"><b style="color:var(--teal-dk);">{hc}</b>  {hn}</span>', unsafe_allow_html=True)
+            if c2c.button("Remove", key=f"del_{hc}"):
                 del st.session_state["custom_hospitals"][hn]; st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
 
     # ── Academic Programme: 3-level cascade ─────────────────────
     st.markdown("""
@@ -1456,8 +1309,21 @@ elif cur == 1:
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # ── Add custom university / college / programme ───────────────
-    with st.expander("Add custom university, college or programme", expanded=False):
+
+    # ── Add custom university / college / programme toggle ────────
+    _show_p = st.session_state.get("show_add_programme", False)
+    _lbl_p  = "Hide" if _show_p else "+ Add custom university, college or programme"
+    if st.button(_lbl_p, key="toggle_add_prog"):
+        st.session_state["show_add_programme"] = not _show_p
+        st.rerun()
+
+    if st.session_state.get("show_add_programme"):
+        st.markdown("""
+        <div class="card" style="border-left:3px solid var(--blue);margin-top:.25rem;">
+          <div class="card-header"><div class="card-icon ci-blue">🎓</div>
+          <div class="card-title">Add Custom Entry</div></div>""",
+        unsafe_allow_html=True)
+
         add_tab = st.selectbox("What to add:", ["University", "College", "Programme"],
                                key="add_tab_sel", label_visibility="visible")
 
@@ -1465,7 +1331,7 @@ elif cur == 1:
             ca, cb = st.columns([3, 1])
             with ca: new_u = st.text_input("University name", placeholder="e.g. INES-Ruhengeri", key="new_u_name")
             with cb: new_u_code = st.text_input("Code", max_chars=6, placeholder="INES", key="new_u_code")
-            if st.button("Add university", use_container_width=True, key="btn_add_u"):
+            if st.button("Add university", use_container_width=True, type="primary", key="btn_add_u"):
                 n, c = new_u.strip(), new_u_code.strip().upper()
                 if not n: st.error("Enter a university name.")
                 elif not c: st.error("Enter a code.")
@@ -1473,14 +1339,15 @@ elif cur == 1:
                 else:
                     st.session_state["custom_universities"][n] = {"code": c, "colleges": {}}
                     st.session_state["sel_university"] = n
+                    st.session_state["show_add_programme"] = False
                     st.rerun()
 
         elif add_tab == "College":
             ca, cb = st.columns([3, 1])
             with ca: new_c = st.text_input("College / School name", placeholder="e.g. School of Public Health", key="new_c_name")
             with cb: new_c_code = st.text_input("Code", max_chars=8, placeholder="SPH", key="new_c_code")
-            st.markdown(f'<div style="font-size:.78rem;color:#5e7190;margin-bottom:.3rem;">Adding to: <b>{sel_uni}</b></div>', unsafe_allow_html=True)
-            if st.button("Add college", use_container_width=True, key="btn_add_c"):
+            st.markdown(f'<div style="font-size:.82rem;color:#5e7190;margin-bottom:.4rem;">Adding to: <b style="color:var(--text2);">{sel_uni}</b></div>', unsafe_allow_html=True)
+            if st.button("Add college", use_container_width=True, type="primary", key="btn_add_c"):
                 n, c = new_c.strip(), new_c_code.strip().upper()
                 if not n: st.error("Enter a college name.")
                 elif not c: st.error("Enter a code.")
@@ -1488,14 +1355,15 @@ elif cur == 1:
                     key = f"{sel_uni}|{n}"
                     st.session_state["custom_colleges"][key] = {"code": c, "programmes": {}}
                     st.session_state["sel_college"] = n
+                    st.session_state["show_add_programme"] = False
                     st.rerun()
 
         else:  # Programme
             ca, cb = st.columns([3, 1])
             with ca: new_p = st.text_input("Programme name", placeholder="e.g. Health Informatics", key="new_p_name")
             with cb: new_p_code = st.text_input("Code", max_chars=8, placeholder="HI", key="new_p_code")
-            st.markdown(f'<div style="font-size:.78rem;color:#5e7190;margin-bottom:.3rem;">Adding to: <b>{sel_uni}</b> → <b>{sel_col}</b></div>', unsafe_allow_html=True)
-            if st.button("Add programme", use_container_width=True, key="btn_add_p"):
+            st.markdown(f'<div style="font-size:.82rem;color:#5e7190;margin-bottom:.4rem;">Adding to: <b style="color:var(--text2);">{sel_uni}</b> / <b style="color:var(--text2);">{sel_col}</b></div>', unsafe_allow_html=True)
+            if st.button("Add programme", use_container_width=True, type="primary", key="btn_add_p"):
                 n, c = new_p.strip(), new_p_code.strip().upper()
                 if not n: st.error("Enter a programme name.")
                 elif not c: st.error("Enter a code.")
@@ -1503,7 +1371,10 @@ elif cur == 1:
                     key = f"{sel_uni}|{sel_col}|{n}"
                     st.session_state["custom_programmes"][key] = c
                     st.session_state["sel_programme"] = n
+                    st.session_state["show_add_programme"] = False
                     st.rerun()
+
+        st.markdown('</div>', unsafe_allow_html=True)
 
     # Image type card
     st.markdown('<div class="card"><div class="card-header"><div class="card-icon ci-teal">🩻</div><div class="card-title">Image Modality</div></div>', unsafe_allow_html=True)
@@ -2083,14 +1954,21 @@ elif cur == 4:
             st.markdown('<div class="alert alert-info"><span>ℹ️</span><div>Run anonymization first to generate the mapping table.</div></div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-        # ── Audit log ─────────────────────────────────────────────
+
+        # ── Audit log toggle ──────────────────────────────────────
         integrity = st.session_state.get("integrity_log", [])
-        with st.expander(f"View audit log  ({len(integrity)} checksum record(s))"):
+        _show_log = st.session_state.get("show_audit_log", False)
+        _lbl_log  = "Hide audit log" if _show_log else f"View audit log  ({len(integrity)} checksum record(s))"
+        if st.button(_lbl_log, key="toggle_audit_log"):
+            st.session_state["show_audit_log"] = not _show_log
+            st.rerun()
+
+        if st.session_state.get("show_audit_log"):
             log_txt = "\n".join(st.session_state.get("log_lines", []))
             st.markdown(f'<div class="logbox"><pre>{log_txt}</pre></div>', unsafe_allow_html=True)
             col_lg, _ = st.columns([1, 3])
             with col_lg:
-                st.download_button("⬇ Download full log (.txt)", data=log_txt.encode(),
+                st.download_button("Download full log (.txt)", data=log_txt.encode(),
                                     file_name=f"anon_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
                                     mime="text/plain")
 
