@@ -13,6 +13,14 @@ from pathlib import Path
 from datetime import datetime
 from PIL import Image
 
+# ── Enforce upload size limit (700 MB) via runtime config ──────────
+from streamlit import config as _stconfig
+try:
+    _stconfig.set_option("server.maxUploadSize", 700)
+    _stconfig.set_option("server.maxMessageSize", 700)
+except Exception:
+    pass
+
 DICOM_AVAILABLE = False
 try:
     import pydicom
