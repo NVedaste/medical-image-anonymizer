@@ -831,90 +831,118 @@ for _idx, _icon, _lbl in _pages:
 
 st.markdown(f"""
 <style>
-/* ── MedAnon Navbar ── */
-.mna-bar {{
-  display:       flex;
-  align-items:   center;
+/* ══════════════════════════════════════════
+   MedAnon Two-Row Navbar
+   Row 1 (42px): brand left, system info right
+   Row 2 (46px): nav tabs full width
+══════════════════════════════════════════ */
+.mna-header {{
   background:    #0d1b2a;
-  border-bottom: 2.5px solid #0ea5a0;
-  box-shadow:    0 3px 16px rgba(13,27,42,.45);
-  margin:        -1.8rem -3.5rem 2rem -3.5rem;
+  margin:        -1.8rem -3.5rem 0 -3.5rem;
   padding:       0;
   position:      sticky;
   top:           0;
   z-index:       9999;
-  height:        54px;
-  max-height:    54px;
-  overflow:      hidden;
   font-family:   'Lexend', sans-serif;
-  box-sizing:    border-box;
+  box-shadow:    0 3px 18px rgba(13,27,42,.45);
 }}
-/* Brand */
-.mna-brand {{
+
+/* ── Top row ── */
+.mna-top {{
   display:         flex;
   align-items:     center;
-  gap:             .5rem;
-  padding:         0 1.1rem 0 1rem;
-  border-right:    1px solid #1e2d42;
-  flex-shrink:     0;
-  width:           170px;
-  height:          54px;
+  justify-content: space-between;
+  height:          42px;
+  padding:         0 1.2rem;
+  border-bottom:   1px solid #1a2d40;
+}}
+.mna-brand {{
+  display:     flex;
+  align-items: center;
+  gap:         .5rem;
   text-decoration: none !important;
-  box-sizing:      border-box;
 }}
 .mna-dot {{
-  width:           30px;
-  height:          30px;
+  width:           28px;
+  height:          28px;
   background:      #0ea5a0;
-  border-radius:   7px;
+  border-radius:   6px;
   display:         flex;
   align-items:     center;
   justify-content: center;
-  font-size:       .85rem;
+  font-size:       .82rem;
   flex-shrink:     0;
   box-shadow:      0 2px 6px rgba(14,165,160,.4);
 }}
 .mna-name {{
-  font-size:      .88rem;
+  font-size:      .9rem;
   font-weight:    800;
   color:          #f1f5f9 !important;
   letter-spacing: -.2px;
-  line-height:    1.2;
+  line-height:    1;
   white-space:    nowrap;
 }}
 .mna-sub {{
-  font-size:  .56rem;
-  color:      #3a566e !important;
-  margin-top: .04rem;
+  font-size:   .58rem;
+  color:       #3a566e !important;
+  margin-top:  .06rem;
   white-space: nowrap;
 }}
-/* Nav links */
-.mna-links {{
+.mna-sysinfo {{
   display:     flex;
-  align-items: stretch;
-  flex:        1;
-  overflow:    hidden;
-  height:      54px;
+  align-items: center;
+  gap:         1.2rem;
+}}
+.mna-pill-inner {{
+  font-family:   'JetBrains Mono', monospace;
+  font-size:     .62rem;
+  line-height:   1.65;
+  color:         #5a7a96 !important;
+  background:    #162032;
+  border-radius: 5px;
+  padding:       .18rem .55rem;
+  white-space:   nowrap;
+  border:        1px solid #1e2d42;
+}}
+.mna-pill-inner span {{ color: #0ea5a0 !important; font-weight: 600; }}
+.mna-inst {{
+  font-size:   .62rem;
+  line-height: 1.55;
+  color:       #4a6680 !important;
+  text-align:  right;
+  white-space: nowrap;
+}}
+.mna-inst b {{ color: #6a92b0 !important; font-weight: 600; }}
+
+/* ── Bottom row — nav tabs ── */
+.mna-tabs {{
+  display:       flex;
+  align-items:   stretch;
+  height:        46px;
+  border-bottom: 2.5px solid #0ea5a0;
+  overflow:      hidden;
 }}
 .mna-link {{
   display:         flex;
   align-items:     center;
-  gap:             .3rem;
-  padding:         0 .85rem;
-  font-size:       .83rem;
+  justify-content: center;
+  gap:             .32rem;
+  flex:            1;
+  font-size:       .84rem;
   font-weight:     500;
   color:           #7ea8c8 !important;
   text-decoration: none !important;
   border-bottom:   3px solid transparent;
   white-space:     nowrap;
-  height:          54px;
+  height:          46px;
   transition:      background .12s, color .12s, border-color .12s;
   box-sizing:      border-box;
+  padding:         0 .4rem;
 }}
 .mna-link:visited,
-.mna-link:focus  {{ text-decoration: none !important; color: #7ea8c8 !important; outline: none; }}
-.mna-icon {{ font-size: .82rem; line-height: 1; flex-shrink: 0; }}
-.mna-lbl  {{ font-size: .83rem; line-height: 1; }}
+.mna-link:focus {{ text-decoration: none !important; color: #7ea8c8 !important; outline: none; }}
+.mna-icon {{ font-size: .82rem; flex-shrink: 0; line-height: 1; }}
+.mna-lbl  {{ font-size: .84rem; line-height: 1; }}
 .mna-link:hover {{
   background:          #162032;
   color:               #d4e8f8 !important;
@@ -928,68 +956,38 @@ st.markdown(f"""
   border-bottom-color: #0ea5a0;
   text-decoration:     none !important;
 }}
-/* Config pill */
-.mna-pill {{
-  display:     flex;
-  align-items: center;
-  padding:     0 .75rem;
-  border-left: 1px solid #1e2d42;
-  flex-shrink: 0;
-  height:      54px;
-}}
-.mna-pill-inner {{
-  font-family:   'JetBrains Mono', monospace;
-  font-size:     .59rem;
-  line-height:   1.65;
-  color:         #5a7a96 !important;
-  background:    #162032;
-  border-radius: 5px;
-  padding:       .18rem .5rem;
-  white-space:   nowrap;
-  border:        1px solid #1e2d42;
-}}
-.mna-pill-inner span {{ color: #0ea5a0 !important; font-weight: 600; }}
-/* Right info — fixed width so it never overflows */
-.mna-right {{
-  display:     flex;
-  align-items: center;
-  padding:     0 .9rem;
-  border-left: 1px solid #1e2d42;
-  flex-shrink: 0;
-  width:       148px;
-  height:      54px;
-  font-size:   .58rem;
-  line-height: 1.6;
-  color:       #5a7a96 !important;
-  text-align:  right;
-  overflow:    hidden;
-  box-sizing:  border-box;
-}}
-.mna-right b {{ color: #7ea8c8 !important; font-weight: 600; }}
 </style>
 
-<div class="mna-bar">
-  <div class="mna-brand">
-    <div class="mna-dot">🛡</div>
-    <div>
-      <div class="mna-name">MedAnon Pro</div>
-      <div class="mna-sub">© Vedaste NYANDWI</div>
+<div class="mna-header">
+
+  <div class="mna-top">
+    <div class="mna-brand">
+      <div class="mna-dot">🛡</div>
+      <div>
+        <div class="mna-name">MedAnon Pro</div>
+        <div class="mna-sub">© Vedaste NYANDWI</div>
+      </div>
+    </div>
+    <div class="mna-sysinfo">
+      <div class="mna-pill-inner">
+        {_h_code} · {_t_code} &nbsp;|&nbsp; <span>{_p_code}</span>
+      </div>
+      <div class="mna-inst">
+        <b>University of Rwanda</b><br>
+        College of Business &amp; Economics · ACE-DS · Data Mining
+      </div>
     </div>
   </div>
-  <div class="mna-links">
+
+  <div class="mna-tabs">
     {_nav_html}
   </div>
-  <div class="mna-pill">
-    <div class="mna-pill-inner">
-      {_h_code} · {_t_code}<br>
-      <span>{_p_code}</span>
-    </div>
-  </div>
-  <div class="mna-right">
-    <div><b>Univ. of Rwanda</b><br>CBE · ACE-DS · DM</div>
-  </div>
+
 </div>
+<div style="margin-bottom:2rem;"></div>
 """, unsafe_allow_html=True)
+
+
 
 
 
