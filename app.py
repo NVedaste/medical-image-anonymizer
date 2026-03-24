@@ -852,8 +852,8 @@ st.markdown(f"""
   display:         flex;
   align-items:     center;
   justify-content: space-between;
-  height:          42px;
-  padding:         0 1.2rem;
+  height:          46px;
+  padding:         0 1.3rem;
   border-bottom:   1px solid #1a2d40;
 }}
 .mna-brand {{
@@ -875,7 +875,7 @@ st.markdown(f"""
   box-shadow:      0 2px 6px rgba(14,165,160,.4);
 }}
 .mna-name {{
-  font-size:      .9rem;
+  font-size:      1rem;
   font-weight:    800;
   color:          #f1f5f9 !important;
   letter-spacing: -.2px;
@@ -883,7 +883,7 @@ st.markdown(f"""
   white-space:    nowrap;
 }}
 .mna-sub {{
-  font-size:   .58rem;
+  font-size:   .65rem;
   color:       #3a566e !important;
   margin-top:  .06rem;
   white-space: nowrap;
@@ -895,18 +895,18 @@ st.markdown(f"""
 }}
 .mna-pill-inner {{
   font-family:   'JetBrains Mono', monospace;
-  font-size:     .62rem;
+  font-size:     .72rem;
   line-height:   1.65;
   color:         #5a7a96 !important;
   background:    #162032;
   border-radius: 5px;
-  padding:       .18rem .55rem;
+  padding:       .22rem .65rem;
   white-space:   nowrap;
   border:        1px solid #1e2d42;
 }}
 .mna-pill-inner span {{ color: #0ea5a0 !important; font-weight: 600; }}
 .mna-inst {{
-  font-size:   .62rem;
+  font-size:   .7rem;
   line-height: 1.55;
   color:       #4a6680 !important;
   text-align:  right;
@@ -918,7 +918,7 @@ st.markdown(f"""
 .mna-tabs {{
   display:       flex;
   align-items:   stretch;
-  height:        46px;
+  height:        48px;
   border-bottom: 2.5px solid #0ea5a0;
   overflow:      hidden;
 }}
@@ -926,23 +926,23 @@ st.markdown(f"""
   display:         flex;
   align-items:     center;
   justify-content: center;
-  gap:             .32rem;
+  gap:             .38rem;
   flex:            1;
-  font-size:       .84rem;
+  font-size:       .92rem;
   font-weight:     500;
   color:           #7ea8c8 !important;
   text-decoration: none !important;
   border-bottom:   3px solid transparent;
   white-space:     nowrap;
-  height:          46px;
+  height:          48px;
   transition:      background .12s, color .12s, border-color .12s;
   box-sizing:      border-box;
   padding:         0 .4rem;
 }}
 .mna-link:visited,
 .mna-link:focus {{ text-decoration: none !important; color: #7ea8c8 !important; outline: none; }}
-.mna-icon {{ font-size: .82rem; flex-shrink: 0; line-height: 1; }}
-.mna-lbl  {{ font-size: .84rem; line-height: 1; }}
+.mna-icon {{ font-size: .9rem; flex-shrink: 0; line-height: 1; }}
+.mna-lbl  {{ font-size: .92rem; line-height: 1; }}
 .mna-link:hover {{
   background:          #162032;
   color:               #d4e8f8 !important;
@@ -1103,7 +1103,7 @@ if cur == 0:
       </div>
       <div class="alert alert-warn" style="margin-top:.75rem;">
         <span>⚠️</span>
-        <div style="font-size:.8rem;"><b>Residual limitations:</b> W6 (utility–privacy trade-off in MRI/CT), W9 (cross-modal linkage when audio/text records coexist), and W12 (non-facial biometrics such as gait or ear shape) are outside the scope of file-level anonymization and require dataset-level controls.</div>
+        <div style="font-size:.8rem;"><b>Residual limitations:</b> Utility-privacy trade-off in MRI/CT, cross-modal linkage when audio/text records coexist, and non-facial biometrics (gait, ear shape) are outside the scope of file-level anonymization and require dataset-level controls.</div>
       </div>
     </div>""", unsafe_allow_html=True)
 
@@ -1120,27 +1120,27 @@ if cur == 0:
       </div>
       <div class="weakness-grid">
         <div class="wk-pill green">
-          <div class="wk-title">Fix #1 · Operator identity</div>
+          <div class="wk-title">Operator Identity</div>
           <div class="wk-desc">Researcher name and department captured in Configure. Printed on the deletion certificate. The department knows <em>who</em> ran this.</div>
           <div class="wk-status addressed">✓ Implemented</div>
         </div>
         <div class="wk-pill blue">
-          <div class="wk-title">Fix #2 · Encrypted mapping table</div>
+          <div class="wk-title">Encrypted Mapping Table</div>
           <div class="wk-desc">CSV mapping original → anonymized ID, with SHA-256 hashes. Packaged as an AES-encrypted ZIP for the data officer — never stored on the server.</div>
           <div class="wk-status addressed">✓ Implemented</div>
         </div>
         <div class="wk-pill amber">
-          <div class="wk-title">Fix #3 · Image content validation</div>
+          <div class="wk-title">Image Content Validation</div>
           <div class="wk-desc">Checks dimensions, aspect ratio, and colour distribution to confirm files are plausible medical images. Catches accidental photo uploads.</div>
           <div class="wk-status addressed">✓ Implemented</div>
         </div>
         <div class="wk-pill">
-          <div class="wk-title">Fix #4 · Multi-scan patient grouping</div>
+          <div class="wk-title">Patient Grouping</div>
           <div class="wk-desc">Users can label files belonging to the same patient. Grouped files share one anonymized ID, preventing a single patient appearing as multiple identities.</div>
           <div class="wk-status addressed">✓ Implemented</div>
         </div>
         <div class="wk-pill red">
-          <div class="wk-title">Fix #5 · Full memory purge on delete</div>
+          <div class="wk-title">Memory Purge on Delete</div>
           <div class="wk-desc">When the operator clicks Delete, all session data is byte-zeroed and cleared. The certificate records this event with operator signature and timestamp.</div>
           <div class="wk-status addressed">✓ Implemented</div>
         </div>
@@ -1400,7 +1400,7 @@ elif cur == 1:
       <div class="fname-preview">{h_code}_{p_code}_{t_code}_00002.png</div>
       <div class="fname-preview">{h_code}_{p_code}_{t_code}_00003.dcm</div>
       <div style="margin-top:.6rem;font-size:.78rem;color:#5e7190;">
-        Patient IDs are assigned sequentially (00001, 00002 …). Original filenames are discarded entirely <b>(W1 mitigation)</b>.
+        Patient IDs are assigned sequentially (00001, 00002 …). Original filenames are discarded entirely.
       </div>
     </div>""", unsafe_allow_html=True)
 
@@ -1560,7 +1560,7 @@ elif cur == 2:
         st.markdown("""
         <div class="card">
           <div class="card-header"><div class="card-icon ci-amber">🔍</div>
-          <div class="card-title">Fix #3 — Image Content Validation</div></div>
+          <div class="card-title">Image Content Validation</div></div>
           <div style="font-size:.83rem;color:#374a60;margin-bottom:.75rem;">
             Checks each file to confirm it is plausibly a medical image
             (dimensions, aspect ratio, grayscale content). Catches accidental
@@ -1621,7 +1621,7 @@ elif cur == 2:
         st.markdown("""
         <div class="card">
           <div class="card-header"><div class="card-icon ci-blue">👤</div>
-          <div class="card-title">Fix #4 — Patient Grouping (Optional)</div></div>
+          <div class="card-title">Patient Grouping (Optional)</div></div>
           <div style="font-size:.83rem;color:#374a60;margin-bottom:.75rem;">
             If the same patient has <b>multiple scans</b>, assign them the same
             patient label so they share a single anonymized ID. Leave blank to
@@ -1745,7 +1745,7 @@ elif cur == 3:
         st.markdown("""
         <div class="alert alert-teal">
           <span>🛡</span>
-          <div><b>Anonymization complete.</b> All PHI tags stripped, files renamed with opaque IDs, SHA-256 checksums recorded, and image buffers zeroed from RAM. <b>(W1 · W5 · W7 · W11)</b></div>
+          <div><b>Anonymization complete.</b> All PHI tags stripped, files renamed with opaque IDs, SHA-256 checksums recorded, and image buffers zeroed from RAM.</div>
         </div>""", unsafe_allow_html=True)
 
         # ── Image thumbnail preview grid ──────────────────────
@@ -1822,10 +1822,10 @@ elif cur == 3:
               <div>
                 <b>What happens when you click Run:</b><br>
                 1. Images extracted and processed in memory (never saved to disk)<br>
-                2. EXIF metadata stripped via pixel-level reconstruction <b>(W5)</b><br>
-                3. DICOM PHI tags wiped + UIDs regenerated <b>(W5 · W11)</b><br>
-                4. SHA-256 checksum logged per file <b>(W7)</b><br>
-                5. Anonymized ZIP packaged, then all image buffers zeroed <b>(W11)</b>
+                2. EXIF metadata stripped via pixel-level reconstruction<br>
+                3. DICOM PHI tags wiped + UIDs regenerated<br>
+                4. SHA-256 checksum logged per file<br>
+                5. Anonymized ZIP packaged, then all image buffers zeroed
               </div>
             </div>""", unsafe_allow_html=True)
 
