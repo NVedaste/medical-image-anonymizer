@@ -34,8 +34,6 @@ st.set_page_config(page_title="MedAnon Pro", page_icon="🛡",
 
 # ══════════════════════════════════════════════════════════════════
 # DESIGN SYSTEM
-# Professional clinical palette: white surface, deep navy sidebar,
-# teal accent. Lexend (display) + JetBrains Mono (data).
 # ══════════════════════════════════════════════════════════════════
 st.markdown("""
 <style>
@@ -73,12 +71,10 @@ html, body, [class*="css"] {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Font family only — no colour override on generic selectors */
 p, div, span, li, label, input, textarea, select {
   font-family: 'Lexend', sans-serif !important;
 }
 
-/* Body text colour only on content elements, not on navbar */
 .main p, .stMarkdown p  {
   font-size: 1rem !important;
   line-height: 1.65 !important;
@@ -87,24 +83,17 @@ p, div, span, li, label, input, textarea, select {
 .stMarkdown p  { color: var(--text2) !important; }
 .stMarkdown li { font-size: 1rem !important; line-height: 1.8 !important; color: var(--text2) !important; }
 
-/* Widget labels */
 .stSelectbox label, .stTextInput label, .stTextArea label,
 .stFileUploader label, .stRadio label, .stCheckbox label, .stSlider label {
   font-size: .92rem !important; font-weight: 500 !important; color: var(--text) !important;
 }
 .stTextInput input, .stTextArea textarea { font-size: .95rem !important; color: var(--text) !important; }
 
-/* ── Hide Streamlit chrome & sidebar toggle ── */
 #MainMenu, footer, header { visibility: hidden; }
 .stDeployButton { display: none; }
 [data-testid="collapsedControl"] { display: none !important; }
 section[data-testid="stSidebar"] { display: none !important; }
 
-/* ════════════════════════════════════════
-   MAIN CONTENT — margins, width, spacing
-════════════════════════════════════════ */
-
-/* Target every Streamlit container selector to guarantee margins */
 .main .block-container,
 [data-testid="block-container"],
 div.block-container {
@@ -117,18 +106,15 @@ div.block-container {
   margin-right:   auto    !important;
 }
 
-/* Streamlit injects its own appview-container; keep it full width */
 [data-testid="stAppViewContainer"] {
   background: var(--bg) !important;
 }
 
-/* ── Page heading ── */
 .pg-wrap    { margin-bottom: 1.4rem; }
 .pg-eyebrow { font-size: .72rem; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: var(--teal-dk) !important; margin-bottom: .3rem; }
 .pg-title   { font-size: 1.6rem; font-weight: 800; color: var(--text) !important; letter-spacing: -.5px; line-height: 1.2; margin: 0 0 .35rem; }
 .pg-sub     { font-size: 1rem; color: var(--text3) !important; line-height: 1.6; }
 
-/* ── Cards ── */
 .card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 1.5rem 1.6rem; margin-bottom: 1rem; box-shadow: var(--sh); }
 .card-header { display: flex; align-items: center; gap: .6rem; margin-bottom: 1rem; }
 .card-icon { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: .9rem; flex-shrink: 0; }
@@ -139,7 +125,6 @@ div.block-container {
 .ci-green { background: var(--green-lt); }
 .card-title { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; color: var(--text2) !important; }
 
-/* ── Weakness pills ── */
 .weakness-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: .65rem; margin-bottom: .6rem; }
 .wk-pill { background: var(--bg); border: 1px solid var(--border); border-radius: var(--rs); padding: .7rem .85rem; border-left: 3px solid var(--teal); }
 .wk-pill.amber { border-left-color: var(--amber); }
@@ -153,21 +138,18 @@ div.block-container {
 .wk-status.noted     { color: var(--amber) !important; }
 .wk-status.partial   { color: var(--blue) !important; }
 
-/* ── Info pills ── */
 .info-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: .65rem; margin-bottom: .8rem; }
 .info-pill { background: var(--bg); border: 1px solid var(--border); border-radius: var(--rs); padding: .75rem 1rem; }
 .info-lbl  { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; color: var(--text3) !important; margin-bottom: .18rem; }
 .info-val  { font-size: .92rem; font-weight: 600; color: var(--text) !important; }
 .info-code { font-family: 'JetBrains Mono', monospace; font-size: .82rem; font-weight: 500; color: var(--teal-dk) !important; }
 
-/* ── Mode buttons ── */
 .mode-btn { border: 2px solid var(--border); border-radius: var(--r); padding: 1.1rem; text-align: center; background: var(--white); transition: all .15s; }
 .mode-btn:hover, .mode-btn.active { border-color: var(--teal); background: var(--teal-lt); }
 .mode-btn-icon  { font-size: 1.5rem; margin-bottom: .3rem; }
 .mode-btn-label { font-size: .88rem; font-weight: 700; color: var(--text) !important; }
 .mode-btn-hint  { font-size: .73rem; color: var(--text3) !important; margin-top: .12rem; }
 
-/* ── Alerts ── */
 .alert { display: flex; align-items: flex-start; gap: .75rem; border-radius: var(--rs); padding: .9rem 1.1rem; margin: .7rem 0; font-size: .88rem; line-height: 1.55; }
 .alert-ok     { background: var(--green-lt); border:1px solid #bbf7d0; border-left:4px solid var(--green); color:#14532d !important; }
 .alert-warn   { background: var(--amber-lt); border:1px solid #fde68a; border-left:4px solid var(--amber); color:#78350f !important; }
@@ -175,11 +157,9 @@ div.block-container {
 .alert-danger { background: var(--red-lt);   border:1px solid #fecdd3; border-left:4px solid var(--red);   color:#9f1239 !important; }
 .alert-teal   { background: var(--teal-lt);  border:1px solid #a7f3d0; border-left:4px solid var(--teal);  color:#065f46 !important; }
 
-/* ── Filename terminal ── */
 .fname-preview { font-family:'JetBrains Mono',monospace; font-size:.86rem; background:var(--navy); color:var(--teal) !important; padding:.7rem 1rem; border-radius:var(--rs); margin:.4rem 0; }
 .fname-label   { font-size:.65rem; color:#475569 !important; margin-bottom:.22rem; font-weight:600; letter-spacing:.5px; text-transform:uppercase; }
 
-/* ── Stats ── */
 .stat-row { display:flex; gap:.7rem; margin-bottom:1rem; }
 .stat-box  { flex:1; background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:1rem 1.1rem; text-align:center; box-shadow:var(--sh); }
 .stat-n    { font-size:2.1rem; font-weight:800; line-height:1; }
@@ -187,7 +167,6 @@ div.block-container {
 .c-teal { color:var(--teal-dk) !important; } .c-red { color:var(--red) !important; }
 .c-amber{ color:var(--amber) !important; }   .c-slate{ color:var(--text) !important; }
 
-/* ── File table ── */
 .ftable { border:1px solid var(--border); border-radius:var(--r); overflow:hidden; box-shadow:var(--sh); }
 .fth  { display:grid; grid-template-columns:2fr 2.3fr 88px; background:var(--navy); padding:.6rem 1.1rem; font-family:'JetBrains Mono',monospace; font-size:.63rem; letter-spacing:1.1px; text-transform:uppercase; color:#475569 !important; }
 .frow { display:grid; grid-template-columns:2fr 2.3fr 88px; padding:.65rem 1.1rem; background:var(--white); border-top:1px solid var(--border); align-items:center; transition:background .12s; }
@@ -199,20 +178,16 @@ div.block-container {
 .fberr  { background:var(--red-lt);  color:var(--red) !important; }
 .fbskip { background:var(--amber-lt);color:var(--amber) !important; }
 
-/* ── Del / proof boxes ── */
 .del-box   { background:var(--red-lt);   border:2px solid #fecdd3; border-radius:var(--r); padding:1.3rem 1.4rem; }
 .del-title { font-size:1rem; font-weight:800; color:var(--red) !important; margin-bottom:.45rem; }
 .proof-box { background:var(--green-lt); border:2px solid #86efac; border-radius:var(--r); padding:1.4rem; }
 .proof-title { font-size:1rem; font-weight:800; color:#15803d !important; margin-bottom:.75rem; }
 .proof-row { display:flex; align-items:flex-start; gap:.6rem; font-size:.88rem; color:#14532d !important; margin-bottom:.4rem; }
 
-/* ── Log box ── */
 .logbox { background:var(--navy); color:#4ade80 !important; font-family:'JetBrains Mono',monospace; font-size:.75rem; border-radius:var(--rs); padding:.9rem 1.1rem; max-height:230px; overflow-y:auto; line-height:1.75; border:1px solid var(--navy3); }
 
-/* ── Misc ── */
 .img-count-badge { background:var(--navy); border:1px solid var(--navy3); border-radius:var(--rs); padding:.48rem .8rem; font-size:.82rem; color:#94a3b8 !important; display:inline-flex; align-items:center; gap:.4rem; margin-bottom:.5rem; }
 
-/* ── Main buttons ── */
 .stButton > button { font-family:'Lexend',sans-serif !important; font-weight:600 !important; border-radius:var(--rs) !important; border:none !important; transition:all .15s !important; font-size:.92rem !important; }
 .stButton > button[kind="primary"] { background:var(--teal) !important; color:var(--navy) !important; font-weight:700 !important; padding:.58rem 1.5rem !important; }
 .stButton > button:hover { opacity:.88 !important; transform:translateY(-1px) !important; }
@@ -225,7 +200,6 @@ hr { border-color:var(--border) !important; }
 ::-webkit-scrollbar { width:4px; height:4px; }
 ::-webkit-scrollbar-thumb { background:var(--border2); border-radius:10px; }
 
-/* ── Reviews ── */
 .review-card { background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:1.2rem 1.4rem; margin-bottom:.7rem; box-shadow:var(--sh); }
 .review-header { display:flex; align-items:center; gap:.7rem; margin-bottom:.5rem; }
 .review-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,var(--teal),#2563eb); display:flex; align-items:center; justify-content:center; font-size:.95rem; font-weight:800; color:white !important; flex-shrink:0; }
@@ -249,6 +223,26 @@ hr { border-color:var(--border) !important; }
 .rating-bar-track{ flex:1; height:7px; background:var(--border); border-radius:100px; overflow:hidden; }
 .rating-bar-fill { height:100%; border-radius:100px; background:var(--teal); }
 .rating-bar-n    { font-size:.7rem; color:var(--text3) !important; width:20px; }
+
+/* ── Success toast for feedback ── */
+.fb-success-toast {
+  background: var(--green-lt);
+  border: 2px solid #86efac;
+  border-radius: var(--r);
+  padding: 1.1rem 1.4rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  animation: slideIn .3s ease;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fb-success-toast .toast-icon { font-size: 1.4rem; }
+.fb-success-toast .toast-msg  { font-size: .92rem; font-weight: 600; color: #15803d !important; }
+.fb-success-toast .toast-sub  { font-size: .8rem; color: #166534 !important; margin-top: .1rem; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -263,8 +257,6 @@ HOSPITALS = {
     "CHUB — University Teaching Hospital of Butare": "H04",
 }
 
-# ── Cascaded academic structure: University → College → Programme ──
-# Structure: { university_name: { code, colleges: { college_name: { code, programmes: { prog_name: code } } } } }
 ACADEMIC_TREE = {
     "University of Rwanda": {
         "code": "UR",
@@ -325,14 +317,12 @@ SUPPORTED_EXT = {".jpg", ".jpeg", ".png", ".dcm", ".dicom"}
 _D = dict(
     page=0,
     hospital_key=list(HOSPITALS.keys())[0],
-    # ── Cascaded programme selection ──
     sel_university="University of Rwanda",
     sel_college="College of Business and Economics (CBE)",
     sel_programme="ACE-DS · Data Mining",
-    # custom additions per level
-    custom_universities={},   # { uni_name: { code, colleges: {} } }
-    custom_colleges={},       # { "uni_name|college_name": { code, programmes: {} } }
-    custom_programmes={},     # { "uni_name|college_name|prog_name": code }
+    custom_universities={},
+    custom_colleges={},
+    custom_programmes={},
     img_code="CXR",
     custom_hospitals={},
     upload_mode="zip",
@@ -355,6 +345,10 @@ _D = dict(
     show_add_hospital=False,
     show_add_programme=False,
     show_audit_log=False,
+    # ── Feedback-specific state ──
+    fb_submitted=False,       # True right after a successful submission
+    fb_submitted_name="",     # Name of the reviewer just submitted
+    fb_form_key=0,            # Increment to reset form widgets without rerun
     feedback_reviews=[
         {
             "name": "Dr. Mukeshimana A.",
@@ -404,16 +398,12 @@ logger = _logger()
 
 # ══════════════════════════════════════════════════════════════════
 # PROGRAMME CODE HELPER
-# Derives the short filename code from the 3-level cascade.
-# Format: {UNI_CODE}_{COL_CODE}_{PROG_CODE}  e.g. UR_CBE_DM
 # ══════════════════════════════════════════════════════════════════
 def get_programme_code() -> str:
-    """Return the combined code for the selected university / college / programme."""
     uni  = st.session_state.get("sel_university","")
     col  = st.session_state.get("sel_college","")
     prog = st.session_state.get("sel_programme","")
 
-    # Merge built-in tree with any custom additions
     tree = dict(ACADEMIC_TREE)
     for u_name, u_data in st.session_state.get("custom_universities",{}).items():
         tree[u_name] = u_data
@@ -436,27 +426,15 @@ def get_programme_code() -> str:
 
 # ══════════════════════════════════════════════════════════════════
 # CORE ANONYMIZATION
-# Weakness mitigations applied here:
-#  [W5]  EXIF / metadata fully stripped via pixel reconstruction
-#  [W5]  DICOM: 27 sensitive tags wiped + UIDs regenerated
-#  [W11] SHA-256 checksum logged before zeroing (audit trail)
-#  [W1]  Filename structure carries no patient information
-#  [W4]  No face replacement (no GAN risk introduced)
 # ══════════════════════════════════════════════════════════════════
 
 def _wipe(ba: bytearray):
-    """Zero every byte — W11: no residual data in RAM."""
     for i in range(len(ba)): ba[i] = 0
 
 def sha256_hex(data: bytes) -> str:
-    """Return SHA-256 hex of raw bytes — used for integrity audit log."""
     return hashlib.sha256(data).hexdigest()[:16] + "…"
 
 def strip_image(raw: bytes, ext: str) -> bytes:
-    """
-    Pixel-level reconstruction drops ALL EXIF/XMP/IPTC metadata.
-    Addresses W5 (metadata leakage) and W1 (re-identification via metadata).
-    """
     img = Image.open(io.BytesIO(raw))
     out = Image.new(img.mode, img.size)
     out.putdata(list(img.getdata()))
@@ -468,14 +446,9 @@ def strip_image(raw: bytes, ext: str) -> bytes:
     return buf.getvalue()
 
 def strip_dicom(raw: bytes) -> bytes:
-    """
-    Wipes 27 PHI DICOM tags and regenerates all UIDs.
-    Addresses W5 and W1. Does NOT use face-replacement (avoids W4).
-    """
     if not DICOM_AVAILABLE:
         raise RuntimeError("pydicom not installed — pip install pydicom")
     ds = pydicom.dcmread(io.BytesIO(raw))
-    # Comprehensive PHI tag wipe
     for tag in [
         "PatientName","PatientID","PatientBirthDate","PatientSex","PatientAge",
         "PatientWeight","PatientAddress","PatientTelephoneNumbers",
@@ -489,7 +462,6 @@ def strip_dicom(raw: bytes) -> bytes:
         if hasattr(ds, tag):
             try: setattr(ds, tag, "ANONYMIZED")
             except: pass
-    # Regenerate all UIDs (W11: no linkage via original UIDs)
     ds.StudyInstanceUID  = generate_uid()
     ds.SeriesInstanceUID = generate_uid()
     ds.SOPInstanceUID    = generate_uid()
@@ -497,11 +469,9 @@ def strip_dicom(raw: bytes) -> bytes:
     return buf.getvalue()
 
 def make_fname(h, p, t, pid, ext):
-    """W1: filename carries no patient info — only opaque sequential ID."""
     return f"{h}_{p}_{t}_{str(pid).zfill(5)}{ext.lower()}"
 
 def collect_zip(zf_obj) -> list:
-    """Extract supported images from an uploaded ZIP in memory."""
     entries = []
     with zipfile.ZipFile(io.BytesIO(zf_obj.read())) as zf:
         for info in zf.infolist():
@@ -512,7 +482,7 @@ def collect_zip(zf_obj) -> list:
             if ext in SUPPORTED_EXT:
                 raw = zf.read(info.filename)
                 entries.append({"name": fname.name, "raw": raw, "ext": ext,
-                                 "checksum": sha256_hex(raw)})  # W11 audit
+                                 "checksum": sha256_hex(raw)})
     return entries
 
 def collect_files(uploaded) -> list:
@@ -522,15 +492,10 @@ def collect_files(uploaded) -> list:
         if ext in SUPPORTED_EXT:
             raw = f.read()
             entries.append({"name": f.name, "raw": raw, "ext": ext,
-                             "checksum": sha256_hex(raw)})  # W11 audit
+                             "checksum": sha256_hex(raw)})
     return entries
 
 def run_pipeline(entries, h, p, t, bar, status_el):
-    """
-    Main anonymization loop. Entries must have 'pid' key pre-assigned.
-    W7: logs every file with checksum.  W10: full pipeline before pack.
-    Fix#1: operator baked into log.    Fix#2: integrity mapped per file.
-    """
     results, log = [], operator_header() + [
         f"  Hospital:{h}  Program:{p}  Type:{t}  Files:{len(entries)}",
         f"  Weaknesses addressed: W1 W3 W4 W5 W7 W8 W10 W11",
@@ -579,7 +544,6 @@ def pack_zip(results) -> bytes:
     return buf.getvalue()
 
 def purge_ram(results) -> list:
-    """W11: zero all clean_bytes buffers before returning."""
     out = []
     for r in results:
         if r.get("clean_bytes"):
@@ -588,12 +552,6 @@ def purge_ram(results) -> list:
     return out
 
 def make_thumb_b64(raw: bytes, ext: str, max_px: int = 120) -> str:
-    """
-    Create a tiny base64-encoded JPEG thumbnail from raw image bytes.
-    Returns empty string on failure or for DICOM.
-    Thumbnails are generated from the ORIGINAL before anonymization —
-    they are never stored in session after purge.
-    """
     if ext in (".dcm", ".dicom"):
         return ""
     try:
@@ -612,7 +570,6 @@ def make_thumb_b64(raw: bytes, ext: str, max_px: int = 120) -> str:
 # FIX #1  — Operator identity baked into log + certificate
 # ══════════════════════════════════════════════════════════════════
 def operator_header() -> list[str]:
-    """Lines prepended to every log showing who ran the anonymization."""
     name  = st.session_state.get("operator_name","").strip()  or "NOT PROVIDED"
     dept  = st.session_state.get("operator_dept","").strip()  or "NOT PROVIDED"
     email = st.session_state.get("operator_email","").strip() or "NOT PROVIDED"
@@ -629,18 +586,10 @@ def operator_header() -> list[str]:
     ]
 
 # ══════════════════════════════════════════════════════════════════
-# FIX #2  — Encrypted mapping CSV  (original → anonymized)
-# The CSV is packaged inside a password-protected ZIP so only the
-# hospital data officer (who holds the password) can open it.
+# FIX #2  — Encrypted mapping CSV
 # ══════════════════════════════════════════════════════════════════
 def build_mapping_csv(results: list, integrity: list,
                        operator: str, dept: str) -> bytes:
-    """
-    Build a CSV with columns:
-      original_filename | anonymized_filename | patient_group |
-      sha256_in | sha256_out | operator | dept | timestamp
-    Returns raw CSV bytes.
-    """
     buf = io.StringIO()
     writer = csv.writer(buf)
     writer.writerow([
@@ -663,15 +612,8 @@ def build_mapping_csv(results: list, integrity: list,
     return buf.getvalue().encode("utf-8")
 
 def pack_mapping_zip(csv_bytes: bytes, password: str) -> bytes:
-    """
-    Wrap the mapping CSV in a ZIP.
-    NOTE: Python's zipfile does not support AES encryption natively.
-    We add a README inside the ZIP explaining the password convention,
-    and the CSV itself. For true AES protection, pyzipper can be used
-    as a drop-in replacement — we guard gracefully here.
-    """
     try:
-        import pyzipper  # type: ignore
+        import pyzipper
         buf = io.BytesIO()
         with pyzipper.AESZipFile(buf, "w",
                                   compression=pyzipper.ZIP_DEFLATED,
@@ -684,7 +626,6 @@ def pack_mapping_zip(csv_bytes: bytes, password: str) -> bytes:
                 "Keep this file confidential. Do not share the mapping.\n")
         return buf.getvalue()
     except ImportError:
-        # Fallback: plain ZIP with a clear warning inside
         buf = io.BytesIO()
         with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
             zf.writestr("mapping_table.csv", csv_bytes)
@@ -695,20 +636,12 @@ def pack_mapping_zip(csv_bytes: bytes, password: str) -> bytes:
 
 # ══════════════════════════════════════════════════════════════════
 # FIX #3  — Image content validation
-# Checks that uploaded files are plausibly medical images, not
-# photos of people or unrelated content.
 # ══════════════════════════════════════════════════════════════════
-MEDICAL_ASPECT_RANGE = (0.5, 2.5)   # width/height ratio (DICOM ~1:1)
-MIN_DIM_PX           = 64            # reject tiny/thumbnail images
-MAX_DIM_PX           = 8000          # reject suspicious huge images
+MEDICAL_ASPECT_RANGE = (0.5, 2.5)
+MIN_DIM_PX           = 64
+MAX_DIM_PX           = 8000
 
 def validate_image(raw: bytes, ext: str, name: str) -> dict:
-    """
-    Returns a dict with:
-      valid: bool
-      warnings: list[str]   — non-blocking concerns
-      errors:   list[str]   — blocking issues
-    """
     warnings, errors = [], []
 
     if ext in (".dcm", ".dicom"):
@@ -717,7 +650,6 @@ def validate_image(raw: bytes, ext: str, name: str) -> dict:
         try:
             ds = pydicom.dcmread(io.BytesIO(raw), stop_before_pixels=True)
             modality = getattr(ds, "Modality", "").upper()
-            # Accept radiology modalities; warn on unexpected ones
             radio_mods = {"CR","DR","DX","MR","CT","PT","NM","US","XA","RF",
                           "MG","OP","OT",""}
             if modality and modality not in radio_mods:
@@ -734,7 +666,6 @@ def validate_image(raw: bytes, ext: str, name: str) -> dict:
             errors.append(f"Could not parse DICOM header: {e}")
         return {"valid": len(errors) == 0, "warnings": warnings, "errors": errors}
 
-    # JPEG / PNG path
     try:
         img = Image.open(io.BytesIO(raw))
         w, h = img.size
@@ -745,7 +676,6 @@ def validate_image(raw: bytes, ext: str, name: str) -> dict:
         ratio = w / h if h else 1
         if not (MEDICAL_ASPECT_RANGE[0] <= ratio <= MEDICAL_ASPECT_RANGE[1]):
             warnings.append(f"Aspect ratio {ratio:.2f} unusual for medical scans")
-        # Colour check: chest X-rays are greyscale (L or grayscale RGB)
         if img.mode == "RGB":
             pixels = list(img.getdata())
             sample = pixels[::max(1, len(pixels)//500)][:500]
@@ -758,15 +688,9 @@ def validate_image(raw: bytes, ext: str, name: str) -> dict:
     return {"valid": len(errors) == 0, "warnings": warnings, "errors": errors}
 
 # ══════════════════════════════════════════════════════════════════
-# FIX #4  — Patient grouping  (multiple scans → same patient ID)
+# FIX #4  — Patient grouping
 # ══════════════════════════════════════════════════════════════════
 def assign_pids_with_groups(entries: list, groups: dict) -> list:
-    """
-    Given entries and a groups dict {filename: group_label},
-    assign consistent patient IDs so files in the same group
-    share the same PID.
-    Returns entries with an added 'pid' key.
-    """
     label_to_pid: dict = {}
     next_pid = 1
     result = []
@@ -791,7 +715,7 @@ def go(idx):
     st.rerun()
 
 # ══════════════════════════════════════════════════════════════════
-# TOP NAVBAR — pure HTML, single block, no Streamlit widgets inside.
+# TOP NAVBAR
 # ══════════════════════════════════════════════════════════════════
 
 cur  = st.session_state["page"]
@@ -801,7 +725,6 @@ _h_code = _all_h.get(st.session_state["hospital_key"], "H01")
 _p_code = get_programme_code()
 _t_code = st.session_state["img_code"]
 
-# Read query param navigation request
 try:
     _qp = st.query_params.get("p", None)
     if _qp is not None:
@@ -813,7 +736,6 @@ try:
 except Exception:
     pass
 
-# Build nav items HTML — 7 pages (Download and Delete are now separate)
 _pages = [
     (0, "🏠", "Home"),
     (1, "⚙", "Configure"),
@@ -835,15 +757,8 @@ for _idx, _icon, _lbl in _pages:
         f'</a>'
     )
 
-
-
 st.markdown(f"""
 <style>
-/* ══════════════════════════════════════════
-   MedAnon Two-Row Navbar
-   Row 1 (42px): brand left, system info right
-   Row 2 (46px): nav tabs full width
-══════════════════════════════════════════ */
 .mna-header {{
   background:    #0d1b2a;
   margin:        -1.8rem -3.5rem 0 -3.5rem;
@@ -854,8 +769,6 @@ st.markdown(f"""
   font-family:   'Lexend', sans-serif;
   box-shadow:    0 3px 18px rgba(13,27,42,.45);
 }}
-
-/* ── Top row ── */
 .mna-top {{
   display:         flex;
   align-items:     center;
@@ -921,8 +834,6 @@ st.markdown(f"""
   white-space: nowrap;
 }}
 .mna-inst b {{ color: #6a92b0 !important; font-weight: 600; }}
-
-/* ── Bottom row — nav tabs ── */
 .mna-tabs {{
   display:       flex;
   align-items:   stretch;
@@ -967,7 +878,6 @@ st.markdown(f"""
 </style>
 
 <div class="mna-header">
-
   <div class="mna-top">
     <div class="mna-brand">
       <div class="mna-dot">🛡</div>
@@ -986,25 +896,12 @@ st.markdown(f"""
       </div>
     </div>
   </div>
-
   <div class="mna-tabs">
     {_nav_html}
   </div>
-
 </div>
 <div style="margin-bottom:2rem;"></div>
 """, unsafe_allow_html=True)
-
-
-
-
-
-
-
-
-
-
-
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -1052,7 +949,6 @@ if cur == 0:
           </ol>
         </div>""", unsafe_allow_html=True)
 
-    # Weaknesses addressed — sourced from the research document
     st.markdown("""
     <div class="card">
       <div class="card-header">
@@ -1060,96 +956,91 @@ if cur == 0:
         <div class="card-title">Known weaknesses addressed by this system</div>
       </div>
       <div style="font-size:.78rem;color:#374a60;margin-bottom:.75rem;">
-        Based on published literature on image anonymization vulnerabilities. Each mitigation is applied during the anonymization pipeline.
+        Based on published literature on image anonymization vulnerabilities.
       </div>
       <div class="weakness-grid">
         <div class="wk-pill">
           <div class="wk-title">W1 · Metadata re-identification</div>
-          <div class="wk-desc">EXIF GPS, timestamps, device IDs removed via full pixel reconstruction. No metadata survives.</div>
+          <div class="wk-desc">EXIF GPS, timestamps, device IDs removed via full pixel reconstruction.</div>
           <div class="wk-status addressed">✓ Fully addressed</div>
         </div>
         <div class="wk-pill green">
           <div class="wk-title">W5 · Contextual leakage</div>
-          <div class="wk-desc">All DICOM tags stripped: institution, physician, acquisition dates, and patient demographics.</div>
+          <div class="wk-desc">All DICOM tags stripped: institution, physician, acquisition dates.</div>
           <div class="wk-status addressed">✓ Fully addressed</div>
         </div>
         <div class="wk-pill blue">
           <div class="wk-title">W7 · No formal audit trail</div>
-          <div class="wk-desc">SHA-256 checksum logged per file before and after anonymization. Full auditability.</div>
+          <div class="wk-desc">SHA-256 checksum logged per file before and after anonymization.</div>
           <div class="wk-status addressed">✓ Fully addressed</div>
         </div>
         <div class="wk-pill green">
           <div class="wk-title">W11 · Key/buffer management</div>
-          <div class="wk-desc">All image buffers byte-zeroed in RAM immediately after ZIP is packed. No residual data.</div>
+          <div class="wk-desc">All image buffers byte-zeroed in RAM immediately after ZIP is packed.</div>
           <div class="wk-status addressed">✓ Fully addressed</div>
         </div>
         <div class="wk-pill amber">
           <div class="wk-title">W4 · GAN face-replacement risk</div>
-          <div class="wk-desc">System does not use generative models. No synthetic face substitution. No GAN leakage risk.</div>
+          <div class="wk-desc">System does not use generative models. No GAN leakage risk.</div>
           <div class="wk-status addressed">✓ Avoided by design</div>
         </div>
         <div class="wk-pill amber">
           <div class="wk-title">W10 · Scalability failures</div>
-          <div class="wk-desc">Full in-memory pipeline. No half-processed states. ZIP built only after all files succeed.</div>
+          <div class="wk-desc">Full in-memory pipeline. ZIP built only after all files succeed.</div>
           <div class="wk-status partial">~ Partially addressed</div>
         </div>
         <div class="wk-pill" style="border-left-color:var(--text3);">
           <div class="wk-title">W3 · Detection coverage gaps</div>
-          <div class="wk-desc">X-ray pipeline does not use face detection. Renaming and metadata stripping are universal.</div>
+          <div class="wk-desc">X-ray pipeline does not use face detection. Renaming is universal.</div>
           <div class="wk-status noted">~ Not applicable (X-ray)</div>
         </div>
         <div class="wk-pill" style="border-left-color:var(--text3);">
           <div class="wk-title">W8 · Demographic bias in detection</div>
-          <div class="wk-desc">No ML detector used in this pipeline. All images are processed equally regardless of content.</div>
+          <div class="wk-desc">No ML detector used. All images processed equally.</div>
           <div class="wk-status noted">~ Not applicable</div>
         </div>
         <div class="wk-pill red">
           <div class="wk-title">W2 · Adversarial attacks</div>
-          <div class="wk-desc">No ML-based detector is used, so adversarial pixel perturbations cannot bypass the pipeline.</div>
+          <div class="wk-desc">No ML-based detector used, so adversarial perturbations cannot bypass the pipeline.</div>
           <div class="wk-status addressed">✓ Avoided by design</div>
         </div>
       </div>
       <div class="alert alert-warn" style="margin-top:.75rem;">
         <span>⚠️</span>
-        <div style="font-size:.8rem;"><b>Residual limitations:</b> Utility-privacy trade-off in MRI/CT, cross-modal linkage when audio/text records coexist, and non-facial biometrics (gait, ear shape) are outside the scope of file-level anonymization and require dataset-level controls.</div>
+        <div style="font-size:.8rem;"><b>Residual limitations:</b> Utility-privacy trade-off in MRI/CT, cross-modal linkage when audio/text records coexist, and non-facial biometrics are outside the scope of file-level anonymization.</div>
       </div>
     </div>""", unsafe_allow_html=True)
 
-    # ── 5 hospital-specific fixes ─────────────────────────────────
     st.markdown("""
     <div class="card">
       <div class="card-header">
         <div class="card-icon ci-red">🏥</div>
         <div class="card-title">5 Hospital-Specific Requirements: Addressed</div>
       </div>
-      <div style="font-size:.78rem;color:#374a60;margin-bottom:.75rem;">
-        Beyond the published weakness literature, these are the questions a hospital radiology
-        department or IRB will ask before approving data collection.
-      </div>
       <div class="weakness-grid">
         <div class="wk-pill green">
           <div class="wk-title">Operator Identity</div>
-          <div class="wk-desc">Researcher name and department captured in Configure. Printed on the deletion certificate. The department knows <em>who</em> ran this.</div>
+          <div class="wk-desc">Researcher name and department captured in Configure. Printed on the deletion certificate.</div>
           <div class="wk-status addressed">✓ Implemented</div>
         </div>
         <div class="wk-pill blue">
           <div class="wk-title">Encrypted Mapping Table</div>
-          <div class="wk-desc">CSV mapping original → anonymized ID, with SHA-256 hashes. Packaged as an AES-encrypted ZIP for the data officer — never stored on the server.</div>
+          <div class="wk-desc">CSV mapping original → anonymized ID, with SHA-256 hashes. AES-encrypted ZIP.</div>
           <div class="wk-status addressed">✓ Implemented</div>
         </div>
         <div class="wk-pill amber">
           <div class="wk-title">Image Content Validation</div>
-          <div class="wk-desc">Checks dimensions, aspect ratio, and colour distribution to confirm files are plausible medical images. Catches accidental photo uploads.</div>
+          <div class="wk-desc">Checks dimensions, aspect ratio, and colour distribution. Catches accidental photo uploads.</div>
           <div class="wk-status addressed">✓ Implemented</div>
         </div>
         <div class="wk-pill">
           <div class="wk-title">Patient Grouping</div>
-          <div class="wk-desc">Users can label files belonging to the same patient. Grouped files share one anonymized ID, preventing a single patient appearing as multiple identities.</div>
+          <div class="wk-desc">Files belonging to the same patient share one anonymized ID.</div>
           <div class="wk-status addressed">✓ Implemented</div>
         </div>
         <div class="wk-pill red">
           <div class="wk-title">Memory Purge on Delete</div>
-          <div class="wk-desc">When the operator clicks Delete, all session data is byte-zeroed and cleared. The certificate records this event with operator signature and timestamp.</div>
+          <div class="wk-desc">All session data byte-zeroed and cleared. Certificate records event with timestamp.</div>
           <div class="wk-status addressed">✓ Implemented</div>
         </div>
       </div>
@@ -1174,7 +1065,6 @@ elif cur == 1:
 
     all_hospitals = {**HOSPITALS, **st.session_state["custom_hospitals"]}
 
-    # Hospital card
     st.markdown('<div class="card"><div class="card-header"><div class="card-icon ci-teal">🏥</div><div class="card-title">Hospital</div></div>', unsafe_allow_html=True)
     sel_h = st.selectbox("Select hospital", list(all_hospitals.keys()),
                           index=list(all_hospitals.keys()).index(st.session_state["hospital_key"])
@@ -1182,23 +1072,16 @@ elif cur == 1:
                           label_visibility="collapsed")
     st.session_state["hospital_key"] = sel_h
     h_code = all_hospitals[sel_h]
-    st.markdown(f'<div style="margin-top:.5rem;font-size:.8rem;color:#5e7190;">Internal code: <span style="font-family:\'JetBrains Mono\',monospace;color:var(--teal-dk);font-weight:600;">{h_code}</span> (hidden from output filenames)</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="margin-top:.5rem;font-size:.8rem;color:#5e7190;">Internal code: <span style="font-family:\'JetBrains Mono\',monospace;color:var(--teal-dk);font-weight:600;">{h_code}</span></div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-
-    # ── Register a new hospital toggle ──────────────────────────
     _show_h = st.session_state.get("show_add_hospital", False)
-    _lbl_h  = "Hide" if _show_h else "+ Register a new hospital"
-    if st.button(_lbl_h, key="toggle_add_hospital"):
+    if st.button("Hide" if _show_h else "+ Register a new hospital", key="toggle_add_hospital"):
         st.session_state["show_add_hospital"] = not _show_h
         st.rerun()
 
     if st.session_state.get("show_add_hospital"):
-        st.markdown("""
-        <div class="card" style="border-left:3px solid var(--teal);margin-top:.25rem;">
-          <div class="card-header"><div class="card-icon ci-teal">🏥</div>
-          <div class="card-title">Register a New Hospital</div></div>""",
-        unsafe_allow_html=True)
+        st.markdown('<div class="card" style="border-left:3px solid var(--teal);margin-top:.25rem;"><div class="card-header"><div class="card-icon ci-teal">🏥</div><div class="card-title">Register a New Hospital</div></div>', unsafe_allow_html=True)
         col_a, col_b = st.columns([3, 1])
         with col_a:
             new_hname = st.text_input("Hospital full name", placeholder="e.g. Rwanda Military Hospital", key="nh_name")
@@ -1221,32 +1104,21 @@ elif cur == 1:
                 del st.session_state["custom_hospitals"][hn]; st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # ── Academic Programme: 3-level cascade ─────────────────────
-    st.markdown("""
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon ci-blue">🎓</div>
-        <div class="card-title">Academic Programme — University → College → Programme</div>
-      </div>""", unsafe_allow_html=True)
+    # Academic Programme
+    st.markdown('<div class="card"><div class="card-header"><div class="card-icon ci-blue">🎓</div><div class="card-title">Academic Programme — University → College → Programme</div></div>', unsafe_allow_html=True)
 
-    # Build merged tree (built-in + custom)
     full_tree = dict(ACADEMIC_TREE)
     for u_nm, u_dat in st.session_state.get("custom_universities", {}).items():
         full_tree[u_nm] = u_dat
 
-    # ── Level 1: University ──────────────────────────────────────
     uni_names = list(full_tree.keys())
     cur_uni = st.session_state.get("sel_university", uni_names[0])
-    if cur_uni not in uni_names:
-        cur_uni = uni_names[0]
+    if cur_uni not in uni_names: cur_uni = uni_names[0]
 
     st.markdown('<div style="font-size:.82rem;font-weight:600;color:#374a60;margin-bottom:.3rem;">1 · University</div>', unsafe_allow_html=True)
-    sel_uni = st.selectbox("University", uni_names,
-                            index=uni_names.index(cur_uni),
-                            label_visibility="collapsed", key="sb_uni")
+    sel_uni = st.selectbox("University", uni_names, index=uni_names.index(cur_uni), label_visibility="collapsed", key="sb_uni")
     if sel_uni != st.session_state.get("sel_university"):
         st.session_state["sel_university"] = sel_uni
-        # Reset downstream selections
         st.session_state["sel_college"]   = list(full_tree[sel_uni]["colleges"].keys())[0]
         col_progs = list(full_tree[sel_uni]["colleges"][st.session_state["sel_college"]]["programmes"].keys())
         st.session_state["sel_programme"] = col_progs[0] if col_progs else ""
@@ -1254,9 +1126,7 @@ elif cur == 1:
     st.session_state["sel_university"] = sel_uni
     uni_code = full_tree[sel_uni]["code"]
 
-    # ── Level 2: College ─────────────────────────────────────────
     col_dict = dict(full_tree[sel_uni]["colleges"])
-    # add any custom colleges for this university
     for ck, cv in st.session_state.get("custom_colleges", {}).items():
         u_part, c_part = ck.split("|", 1) if "|" in ck else ("", ck)
         if u_part == sel_uni:
@@ -1264,13 +1134,10 @@ elif cur == 1:
 
     col_names = list(col_dict.keys())
     cur_col = st.session_state.get("sel_college", col_names[0])
-    if cur_col not in col_names:
-        cur_col = col_names[0]
+    if cur_col not in col_names: cur_col = col_names[0]
 
     st.markdown('<div style="font-size:.82rem;font-weight:600;color:#374a60;margin:.75rem 0 .3rem;">2 · College / School</div>', unsafe_allow_html=True)
-    sel_col = st.selectbox("College", col_names,
-                            index=col_names.index(cur_col),
-                            label_visibility="collapsed", key="sb_col")
+    sel_col = st.selectbox("College", col_names, index=col_names.index(cur_col), label_visibility="collapsed", key="sb_col")
     if sel_col != st.session_state.get("sel_college"):
         st.session_state["sel_college"] = sel_col
         prog_list = list(col_dict.get(sel_col, {}).get("programmes", {}).keys())
@@ -1279,9 +1146,7 @@ elif cur == 1:
     st.session_state["sel_college"] = sel_col
     col_code = col_dict[sel_col]["code"]
 
-    # ── Level 3: Programme ────────────────────────────────────────
     prog_dict = dict(col_dict.get(sel_col, {}).get("programmes", {}))
-    # add any custom programmes for this college
     for pk, pv in st.session_state.get("custom_programmes", {}).items():
         parts = pk.split("|")
         if len(parts) == 3 and parts[0] == sel_uni and parts[1] == sel_col:
@@ -1289,50 +1154,31 @@ elif cur == 1:
 
     prog_names = list(prog_dict.keys()) if prog_dict else ["(No programmes)"]
     cur_prog = st.session_state.get("sel_programme", prog_names[0])
-    if cur_prog not in prog_names:
-        cur_prog = prog_names[0]
+    if cur_prog not in prog_names: cur_prog = prog_names[0]
 
     st.markdown('<div style="font-size:.82rem;font-weight:600;color:#374a60;margin:.75rem 0 .3rem;">3 · Programme</div>', unsafe_allow_html=True)
-    sel_prog = st.selectbox("Programme", prog_names,
-                             index=prog_names.index(cur_prog),
-                             label_visibility="collapsed", key="sb_prog")
+    sel_prog = st.selectbox("Programme", prog_names, index=prog_names.index(cur_prog), label_visibility="collapsed", key="sb_prog")
     st.session_state["sel_programme"] = sel_prog
     prog_code = prog_dict.get(sel_prog, "PROG")
-
-    # Derived combined code
     combined_code = get_programme_code()
+
     st.markdown(f"""
     <div style="margin-top:.9rem;display:flex;align-items:center;gap:1rem;
-                background:var(--bg);border-radius:8px;padding:.65rem 1rem;
-                border:1px solid var(--border);">
+                background:var(--bg);border-radius:8px;padding:.65rem 1rem;border:1px solid var(--border);">
       <div style="font-size:.72rem;color:#5e7190;">Code for filename:</div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.9rem;
-                  font-weight:700;color:var(--teal-dk);">{combined_code}</div>
-      <div style="font-size:.72rem;color:#5e7190;margin-left:.25rem;">
-        ({uni_code} · {col_code} · {prog_code})
-      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:700;color:var(--teal-dk);">{combined_code}</div>
+      <div style="font-size:.72rem;color:#5e7190;margin-left:.25rem;">({uni_code} · {col_code} · {prog_code})</div>
     </div>""", unsafe_allow_html=True)
-
     st.markdown('</div>', unsafe_allow_html=True)
 
-
-    # ── Add custom university / college / programme toggle ────────
     _show_p = st.session_state.get("show_add_programme", False)
-    _lbl_p  = "Hide" if _show_p else "+ Add custom university, college or programme"
-    if st.button(_lbl_p, key="toggle_add_prog"):
+    if st.button("Hide" if _show_p else "+ Add custom university, college or programme", key="toggle_add_prog"):
         st.session_state["show_add_programme"] = not _show_p
         st.rerun()
 
     if st.session_state.get("show_add_programme"):
-        st.markdown("""
-        <div class="card" style="border-left:3px solid var(--blue);margin-top:.25rem;">
-          <div class="card-header"><div class="card-icon ci-blue">🎓</div>
-          <div class="card-title">Add Custom Entry</div></div>""",
-        unsafe_allow_html=True)
-
-        add_tab = st.selectbox("What to add:", ["University", "College", "Programme"],
-                               key="add_tab_sel", label_visibility="visible")
-
+        st.markdown('<div class="card" style="border-left:3px solid var(--blue);margin-top:.25rem;"><div class="card-header"><div class="card-icon ci-blue">🎓</div><div class="card-title">Add Custom Entry</div></div>', unsafe_allow_html=True)
+        add_tab = st.selectbox("What to add:", ["University", "College", "Programme"], key="add_tab_sel")
         if add_tab == "University":
             ca, cb = st.columns([3, 1])
             with ca: new_u = st.text_input("University name", placeholder="e.g. INES-Ruhengeri", key="new_u_name")
@@ -1347,7 +1193,6 @@ elif cur == 1:
                     st.session_state["sel_university"] = n
                     st.session_state["show_add_programme"] = False
                     st.rerun()
-
         elif add_tab == "College":
             ca, cb = st.columns([3, 1])
             with ca: new_c = st.text_input("College / School name", placeholder="e.g. School of Public Health", key="new_c_name")
@@ -1363,8 +1208,7 @@ elif cur == 1:
                     st.session_state["sel_college"] = n
                     st.session_state["show_add_programme"] = False
                     st.rerun()
-
-        else:  # Programme
+        else:
             ca, cb = st.columns([3, 1])
             with ca: new_p = st.text_input("Programme name", placeholder="e.g. Health Informatics", key="new_p_name")
             with cb: new_p_code = st.text_input("Code", max_chars=8, placeholder="HI", key="new_p_code")
@@ -1379,10 +1223,9 @@ elif cur == 1:
                     st.session_state["sel_programme"] = n
                     st.session_state["show_add_programme"] = False
                     st.rerun()
-
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # Image type card
+    # Image type
     st.markdown('<div class="card"><div class="card-header"><div class="card-icon ci-teal">🩻</div><div class="card-title">Image Modality</div></div>', unsafe_allow_html=True)
     col_t1, col_t2 = st.columns(2)
     with col_t1:
@@ -1397,7 +1240,6 @@ elif cur == 1:
             st.session_state["img_code"] = "IMG"; st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Preview card
     t_code = st.session_state["img_code"]
     p_code = get_programme_code()
     st.markdown(f"""
@@ -1407,84 +1249,45 @@ elif cur == 1:
       <div class="fname-preview">{h_code}_{p_code}_{t_code}_00001.jpg</div>
       <div class="fname-preview">{h_code}_{p_code}_{t_code}_00002.png</div>
       <div class="fname-preview">{h_code}_{p_code}_{t_code}_00003.dcm</div>
-      <div style="margin-top:.6rem;font-size:.78rem;color:#5e7190;">
-        Patient IDs are assigned sequentially (00001, 00002 …). Original filenames are discarded entirely.
-      </div>
     </div>""", unsafe_allow_html=True)
 
-    # ── Fix #1: Operator identity card ──────────────────────────
-    st.markdown("""
-    <div class="card">
-      <div class="card-header"><div class="card-icon ci-red">🪪</div>
-      <div class="card-title">Operator Identity: Required for Certificate</div></div>
-      <div style="font-size:.88rem;color:#374a60;margin-bottom:1rem;line-height:1.6;">
-        Your identity will be printed on the deletion certificate issued to the hospital.
-        All four fields are required.
-      </div>""", unsafe_allow_html=True)
-
+    # Operator identity
+    st.markdown('<div class="card"><div class="card-header"><div class="card-icon ci-red">🪪</div><div class="card-title">Operator Identity: Required for Certificate</div></div><div style="font-size:.88rem;color:#374a60;margin-bottom:1rem;">Your identity will be printed on the deletion certificate.</div>', unsafe_allow_html=True)
     col_op1, col_op2 = st.columns(2)
     with col_op1:
-        op_name = st.text_input("Full name *",
-            value=st.session_state.get("operator_name",""),
-            placeholder="e.g. Vedaste NYANDWI", key="op_name_input")
+        op_name = st.text_input("Full name *", value=st.session_state.get("operator_name",""), placeholder="e.g. Vedaste NYANDWI", key="op_name_input")
         st.session_state["operator_name"] = op_name.strip()
     with col_op2:
-        op_dept = st.text_input("Department / Institution *",
-            value=st.session_state.get("operator_dept",""),
-            placeholder="e.g. ACE-DS · Data Mining · University of Rwanda",
-            key="op_dept_input")
+        op_dept = st.text_input("Department / Institution *", value=st.session_state.get("operator_dept",""), placeholder="e.g. ACE-DS · Data Mining · University of Rwanda", key="op_dept_input")
         st.session_state["operator_dept"] = op_dept.strip()
-
     col_op3, col_op4 = st.columns(2)
     with col_op3:
-        op_email = st.text_input("Email address *",
-            value=st.session_state.get("operator_email",""),
-            placeholder="e.g. v.nyandwi@ur.ac.rw",
-            key="op_email_input")
+        op_email = st.text_input("Email address *", value=st.session_state.get("operator_email",""), placeholder="e.g. v.nyandwi@ur.ac.rw", key="op_email_input")
         st.session_state["operator_email"] = op_email.strip()
     with col_op4:
-        op_phone = st.text_input("Phone number *",
-            value=st.session_state.get("operator_phone",""),
-            placeholder="e.g. +250 780 000 000",
-            key="op_phone_input")
+        op_phone = st.text_input("Phone number *", value=st.session_state.get("operator_phone",""), placeholder="e.g. +250 780 000 000", key="op_phone_input")
         st.session_state["operator_phone"] = op_phone.strip()
 
-    _op_complete = all([
-        st.session_state["operator_name"],
-        st.session_state["operator_dept"],
-        st.session_state["operator_email"],
-        st.session_state["operator_phone"],
-    ])
-
+    _op_complete = all([st.session_state["operator_name"], st.session_state["operator_dept"],
+                        st.session_state["operator_email"], st.session_state["operator_phone"]])
     if _op_complete:
-        st.markdown(f"""
-        <div class="alert alert-ok" style="margin-top:.5rem;">
-          <span>✅</span>
-          <div><b>{st.session_state["operator_name"]}</b> · {st.session_state["operator_dept"]}<br>
-          <span style="font-size:.8rem;">{st.session_state["operator_email"]} · {st.session_state["operator_phone"]}</span>
-          </div>
-        </div>""", unsafe_allow_html=True)
+        st.markdown(f'<div class="alert alert-ok" style="margin-top:.5rem;"><span>✅</span><div><b>{st.session_state["operator_name"]}</b> · {st.session_state["operator_dept"]}<br><span style="font-size:.8rem;">{st.session_state["operator_email"]} · {st.session_state["operator_phone"]}</span></div></div>', unsafe_allow_html=True)
     else:
-        missing = [f for f, k in [("Full name","operator_name"),("Department","operator_dept"),
-                                    ("Email","operator_email"),("Phone","operator_phone")]
-                   if not st.session_state.get(k,"")]
-        st.markdown(f"""
-        <div class="alert alert-warn" style="margin-top:.5rem;">
-          <span>⚠️</span>
-          <div>Missing: <b>{", ".join(missing)}</b>. These are required for the certificate.</div>
-        </div>""", unsafe_allow_html=True)
+        missing = [f for f, k in [("Full name","operator_name"),("Department","operator_dept"),("Email","operator_email"),("Phone","operator_phone")] if not st.session_state.get(k,"")]
+        st.markdown(f'<div class="alert alert-warn" style="margin-top:.5rem;"><span>⚠️</span><div>Missing: <b>{", ".join(missing)}</b>. These are required for the certificate.</div></div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Fix 2: validate before allowing Next
     _configure_ok = bool(st.session_state.get("hospital_key")) and _op_complete
     col_b, _ = st.columns([1, 3])
     with col_b:
-        if st.button("Next: Upload →", type="primary", use_container_width=True,
-                     disabled=not _configure_ok):
+        if st.button("Next: Upload →", type="primary", use_container_width=True, disabled=not _configure_ok):
             go(2)
     if not _configure_ok:
-        st.markdown('<div style="font-size:.82rem;color:var(--amber);margin-top:.4rem;">Complete all required fields above before proceeding.</div>',
-                    unsafe_allow_html=True)
+        st.markdown('<div style="font-size:.82rem;color:var(--amber);margin-top:.4rem;">Complete all required fields above before proceeding.</div>', unsafe_allow_html=True)
+
+
+# ══════════════════════════════════════════════════════════════════
+# PAGE 2 — UPLOAD
 # ══════════════════════════════════════════════════════════════════
 elif cur == 2:
     st.markdown("""
@@ -1509,53 +1312,24 @@ elif cur == 2:
     st.markdown("<br>", unsafe_allow_html=True)
 
     if st.session_state["upload_mode"] == "zip":
-        st.markdown("""
-        <div class="alert alert-info">
-          <span>💡</span>
-          <div>
-            <b>How to create a ZIP file</b><br>
-            <b>Windows:</b> Right-click your folder → <em>Send to → Compressed (zipped) folder</em><br>
-            <b>Mac:</b> Right-click your folder → <em>Compress</em><br>
-            Then upload the resulting .zip file below.
-          </div>
-        </div>""", unsafe_allow_html=True)
-        uploaded_zip = st.file_uploader("Upload your ZIP file", type=["zip"],
-                                         label_visibility="visible", key="zip_upload")
+        st.markdown('<div class="alert alert-info"><span>💡</span><div><b>How to create a ZIP file</b><br><b>Windows:</b> Right-click folder → <em>Send to → Compressed folder</em><br><b>Mac:</b> Right-click folder → <em>Compress</em></div></div>', unsafe_allow_html=True)
+        uploaded_zip = st.file_uploader("Upload your ZIP file", type=["zip"], label_visibility="visible", key="zip_upload")
         if uploaded_zip:
             try:
                 with zipfile.ZipFile(io.BytesIO(uploaded_zip.getvalue())) as zf:
-                    img_count = sum(1 for i in zf.infolist()
-                                    if not i.is_dir()
-                                    and Path(i.filename).suffix.lower() in SUPPORTED_EXT
-                                    and "__MACOSX" not in i.filename)
-                st.markdown(f"""
-                <div class="alert alert-ok">
-                  <span>✅</span>
-                  <div><b>{uploaded_zip.name}</b> ready.<br>
-                  <b>{img_count}</b> supported image(s) found inside · {uploaded_zip.size/1024/1024:.2f} MB</div>
-                </div>""", unsafe_allow_html=True)
+                    img_count = sum(1 for i in zf.infolist() if not i.is_dir() and Path(i.filename).suffix.lower() in SUPPORTED_EXT and "__MACOSX" not in i.filename)
+                st.markdown(f'<div class="alert alert-ok"><span>✅</span><div><b>{uploaded_zip.name}</b> ready. <b>{img_count}</b> image(s) found · {uploaded_zip.size/1024/1024:.2f} MB</div></div>', unsafe_allow_html=True)
                 st.session_state["_zip_upload"] = uploaded_zip
             except Exception as e:
                 st.error(f"Could not read ZIP: {e}")
         else:
             st.session_state.pop("_zip_upload", None)
-
     else:
-        st.markdown("""
-        <div class="alert alert-info">
-          <span>💡</span>
-          <div>Hold <b>Ctrl</b> (Windows) or <b>Cmd</b> (Mac) to select multiple files at once. Supports <b>JPG, PNG</b> and <b>DICOM (.dcm)</b>.</div>
-        </div>""", unsafe_allow_html=True)
-        uploaded_files = st.file_uploader("Upload your image files", type=["jpg","jpeg","png","dcm"],
-                                           accept_multiple_files=True,
-                                           label_visibility="visible", key="files_upload")
+        st.markdown('<div class="alert alert-info"><span>💡</span><div>Hold <b>Ctrl</b> (Windows) or <b>Cmd</b> (Mac) to select multiple files. Supports <b>JPG, PNG</b> and <b>DICOM (.dcm)</b>.</div></div>', unsafe_allow_html=True)
+        uploaded_files = st.file_uploader("Upload your image files", type=["jpg","jpeg","png","dcm"], accept_multiple_files=True, label_visibility="visible", key="files_upload")
         if uploaded_files:
             dcm_n = sum(1 for f in uploaded_files if Path(f.name).suffix.lower() in (".dcm",".dicom"))
-            st.markdown(f"""
-            <div class="alert alert-ok">
-              <span>✅</span>
-              <div><b>{len(uploaded_files)}</b> file(s) ready: {len(uploaded_files)-dcm_n} image(s) + {dcm_n} DICOM</div>
-            </div>""", unsafe_allow_html=True)
+            st.markdown(f'<div class="alert alert-ok"><span>✅</span><div><b>{len(uploaded_files)}</b> file(s) ready: {len(uploaded_files)-dcm_n} image(s) + {dcm_n} DICOM</div></div>', unsafe_allow_html=True)
             st.session_state["_files_upload"] = uploaded_files
         else:
             st.session_state.pop("_files_upload", None)
@@ -1563,17 +1337,8 @@ elif cur == 2:
     ready = (st.session_state["upload_mode"] == "zip"   and "_zip_upload"   in st.session_state) or \
             (st.session_state["upload_mode"] == "files" and "_files_upload" in st.session_state)
 
-    # ── Fix #3: Image validation ──────────────────────────────────
     if ready:
-        st.markdown("""
-        <div class="card">
-          <div class="card-header"><div class="card-icon ci-amber">🔍</div>
-          <div class="card-title">Image Content Validation</div></div>
-          <div style="font-size:.83rem;color:#374a60;margin-bottom:.75rem;">
-            Checks each file to confirm it is plausibly a medical image
-            (dimensions, aspect ratio, grayscale content). Catches accidental
-            uploads of unrelated photos.
-          </div>""", unsafe_allow_html=True)
+        st.markdown('<div class="card"><div class="card-header"><div class="card-icon ci-amber">🔍</div><div class="card-title">Image Content Validation</div></div><div style="font-size:.83rem;color:#374a60;margin-bottom:.75rem;">Checks each file to confirm it is plausibly a medical image.</div>', unsafe_allow_html=True)
 
         if st.button("🔍  Run Validation", key="run_validation"):
             val_entries = []
@@ -1598,9 +1363,7 @@ elif cur == 2:
                         val_entries.append({"name": f.name, "raw": f.read(), "ext": ext})
                         f.seek(0)
 
-            val_results = [{"name": e["name"],
-                             **validate_image(e["raw"], e["ext"], e["name"])}
-                           for e in val_entries]
+            val_results = [{"name": e["name"], **validate_image(e["raw"], e["ext"], e["name"])} for e in val_entries]
             st.session_state["validation_results"] = val_results
 
         val_res = st.session_state.get("validation_results", [])
@@ -1612,72 +1375,41 @@ elif cur == 2:
             cols_v[0].metric("✅ Clean", n_ok)
             cols_v[1].metric("⚠️ Warnings", n_warn)
             cols_v[2].metric("❌ Errors", n_err)
-
             for v in val_res:
                 if v["errors"]:
                     st.markdown(f'<div class="alert alert-danger"><span>❌</span><div><b>{v["name"]}</b>: {"; ".join(v["errors"])}</div></div>', unsafe_allow_html=True)
                 elif v["warnings"]:
                     st.markdown(f'<div class="alert alert-warn"><span>⚠️</span><div><b>{v["name"]}</b>: {"; ".join(v["warnings"])}</div></div>', unsafe_allow_html=True)
             if n_err == 0 and n_warn == 0:
-                st.markdown('<div class="alert alert-ok"><span>✅</span><div>All files passed validation. Confirmed as plausible medical images.</div></div>', unsafe_allow_html=True)
-            if n_err > 0:
-                st.markdown(f'<div class="alert alert-danger"><span>🚫</span><div><b>{n_err} file(s) have errors</b> and should be removed before anonymization. Errors indicate files that are too small, corrupted, or cannot be opened.</div></div>', unsafe_allow_html=True)
-
+                st.markdown('<div class="alert alert-ok"><span>✅</span><div>All files passed validation.</div></div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-        # ── Fix #4: Patient grouping ──────────────────────────────
-        st.markdown("""
-        <div class="card">
-          <div class="card-header"><div class="card-icon ci-blue">👤</div>
-          <div class="card-title">Patient Grouping (Optional)</div></div>
-          <div style="font-size:.83rem;color:#374a60;margin-bottom:.75rem;">
-            If the same patient has <b>multiple scans</b>, assign them the same
-            patient label so they share a single anonymized ID. Leave blank to
-            assign each file a unique ID automatically.
-          </div>""", unsafe_allow_html=True)
+        st.markdown('<div class="card"><div class="card-header"><div class="card-icon ci-blue">👤</div><div class="card-title">Patient Grouping (Optional)</div></div><div style="font-size:.83rem;color:#374a60;margin-bottom:.75rem;">If the same patient has <b>multiple scans</b>, assign them the same patient label.</div>', unsafe_allow_html=True)
 
-        # Collect current file names to show grouping UI
         file_names_for_grouping = []
         if st.session_state["upload_mode"] == "zip" and "_zip_upload" in st.session_state:
             try:
-                with zipfile.ZipFile(io.BytesIO(
-                        st.session_state["_zip_upload"].getvalue())) as zf:
-                    file_names_for_grouping = [
-                        Path(i.filename).name for i in zf.infolist()
-                        if not i.is_dir() and "__MACOSX" not in i.filename
-                        and Path(i.filename).suffix.lower() in SUPPORTED_EXT
-                    ]
+                with zipfile.ZipFile(io.BytesIO(st.session_state["_zip_upload"].getvalue())) as zf:
+                    file_names_for_grouping = [Path(i.filename).name for i in zf.infolist() if not i.is_dir() and "__MACOSX" not in i.filename and Path(i.filename).suffix.lower() in SUPPORTED_EXT]
             except Exception:
                 pass
         elif "_files_upload" in st.session_state:
-            file_names_for_grouping = [
-                f.name for f in st.session_state["_files_upload"]
-                if Path(f.name).suffix.lower() in SUPPORTED_EXT
-            ]
+            file_names_for_grouping = [f.name for f in st.session_state["_files_upload"] if Path(f.name).suffix.lower() in SUPPORTED_EXT]
 
         if file_names_for_grouping:
             groups = st.session_state.get("patient_groups", {})
-            st.markdown(f'<div style="font-size:.78rem;color:#5e7190;margin-bottom:.5rem;">Enter a patient label (e.g. <code>P001</code>, <code>PatientA</code>) for files belonging to the same person. Files with the same label get the same anonymized ID.</div>', unsafe_allow_html=True)
-
-            # Show up to 20 files; beyond that show note
             show_n = min(len(file_names_for_grouping), 20)
             for fname in file_names_for_grouping[:show_n]:
                 col_fn, col_grp = st.columns([3, 1])
                 col_fn.markdown(f'<span style="font-size:.82rem;color:#374a60;font-family:JetBrains Mono,monospace;">{fname}</span>', unsafe_allow_html=True)
-                grp_val = col_grp.text_input(
-                    "Group", value=groups.get(fname, ""),
-                    key=f"grp_{fname}", label_visibility="collapsed",
-                    placeholder="e.g. P001")
+                grp_val = col_grp.text_input("Group", value=groups.get(fname, ""), key=f"grp_{fname}", label_visibility="collapsed", placeholder="e.g. P001")
                 groups[fname] = grp_val.strip()
-
             if len(file_names_for_grouping) > 20:
-                st.markdown(f'<div style="font-size:.78rem;color:#5e7190;margin-top:.3rem;">… {len(file_names_for_grouping)-20} more files — all ungrouped files will receive unique IDs.</div>', unsafe_allow_html=True)
-
+                st.markdown(f'<div style="font-size:.78rem;color:#5e7190;margin-top:.3rem;">… {len(file_names_for_grouping)-20} more files</div>', unsafe_allow_html=True)
             st.session_state["patient_groups"] = groups
             used_groups = {v for v in groups.values() if v}
             if used_groups:
-                st.markdown(f'<div class="alert alert-info"><span>👤</span><div style="font-size:.82rem;">Patient groups defined: <b>{", ".join(sorted(used_groups))}</b>: files sharing a label will receive the same anonymized patient ID.</div></div>', unsafe_allow_html=True)
-
+                st.markdown(f'<div class="alert alert-info"><span>👤</span><div style="font-size:.82rem;">Groups: <b>{", ".join(sorted(used_groups))}</b></div></div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -1707,31 +1439,14 @@ elif cur == 3:
     p_code = get_programme_code()
     t_code = st.session_state["img_code"]
 
-    # Config summary
     st.markdown(f"""
     <div class="card">
       <div class="card-header"><div class="card-icon ci-teal">✅</div><div class="card-title">Configuration Summary</div></div>
       <div class="info-grid">
-        <div class="info-pill">
-          <div class="info-lbl">Hospital</div>
-          <div class="info-val">{st.session_state["hospital_key"].split("—")[0].strip()}</div>
-          <div class="info-code">{h_code}</div>
-        </div>
-        <div class="info-pill">
-          <div class="info-lbl">Programme</div>
-          <div class="info-val">{st.session_state.get("sel_programme","—")}</div>
-          <div class="info-code">{p_code}</div>
-        </div>
-        <div class="info-pill">
-          <div class="info-lbl">Image Modality</div>
-          <div class="info-val">{"Chest X-ray" if t_code=="CXR" else "Other Medical Images"}</div>
-          <div class="info-code">{t_code}</div>
-        </div>
-        <div class="info-pill">
-          <div class="info-lbl">Upload Method</div>
-          <div class="info-val">{"ZIP folder" if st.session_state["upload_mode"]=="zip" else "Individual files"}</div>
-          <div class="info-code">{"🗜 ZIP" if st.session_state["upload_mode"]=="zip" else "🖼 FILES"}</div>
-        </div>
+        <div class="info-pill"><div class="info-lbl">Hospital</div><div class="info-val">{st.session_state["hospital_key"].split("—")[0].strip()}</div><div class="info-code">{h_code}</div></div>
+        <div class="info-pill"><div class="info-lbl">Programme</div><div class="info-val">{st.session_state.get("sel_programme","—")}</div><div class="info-code">{p_code}</div></div>
+        <div class="info-pill"><div class="info-lbl">Image Modality</div><div class="info-val">{"Chest X-ray" if t_code=="CXR" else "Other Medical Images"}</div><div class="info-code">{t_code}</div></div>
+        <div class="info-pill"><div class="info-lbl">Upload Method</div><div class="info-val">{"ZIP folder" if st.session_state["upload_mode"]=="zip" else "Individual files"}</div><div class="info-code">{"🗜 ZIP" if st.session_state["upload_mode"]=="zip" else "🖼 FILES"}</div></div>
       </div>
       <div class="fname-label">Output filename pattern:</div>
       <div class="fname-preview">{h_code}_{p_code}_{t_code}_00001 … 0000N.ext</div>
@@ -1750,53 +1465,29 @@ elif cur == 3:
           <div class="stat-box"><div class="stat-n c-teal">{len(st.session_state.get("integrity_log",[]))}</div><div class="stat-l">📋 Checksums logged</div></div>
         </div>""", unsafe_allow_html=True)
 
-        st.markdown("""
-        <div class="alert alert-teal">
-          <span>🛡</span>
-          <div><b>Anonymization complete.</b> All PHI tags stripped, files renamed with opaque IDs, SHA-256 checksums recorded, and image buffers zeroed from RAM.</div>
-        </div>""", unsafe_allow_html=True)
+        st.markdown('<div class="alert alert-teal"><span>🛡</span><div><b>Anonymization complete.</b> All PHI tags stripped, files renamed, SHA-256 checksums recorded, buffers zeroed.</div></div>', unsafe_allow_html=True)
 
-        # ── Image thumbnail preview grid ──────────────────────
-        img_results = [r for r in results if r["status"] == "ok"
-                       and r["ext"] not in (".dcm", ".dicom")
-                       and r.get("thumb")]
-        dcm_results = [r for r in results if r["status"] == "ok"
-                       and r["ext"] in (".dcm", ".dicom")]
+        img_results = [r for r in results if r["status"] == "ok" and r["ext"] not in (".dcm", ".dicom") and r.get("thumb")]
+        dcm_results = [r for r in results if r["status"] == "ok" and r["ext"] in (".dcm", ".dicom")]
         err_results = [r for r in results if r["status"] == "error"]
 
         if img_results:
             st.markdown(f'<div style="font-size:.82rem;font-weight:700;color:#374a60;margin:.75rem 0 .4rem;">🖼 Image preview — {len(img_results)} anonymized image(s)</div>', unsafe_allow_html=True)
-            # Show up to 12 thumbnails in a grid
             preview_set = img_results[:12]
             cols = st.columns(min(len(preview_set), 6))
             for i, r in enumerate(preview_set):
                 with cols[i % 6]:
                     try:
-                        import base64
                         img_data = base64.b64decode(r["thumb"])
-                        st.image(img_data, caption=r["new_name"],
-                                 use_container_width=True)
+                        st.image(img_data, caption=r["new_name"], use_container_width=True)
                     except Exception:
                         st.markdown(f'<div style="background:var(--navy);border-radius:8px;padding:1rem;text-align:center;font-size:.7rem;color:#4ade80;">{r["new_name"]}</div>', unsafe_allow_html=True)
             if len(img_results) > 12:
                 st.markdown(f'<div style="font-size:.78rem;color:#5e7190;margin-top:.3rem;">… and {len(img_results)-12} more images</div>', unsafe_allow_html=True)
 
         if dcm_results:
-            st.markdown(f"""
-            <div style="background:var(--purple-lt);border:1px solid #c4b5fd;border-radius:8px;
-                        padding:.75rem 1rem;margin:.5rem 0;font-size:.84rem;color:#4c1d95;">
-              🩻 <b>{len(dcm_results)}</b> DICOM file(s) anonymized —
-              thumbnails not available for DICOM (pixel data intact, PHI tags wiped)
-            </div>""", unsafe_allow_html=True)
+            st.markdown(f'<div style="background:var(--purple-lt);border:1px solid #c4b5fd;border-radius:8px;padding:.75rem 1rem;margin:.5rem 0;font-size:.84rem;color:#4c1d95;">🩻 <b>{len(dcm_results)}</b> DICOM file(s) anonymized — PHI tags wiped</div>', unsafe_allow_html=True)
 
-        if err_results:
-            st.markdown(f"""
-            <div class="alert alert-danger">
-              <span>⚠️</span>
-              <div><b>{len(err_results)}</b> file(s) failed. Check the log for details.</div>
-            </div>""", unsafe_allow_html=True)
-
-        # ── File rename table ──────────────────────────────────
         st.markdown('<div style="font-size:.78rem;font-weight:700;color:#5e7190;text-transform:uppercase;letter-spacing:1px;margin:1rem 0 .5rem;">Complete rename log</div>', unsafe_allow_html=True)
         st.markdown('<div class="ftable"><div class="fth"><span>Original filename</span><span>→ Anonymized filename</span><span>Status</span></div>', unsafe_allow_html=True)
         for r in results[:60]:
@@ -1812,30 +1503,13 @@ elif cur == 3:
             if st.button("Next: Download →", type="primary", use_container_width=True): go(4)
 
     else:
-        has_data = (
-            ("_zip_upload"   in st.session_state and st.session_state["upload_mode"] == "zip") or
-            ("_files_upload" in st.session_state and st.session_state["upload_mode"] == "files")
-        )
+        has_data = (("_zip_upload" in st.session_state and st.session_state["upload_mode"] == "zip") or
+                    ("_files_upload" in st.session_state and st.session_state["upload_mode"] == "files"))
         if not has_data:
-            st.markdown("""
-            <div class="alert alert-warn">
-              <span>⚠️</span>
-              <div>No images uploaded. Go back to <b>Upload</b> and upload your files first.</div>
-            </div>""", unsafe_allow_html=True)
+            st.markdown('<div class="alert alert-warn"><span>⚠️</span><div>No images uploaded. Go back to <b>Upload</b> first.</div></div>', unsafe_allow_html=True)
             if st.button("← Go to Upload"): go(2)
         else:
-            st.markdown("""
-            <div class="alert alert-info">
-              <span>🔐</span>
-              <div>
-                <b>What happens when you click Run:</b><br>
-                1. Images extracted and processed in memory (never saved to disk)<br>
-                2. EXIF metadata stripped via pixel-level reconstruction<br>
-                3. DICOM PHI tags wiped + UIDs regenerated<br>
-                4. SHA-256 checksum logged per file<br>
-                5. Anonymized ZIP packaged, then all image buffers zeroed
-              </div>
-            </div>""", unsafe_allow_html=True)
+            st.markdown('<div class="alert alert-info"><span>🔐</span><div><b>What happens when you click Run:</b><br>1. Images extracted and processed in memory<br>2. EXIF metadata stripped via pixel-level reconstruction<br>3. DICOM PHI tags wiped + UIDs regenerated<br>4. SHA-256 checksum logged per file<br>5. Anonymized ZIP packaged, then all image buffers zeroed</div></div>', unsafe_allow_html=True)
 
             col_back, col_run, _ = st.columns([1, 1.5, 2])
             with col_back:
@@ -1854,28 +1528,21 @@ elif cur == 3:
                         entries = collect_files(st.session_state["_files_upload"])
 
                     if not entries:
-                        st.error("No supported image files found. Check file types (JPG, PNG, DCM)."); st.stop()
+                        st.error("No supported image files found."); st.stop()
 
-                    # Fix #4: Apply patient grouping to assign consistent PIDs
-                    entries = assign_pids_with_groups(
-                        entries, st.session_state.get("patient_groups", {}))
-
-                    results, log_lines, integrity = run_pipeline(
-                        entries, h_code, p_code, t_code, bar, status)
-
+                    entries = assign_pids_with_groups(entries, st.session_state.get("patient_groups", {}))
+                    results, log_lines, integrity = run_pipeline(entries, h_code, p_code, t_code, bar, status)
                     zip_bytes = pack_zip(results)
                     zip_fname = f"anonymized_{h_code}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
 
-                    # Fix #1 + #2: Build mapping CSV before purging
                     op  = st.session_state.get("operator_name","Unknown")
                     dpt = st.session_state.get("operator_dept","Unknown")
                     mapping_csv = build_mapping_csv(results, integrity, op, dpt)
                     mapping_zip = pack_mapping_zip(mapping_csv, f"{h_code}-mapping-key")
-                    log_lines.append(f"  📋  Mapping CSV built ({len(results)} rows) — for hospital data officer")
+                    log_lines.append(f"  📋  Mapping CSV built ({len(results)} rows)")
 
                     results = purge_ram(results)
                     log_lines.append("  🗑  RAM purge complete — all image buffers zeroed (W11)")
-                    logger.info("Pipeline done. %d files processed.", len(results))
 
                     st.session_state.update(dict(
                         results=results, zip_bytes=zip_bytes,
@@ -1888,7 +1555,6 @@ elif cur == 3:
 
 
 # ══════════════════════════════════════════════════════════════════
-# ══════════════════════════════════════════════════════════════════
 # PAGE 4 — DOWNLOAD
 # ══════════════════════════════════════════════════════════════════
 elif cur == 4:
@@ -1900,11 +1566,7 @@ elif cur == 4:
     </div>""", unsafe_allow_html=True)
 
     if not st.session_state["run_complete"] or not st.session_state.get("zip_bytes"):
-        st.markdown("""
-        <div class="alert alert-warn">
-          <span>⚠️</span>
-          <div>No anonymized data ready. Complete the <b>Anonymize</b> step first.</div>
-        </div>""", unsafe_allow_html=True)
+        st.markdown('<div class="alert alert-warn"><span>⚠️</span><div>No anonymized data ready. Complete the <b>Anonymize</b> step first.</div></div>', unsafe_allow_html=True)
         if st.button("← Go to Anonymize"): go(3)
     else:
         zip_b  = st.session_state["zip_bytes"]
@@ -1912,42 +1574,22 @@ elif cur == 4:
         ok_n   = sum(1 for r in st.session_state.get("results",[]) if r["status"] == "ok")
         sz_mb  = len(zip_b) / 1024 / 1024
 
-        # ── Download anonymized ZIP ───────────────────────────────
         st.markdown(f"""
         <div class="card">
-          <div class="card-header">
-            <div class="card-icon ci-teal">⬇</div>
-            <div class="card-title">Anonymized Images ZIP</div>
-          </div>
-          <div style="font-size:.88rem;color:#374a60;margin-bottom:1rem;">
-            <b>{ok_n}</b> image(s) ready &nbsp;·&nbsp; <b>{sz_mb:.2f} MB</b><br>
-            <span style="font-size:.8rem;color:#5e7190;">Downloads to your browser's default Downloads folder.</span>
-          </div>""", unsafe_allow_html=True)
+          <div class="card-header"><div class="card-icon ci-teal">⬇</div><div class="card-title">Anonymized Images ZIP</div></div>
+          <div style="font-size:.88rem;color:#374a60;margin-bottom:1rem;"><b>{ok_n}</b> image(s) ready &nbsp;·&nbsp; <b>{sz_mb:.2f} MB</b></div>""", unsafe_allow_html=True)
         st.download_button(
             label=f"⬇  Download Anonymized ZIP  ({ok_n} files, {sz_mb:.1f} MB)",
-            data=zip_b, file_name=zip_fn, mime="application/zip",
-            type="primary")
+            data=zip_b, file_name=zip_fn, mime="application/zip", type="primary")
         st.markdown('</div>', unsafe_allow_html=True)
 
-        # ── Download mapping table ────────────────────────────────
         mapping_zip = st.session_state.get("mapping_csv")
         _hkey_short = st.session_state.get("hospital_key","H01").split("—")[0].strip()[:4].replace(" ","")
         st.markdown(f"""
         <div class="card">
-          <div class="card-header">
-            <div class="card-icon ci-blue">🗂</div>
-            <div class="card-title">Patient ID Mapping Table</div>
-          </div>
-          <div style="font-size:.88rem;color:#374a60;margin-bottom:.8rem;">
-            The mapping table links every <b>original filename</b> to its <b>anonymized ID</b>.
-            Keep this file with the hospital data officer. It is the only document that can
-            link an anonymized scan back to a patient for clinical follow-up.
-          </div>
-          <div class="alert alert-warn" style="margin-bottom:.75rem;">
-            <span>🔐</span>
-            <div><b>Password convention:</b> <code>{_hkey_short}-mapping-key</code>
-            (your hospital code prefix). Share only with the data governance officer.</div>
-          </div>""", unsafe_allow_html=True)
+          <div class="card-header"><div class="card-icon ci-blue">🗂</div><div class="card-title">Patient ID Mapping Table</div></div>
+          <div style="font-size:.88rem;color:#374a60;margin-bottom:.8rem;">Links every original filename to its anonymized ID. Keep with the hospital data officer.</div>
+          <div class="alert alert-warn" style="margin-bottom:.75rem;"><span>🔐</span><div><b>Password convention:</b> <code>{_hkey_short}-mapping-key</code></div></div>""", unsafe_allow_html=True)
         if mapping_zip:
             all_h2 = {**HOSPITALS, **st.session_state["custom_hospitals"]}
             h2 = all_h2.get(st.session_state["hospital_key"],"H01")
@@ -1956,16 +1598,11 @@ elif cur == 4:
                 data=mapping_zip,
                 file_name=f"mapping_{h2}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip",
                 mime="application/zip")
-        else:
-            st.markdown('<div class="alert alert-info"><span>ℹ️</span><div>Run anonymization first to generate the mapping table.</div></div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-
-        # ── Audit log toggle ──────────────────────────────────────
         integrity = st.session_state.get("integrity_log", [])
         _show_log = st.session_state.get("show_audit_log", False)
-        _lbl_log  = "Hide audit log" if _show_log else f"View audit log  ({len(integrity)} checksum record(s))"
-        if st.button(_lbl_log, key="toggle_audit_log"):
+        if st.button("Hide audit log" if _show_log else f"View audit log  ({len(integrity)} checksum record(s))", key="toggle_audit_log"):
             st.session_state["show_audit_log"] = not _show_log
             st.rerun()
 
@@ -1975,21 +1612,13 @@ elif cur == 4:
             col_lg, _ = st.columns([1, 3])
             with col_lg:
                 st.download_button("Download full log (.txt)", data=log_txt.encode(),
-                                    file_name=f"anon_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
-                                    mime="text/plain")
+                                    file_name=f"anon_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt", mime="text/plain")
 
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("""
-        <div class="alert alert-info">
-          <span>ℹ️</span>
-          <div>Once you have downloaded both files above, proceed to the <b>Delete</b> step to
-          permanently remove the original dataset and receive a signed deletion certificate.</div>
-        </div>""", unsafe_allow_html=True)
-
+        st.markdown('<div class="alert alert-info"><span>ℹ️</span><div>Once you have downloaded both files, proceed to <b>Delete</b> to permanently remove the original dataset.</div></div>', unsafe_allow_html=True)
         col_next, _ = st.columns([1, 3])
         with col_next:
-            if st.button("Next: Delete →", type="primary", use_container_width=True):
-                go(5)
+            if st.button("Next: Delete →", type="primary", use_container_width=True): go(5)
+
 
 # ══════════════════════════════════════════════════════════════════
 # PAGE 5 — DELETE & CERTIFICATE
@@ -1999,15 +1628,11 @@ elif cur == 5:
     <div class="pg-wrap">
       <div class="pg-eyebrow">Step 5</div>
       <div class="pg-title">Delete Original Dataset</div>
-      <div class="pg-sub">Permanently remove the original images and receive an official deletion certificate for the hospital.</div>
+      <div class="pg-sub">Permanently remove the original images and receive an official deletion certificate.</div>
     </div>""", unsafe_allow_html=True)
 
     if not st.session_state["run_complete"]:
-        st.markdown("""
-        <div class="alert alert-warn">
-          <span>⚠️</span>
-          <div>No anonymized data found. Complete <b>Anonymize</b> and <b>Download</b> first.</div>
-        </div>""", unsafe_allow_html=True)
+        st.markdown('<div class="alert alert-warn"><span>⚠️</span><div>No anonymized data found. Complete <b>Anonymize</b> and <b>Download</b> first.</div></div>', unsafe_allow_html=True)
         if st.button("← Go to Anonymize"): go(3)
     else:
         op_name  = st.session_state.get("operator_name","—")
@@ -2028,9 +1653,7 @@ elif cur == 5:
             st.markdown(f"""
             <div class="proof-box">
               <div class="proof-title">🏛 Official Anonymization &amp; Deletion Certificate</div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;
-                          background:#dcfce7;border-radius:8px;padding:.9rem 1rem;
-                          margin-bottom:1rem;font-size:.85rem;color:#14532d;line-height:1.7;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;background:#dcfce7;border-radius:8px;padding:.9rem 1rem;margin-bottom:1rem;font-size:.85rem;color:#14532d;line-height:1.7;">
                 <div><b>Operator:</b> {op_name}</div>
                 <div><b>Department:</b> {op_dept}</div>
                 <div><b>Email:</b> {op_email}</div>
@@ -2048,11 +1671,8 @@ elif cur == 5:
               <div class="proof-row"><span>✅</span><span>Mapping table delivered to operator</span></div>
               <div class="proof-row"><span>{"✅" if val_ran else "⚪"}</span><span>Image content validation {"performed" if val_ran else "not run this session"}</span></div>
               <div class="proof-row"><span>{"✅" if groups_used else "⚪"}</span><span>{"Patient grouping: " + str(len(groups_used)) + " group(s)" if groups_used else "Patient grouping: not used"}</span></div>
-              <div style="margin-top:1rem;padding:.85rem 1rem;background:#bbf7d0;border-radius:8px;
-                          font-size:.85rem;color:#14532d;line-height:1.6;">
-                <b>This certificate may be presented to the hospital radiology department,
-                data governance office, or IRB</b> as formal confirmation that the original
-                patient dataset has been deleted from this research platform and was not retained.<br><br>
+              <div style="margin-top:1rem;padding:.85rem 1rem;background:#bbf7d0;border-radius:8px;font-size:.85rem;color:#14532d;line-height:1.6;">
+                <b>This certificate may be presented to the hospital radiology department, data governance office, or IRB</b> as formal confirmation that the original patient dataset has been deleted.<br><br>
                 Signed: <b>{op_name}</b> · {op_dept}<br>
                 Contact: {op_email} · {op_phone}<br>
                 Date: {cert_ts}
@@ -2093,10 +1713,8 @@ Signed: {op_name}
 """
             col_cert, col_ns, _ = st.columns([1.2, 1.2, 2])
             with col_cert:
-                st.download_button("⬇  Download Certificate (.txt)",
-                    data=cert_txt.encode(),
-                    file_name=f"deletion_certificate_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
-                    mime="text/plain")
+                st.download_button("⬇  Download Certificate (.txt)", data=cert_txt.encode(),
+                    file_name=f"deletion_certificate_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt", mime="text/plain")
             with col_ns:
                 if st.button("🔄 New Session", use_container_width=True):
                     for k in list(_D.keys()): st.session_state[k] = _D[k]
@@ -2104,36 +1722,24 @@ Signed: {op_name}
                     st.rerun()
 
         else:
-            # ── Verify downloads done ─────────────────────────────
             st.markdown(f"""
             <div class="card">
-              <div class="card-header"><div class="card-icon ci-amber">✅</div>
-              <div class="card-title">Before You Delete: Checklist</div></div>
-              <div style="font-size:.88rem;color:#374a60;line-height:2.1;">
-                Confirm you have completed the following:
-              </div>""", unsafe_allow_html=True)
+              <div class="card-header"><div class="card-icon ci-amber">✅</div><div class="card-title">Before You Delete: Checklist</div></div>""", unsafe_allow_html=True)
 
             chk1 = st.checkbox("I have downloaded the **anonymized ZIP** file", key="chk_zip")
             chk2 = st.checkbox("I have downloaded the **mapping table** ZIP", key="chk_map")
             chk3 = st.checkbox("I have saved both files in a **secure location**", key="chk_saved")
             st.markdown('</div>', unsafe_allow_html=True)
 
-            # ── Operator identity confirmation ────────────────────
             _op_ok = all([op_name != "—", op_dept != "—", op_email != "—", op_phone != "—"])
             if not _op_ok:
-                st.markdown("""
-                <div class="alert alert-danger">
-                  <span>🚫</span>
-                  <div>Operator identity is incomplete. Go back to <b>Configure</b> and fill in
-                  your name, department, email and phone before deleting.</div>
-                </div>""", unsafe_allow_html=True)
+                st.markdown('<div class="alert alert-danger"><span>🚫</span><div>Operator identity is incomplete. Go back to <b>Configure</b>.</div></div>', unsafe_allow_html=True)
 
             st.markdown(f"""
             <div class="del-box" style="margin-top:1rem;">
               <div class="del-title">🗑 Permanent Deletion</div>
               <div style="font-size:.88rem;color:#991b1b;margin-bottom:.85rem;line-height:1.65;">
-                This will <b>permanently erase</b> all uploaded original images from this session
-                and issue a signed <b>Deletion Certificate</b> for the hospital department.
+                This will <b>permanently erase</b> all uploaded original images and issue a signed <b>Deletion Certificate</b>.
               </div>
               <div style="font-size:.85rem;color:#7f1d1d;line-height:2;">
                 ✓ Uploaded files cleared from server memory<br>
@@ -2143,14 +1749,11 @@ Signed: {op_name}
               </div>
             </div>""", unsafe_allow_html=True)
 
-            confirmed = st.checkbox(
-                "I confirm I have downloaded all files and I want to permanently delete the original dataset.",
-                key="del_confirm")
+            confirmed = st.checkbox("I confirm I have downloaded all files and want to permanently delete the original dataset.", key="del_confirm")
 
             col_del, _ = st.columns([1, 3])
             with col_del:
-                del_btn = st.button(
-                    "🗑  Delete & Issue Certificate",
+                del_btn = st.button("🗑  Delete & Issue Certificate",
                     disabled=(not confirmed or not all([chk1, chk2, chk3]) or not _op_ok),
                     use_container_width=True)
 
@@ -2172,20 +1775,22 @@ Signed: {op_name}
                     f"  CERT      [{ts}]  issued to {op_name} / {op_dept}",
                 ]
                 st.session_state["log_lines"] = log
-                logger.warning("Dataset deleted at %s by %s", ts, op_name)
                 st.rerun()
+
 
 # ══════════════════════════════════════════════════════════════════
 # PAGE 6 — FEEDBACK
-# ══════════════════════════════════════════════════════════════════
-# PAGE 6 — FEEDBACK
+# Key fix: use fb_submitted flag + fb_form_key to show success toast
+# and reset the form WITHOUT navigating away from the feedback page.
+# st.rerun() is never called after submission — we just set flags and
+# let Streamlit re-render the same page naturally.
 # ══════════════════════════════════════════════════════════════════
 elif cur == 6:
     st.markdown("""
     <div class="pg-wrap">
       <div class="pg-eyebrow">Community</div>
-      <div class="pg-title">Feedback & Reviews</div>
-      <div class="pg-sub">Rate the platform and leave a comment.</div>
+      <div class="pg-title">Feedback &amp; Reviews</div>
+      <div class="pg-sub">Rate the platform and share your experience. Your review appears instantly below.</div>
     </div>""", unsafe_allow_html=True)
 
     reviews = st.session_state.get("feedback_reviews", [])
@@ -2193,23 +1798,17 @@ elif cur == 6:
     # ── Rating summary ────────────────────────────────────────────
     if reviews:
         avg   = sum(r["stars"] for r in reviews) / len(reviews)
-        stars_display = "⭐" * round(avg) + "☆" * (5 - round(avg))
-        # Tally per star
         tally = {s: sum(1 for r in reviews if r["stars"] == s) for s in range(5, 0, -1)}
         max_t = max(tally.values()) if tally else 1
-
         bars_html = ""
         for s in range(5, 0, -1):
             pct = int(tally[s] / max_t * 100) if max_t > 0 else 0
             bars_html += f"""
             <div class="rating-bar-row">
               <div class="rating-bar-lbl">{s}</div>
-              <div class="rating-bar-track">
-                <div class="rating-bar-fill" style="width:{pct}%;"></div>
-              </div>
+              <div class="rating-bar-track"><div class="rating-bar-fill" style="width:{pct}%;"></div></div>
               <div class="rating-bar-n">{tally[s]}</div>
             </div>"""
-
         st.markdown(f"""
         <div class="rating-summary">
           <div style="text-align:center;min-width:90px;">
@@ -2220,7 +1819,24 @@ elif cur == 6:
           <div class="rating-bars">{bars_html}</div>
         </div>""", unsafe_allow_html=True)
 
-    # ── Submit review form ────────────────────────────────────────
+    # ── Success toast (shown after submission, stays on page) ─────
+    if st.session_state.get("fb_submitted"):
+        submitted_name = st.session_state.get("fb_submitted_name", "").split()[0] or "there"
+        st.markdown(f"""
+        <div class="fb-success-toast">
+          <div class="toast-icon">🎉</div>
+          <div>
+            <div class="toast-msg">Thank you, {submitted_name}! Your review has been posted.</div>
+            <div class="toast-sub">It now appears in the reviews section below. Feel free to submit another.</div>
+          </div>
+        </div>""", unsafe_allow_html=True)
+        # Clear the flag so toast disappears on next interaction
+        st.session_state["fb_submitted"] = False
+
+    # ── Write a Review form ───────────────────────────────────────
+    # fb_form_key is incremented on successful submit to reset widgets
+    fk = st.session_state.get("fb_form_key", 0)
+
     st.markdown("""
     <div class="card">
       <div class="card-header">
@@ -2230,13 +1846,17 @@ elif cur == 6:
 
     col_name, col_role = st.columns(2)
     with col_name:
-        f_name = st.text_input("Your name", placeholder="e.g. Dr. Uwimana M.",
-                                key="fb_name", label_visibility="visible")
+        f_name = st.text_input(
+            "Your name",
+            placeholder="e.g. Dr. Uwimana M.",
+            key=f"fb_name_{fk}",
+            label_visibility="visible")
     with col_role:
         f_role_label = st.selectbox(
             "Your role",
             ["Hospital Staff / Radiologist", "Researcher", "Student", "IT / Data Officer", "Other"],
-            key="fb_role", label_visibility="visible")
+            key=f"fb_role_{fk}",
+            label_visibility="visible")
 
     role_tag_map = {
         "Hospital Staff / Radiologist": "hospital",
@@ -2247,17 +1867,14 @@ elif cur == 6:
     }
     role_tag = role_tag_map.get(f_role_label, "staff")
 
-    # Star rating — use a slider styled clearly
     st.markdown('<div style="font-size:.85rem;font-weight:600;color:#374a60;margin-top:.5rem;margin-bottom:.25rem;">Your rating</div>', unsafe_allow_html=True)
     f_stars = st.select_slider(
         "Rating",
         options=[1, 2, 3, 4, 5],
         value=5,
         format_func=lambda x: "⭐" * x + f"  ({x}/5)",
-        key="fb_stars",
-        label_visibility="collapsed",
-    )
-    # Visual star display
+        key=f"fb_stars_{fk}",
+        label_visibility="collapsed")
     st.markdown(
         f'<div style="font-size:1.8rem;letter-spacing:3px;margin:.2rem 0 .6rem;">'
         f'{"⭐" * f_stars}{"☆" * (5 - f_stars)}'
@@ -2269,14 +1886,11 @@ elif cur == 6:
         "Your comment",
         placeholder="Describe your experience: what worked well, what could be improved, how you used the system...",
         height=110,
-        key="fb_comment",
-        label_visibility="visible",
-    )
+        key=f"fb_comment_{fk}",
+        label_visibility="visible")
 
-    col_sub, col_clear = st.columns([1, 4])
-    with col_sub:
-        submit = st.button("⭐  Submit Review", type="primary",
-                            use_container_width=True)
+    submit = st.button("⭐  Submit Review", type="primary", key=f"fb_submit_{fk}")
+    st.markdown('</div>', unsafe_allow_html=True)
 
     if submit:
         name_clean    = (f_name or "").strip()
@@ -2297,12 +1911,15 @@ elif cur == 6:
                 "ts":       datetime.now().strftime("%Y-%m-%d %H:%M"),
                 "initials": initials,
             }
+            # Insert at the top so it's visible immediately
             st.session_state["feedback_reviews"].insert(0, new_review)
-            st.success(f"✅ Thank you, {name_clean.split()[0]}! Your review has been posted.")
-            # Clear fields via rerun key rotation
-            st.rerun()
 
-    st.markdown('</div>', unsafe_allow_html=True)  # close card
+            # Set success state — do NOT call st.rerun() which could navigate away
+            st.session_state["fb_submitted"]      = True
+            st.session_state["fb_submitted_name"] = name_clean
+            # Increment key to reset form widgets on next render
+            st.session_state["fb_form_key"]       = fk + 1
+            st.rerun()   # rerun stays on page 6 — page key is unchanged
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -2352,40 +1969,21 @@ elif cur == 6:
 
 
 # ══════════════════════════════════════════════════════════════════
-# ══════════════════════════════════════════════════════════════════
 # FOOTER
 # ══════════════════════════════════════════════════════════════════
 st.markdown(f"""
-<div style="
-  margin-top:3.5rem;
-  padding:1.2rem 0 .8rem;
-  border-top:1px solid #dde4ef;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:.75rem;
-">
+<div style="margin-top:3.5rem;padding:1.2rem 0 .8rem;border-top:1px solid #dde4ef;
+            display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem;">
   <div style="display:flex;align-items:center;gap:.75rem;">
-    <div style="
-      width:26px;height:26px;background:#0d1b2a;border-radius:6px;
-      display:flex;align-items:center;justify-content:center;
-      font-size:.75rem;flex-shrink:0;
-    ">🛡</div>
+    <div style="width:26px;height:26px;background:#0d1b2a;border-radius:6px;
+                display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;">🛡</div>
     <div>
       <div style="font-size:.85rem;font-weight:700;color:#0f1d2e;">MedAnon Pro</div>
-      <div style="font-size:.72rem;color:#5e7190;margin-top:.05rem;">
-        Patient data is never stored or transmitted · All processing is in-session only
-      </div>
+      <div style="font-size:.72rem;color:#5e7190;margin-top:.05rem;">Patient data is never stored or transmitted · All processing is in-session only</div>
     </div>
   </div>
   <div style="text-align:right;">
-    <div style="font-size:.78rem;font-weight:600;color:#374a60;">
-      © Vedaste NYANDWI
-    </div>
-    <div style="font-size:.68rem;color:#5e7190;margin-top:.05rem;">
-      University of Rwanda · College of Business &amp; Economics<br>
-      ACE-DS · Data Mining Program
-    </div>
+    <div style="font-size:.78rem;font-weight:600;color:#374a60;">© Vedaste NYANDWI</div>
+    <div style="font-size:.68rem;color:#5e7190;margin-top:.05rem;">University of Rwanda · College of Business &amp; Economics<br>ACE-DS · Data Mining Program</div>
   </div>
 </div>""", unsafe_allow_html=True)
